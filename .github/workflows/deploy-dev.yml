@@ -3,7 +3,7 @@ name: Deploy to Server (Development)
 on:
   push:
     branches:
-      - dev-release-2 
+      - dev-release
 
 jobs:
   deploy:
@@ -24,10 +24,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd Learning-Application-Web-Dev
 
-            echo "Checking out dev-release-2 branch..."
-            git fetch origin dev-release-2
-            git checkout dev-release-2
-            git pull origin dev-release-2
+            echo "Checking out dev-release branch..."
+            git fetch origin dev-release
+            git checkout dev-release
+            git pull origin dev-release
 
             echo "Building Docker image..."
             docker build -t pudhuyugam-dev:latest .
