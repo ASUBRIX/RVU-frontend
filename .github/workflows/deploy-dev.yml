@@ -1,9 +1,8 @@
-name: Deploy to Server (Development)
+name: Deploy Frontend
 
 on:
   push:
-    branches:
-      - dev-release
+    branches: [development, dev_release]
 
 jobs:
   deploy:
@@ -13,24 +12,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Start SSH Agent
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: Build Docker image
+        run: docker build -t lms-frontend .
+
+      - name: Save image to archive
+        run: docker save lms-frontend | gzip > lms-frontend.tar.gz
+
+      - name: Copy archive to VPS
+        uses: appleboy/scp-action@v0.1.7
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Test SSH Connection
-        run: |
-          ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo '✅ SSH SUCCESS from GitHub Actions'"
-
-      - name: Deploy via SSH
-        run: |
-          ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd Learning-Application-Web-Dev
-            git fetch origin dev-release
-            git checkout dev-release
-            git pull origin dev-release
-            docker build -t pudhuyugam-dev:latest .
-            docker rm -f pudhuyugam-dev-app || true
-            docker run -d --name pudhuyugam-dev-app -p 4000:80 pudhuyugam-dev:latest
-            echo "✅ Deployment complete"
-          EOF
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "lms-frontend.tar.gz"
+          target: "~/frontend"
+      
+      - name: Run Docker on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            mkdir -p ~/frontend
+            cd ~/frontend
+            docker load < lms-frontend.tar.gz
+            docker stop lms-frontend || true
+            docker rm lms-frontend || true
+            docker run -d -p 4002:80 --name lms-frontend lms-frontend
+      
