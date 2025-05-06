@@ -18,7 +18,6 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY_BASE64 }}" | base64 -d > ~/.ssh/github-deploy
           chmod 600 ~/.ssh/github-deploy
-      
 
       - name: Start ssh-agent and add key
         run: |
@@ -27,7 +26,7 @@ jobs:
 
       - name: Test SSH connection
         run: |
-          ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo '✅ SSH SUCCESS!'"
+          ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo '✅ SSH SUCCESS from GitHub Actions'"
 
       - name: Deploy via SSH
         run: |
@@ -39,5 +38,5 @@ jobs:
             docker build -t pudhuyugam-dev:latest .
             docker rm -f pudhuyugam-dev-app || true
             docker run -d --name pudhuyugam-dev-app -p 4000:80 pudhuyugam-dev:latest
-            echo "✅ Deployment done"
+            echo "✅ Deployment complete"
           EOF
