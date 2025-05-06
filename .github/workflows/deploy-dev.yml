@@ -14,14 +14,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH
+      - name: Set up SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Show loaded SSH keys (for debug)
+        run: ssh-add -l
+
+      - name: Test SSH Connection (for debug)
+        run: |
+          ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo '✅ SSH connection successful from GitHub Actions!'"
+
       - name: Deploy via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             cd Learning-Application-Web-Dev
 
             echo "Checking out dev-release branch..."
@@ -38,5 +45,5 @@ jobs:
             echo "Running new Docker container..."
             docker run -d --name pudhuyugam-dev-app -p 4000:80 pudhuyugam-dev:latest
 
-            echo "Deployment complete."
+            echo "✅ Deployment complete."
           EOF
