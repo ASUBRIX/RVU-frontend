@@ -145,7 +145,7 @@ const Hero = () => {
               </span>
             </h1>
             <p className="my-4 lead">
-              Online learning and teaching marketplace with 5K+ courses &amp; 10M students. Taught by experts to help you acquire new skills.
+              Online Online learning and teaching marketplace with 5K+ courses &amp; 10M students. Taught by experts to help you acquire new skills.
             </p>
             <ul className="list-inline position-relative justify-content-center justify-content-lg-start mb-4">
               <li className="list-inline-item me-2 icons-center">
