@@ -1,45 +1,40 @@
-name: Deploy Frontend
+name: Deploy to Server (Development)
 
 on:
   push:
-    branches: [development, dev-release]
+    branches:
+      - dev-release
 
 jobs:
   deploy:
+    name: SSH Deploy & Docker
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Build Docker image
-        run: docker build -t lms-frontend .
-
-      - name: Save image to archive
-        run: docker save lms-frontend | gzip > lms-frontend.tar.gz
-
-      - name: Copy archive to VPS
-        uses: appleboy/scp-action@v0.1.7
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: "lms-frontend.tar.gz"
-          target: "~/frontend"
-      
-      - name: Run Docker on VPS
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            mkdir -p ~/frontend
-            cd ~/frontend
-            docker load < lms-frontend.tar.gz
-            docker stop lms-frontend || true
-            docker rm lms-frontend || true
-            docker run -d -p 4002:80 --name lms-frontend lms-frontend
-      
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd Learning-Application-Web
+
+            echo "Pulling latest code..."
+            git pull origin dev-release
+
+            echo "Building Docker image..."
+            docker build -t pudhuyugam-dev:latest .
+
+            echo "Stopping and removing existing container (if any)..."
+            docker rm -f pudhuyugam-dev-app || true
+
+            echo "Running new Docker container..."
+            docker run -d --name pudhuyugam-dev-app -p 4000:80 pudhuyugam-dev:latest
+
+            echo "Deployment complete."
+          EOF
