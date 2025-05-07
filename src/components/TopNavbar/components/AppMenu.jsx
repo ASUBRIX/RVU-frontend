@@ -211,7 +211,7 @@ const AppMenu = ({
             </Dropdown>}
           {showExtraPages && <Dropdown className="nav-item">
               <DropdownToggle as={Link} className="nav-link arrow-none" to="" id="advanceMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <FaEllipsisH />
+                {/* <FaEllipsisH /> */}
               </DropdownToggle>
               <ul className="dropdown-menu min-w-auto" data-bs-popper="none">
                 <li>
