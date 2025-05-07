@@ -25,7 +25,7 @@ jobs:
             cd Learning-Application-Web
 
             echo "Pulling latest code..."
-            git pull origin dev-release
+            git pull origin development
 
             echo "Building Docker image..."
             docker build -t pudhuyugam-dev:latest .

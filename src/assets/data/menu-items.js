@@ -6,6 +6,7 @@ import clientUnitLogo2 from '@/assets/images/client/uni-logo-02.svg';
 import clientUnitLogo3 from '@/assets/images/client/uni-logo-03.svg';
 import clientUnitLogo4 from '@/assets/images/client/uni-logo-04.svg';
 import { FcGoogle } from 'react-icons/fc';
+import { FaEllipsisH } from 'react-icons/fa';
 export const CATEGORY_MENU_ITEMS = [{
   key: 'category',
   label: 'Category',
