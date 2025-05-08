@@ -184,7 +184,7 @@ const WebsiteSettings = () => {
   return (
     <Card>
       <Card.Header>
-        <h4 className="card-title mb-0">Website Settings</h4>
+        <h4 className="card-title mb-0">Website Settings Development</h4>
       </Card.Header>
       <Card.Body>
         {feedback.message && (
