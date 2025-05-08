@@ -1,11 +1,10 @@
 import { getProductById } from '@/helpers/data';
 import { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import { BsBagFill, BsCalendarFill, BsEyeFill, BsPersonCircle, BsStarFill, BsTranslate } from 'react-icons/bs';
-import { FaBook, FaFont, FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import BookDetails from './components/BookDetails';
 import ProductImage from './components/ProductImage';
+
 const ProductDetailPage = () => {
   const [event, setEvent] = useState();
   const {

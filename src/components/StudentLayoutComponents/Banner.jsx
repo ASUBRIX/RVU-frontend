@@ -20,7 +20,7 @@ const Banner = ({
               <Row className="d-sm-flex justify-sm-content-between mt-2 mt-md-0">
                 <Col xs={'auto'}>
                   <div className="avatar avatar-xxl position-relative mt-n3">
-                    <img className="avatar-img rounded-circle border border-white border-3 shadow" src={avatar9} alt="avatar" />
+                    <img className="avatar-img rounded-circle border-white border-3 shadow" src={avatar9} alt="avatar" />
                     <span className="badge text-bg-success rounded-pill position-absolute top-50 start-100 translate-middle mt-4 mt-md-5 ms-n3 px-md-3">
                       Pro
                     </span>

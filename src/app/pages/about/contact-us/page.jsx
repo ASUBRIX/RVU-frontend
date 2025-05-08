@@ -1,17 +1,20 @@
-import Footer from '@/components/Footer';
-import PageMetaData from '@/components/PageMetaData';
-import ContactCards from './components/ContactCards';
-import ContactFormAndMap from './components/ContactFormAndMap';
-import TopNavigationBar from './components/TopNavigationBar';
+import Footer from '@/components/Footer'
+import PageMetaData from '@/components/PageMetaData'
+import ContactCards from './components/ContactCards'
+import ContactFormAndMap from './components/ContactFormAndMap'
+import TopNavigationBar from '@/components/TopNavigationBar'
+import HeroImage from './components/HeroImage'
 const ContactUs = () => {
-  return <>
+  return (
+    <>
       <PageMetaData title="Contact Us" />
       <TopNavigationBar />
       <main>
-        <ContactCards />
+        <HeroImage/>
         <ContactFormAndMap />
       </main>
-      <Footer className="bg-light" />
-    </>;
-};
-export default ContactUs;
+      <Footer className="custom-footer" style={{ marginTop: 0, paddingTop: 0 }} />
+    </>
+  )
+}
+export default ContactUs

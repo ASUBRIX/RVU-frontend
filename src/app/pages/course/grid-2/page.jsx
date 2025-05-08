@@ -1,19 +1,21 @@
 import Footer from '@/components/Footer';
+import Hero from './components/Hero';
 import PageMetaData from '@/components/PageMetaData';
 import ActionBox from './components/ActionBox';
 import Courses from './components/Courses';
 import PageBanner from './components/PageBanner';
-import TopNavigationBar from './components/TopNavigationBar';
+import TopNavigationBar from '@/components/TopNavigationBar';
 const CourseGrid2 = () => {
   return <>
       <PageMetaData title="Course Grid2" />
       <TopNavigationBar />
       <main>
-        <PageBanner />
+        <Hero/>
+        {/* <PageBanner /> */}
         <Courses />
-        <ActionBox />
+        {/* <ActionBox /> */}
       </main>
-      <Footer className="bg-light" />
+      <Footer className="custom-footer"/>
     </>;
 };
 export default CourseGrid2;

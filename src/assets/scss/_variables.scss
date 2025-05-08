@@ -63,8 +63,9 @@ $min-contrast-ratio: 2;
 $color-contrast-dark: $black;
 $color-contrast-light: $white;
 
-$primary: #066ac9;
+$primary: #ED155A;
 $secondary: $gray-500;
+$theme-secondary: #142841;
 $success: $green;
 $info: $cyan;
 $warning: $yellow;
@@ -74,6 +75,7 @@ $dark: $gray-800;
 
 // theme colors map
 $theme-colors: (
+	"theme-secondary": $theme-secondary,
 	"primary": $primary,
 	"white": $white,
 	"secondary": $secondary,

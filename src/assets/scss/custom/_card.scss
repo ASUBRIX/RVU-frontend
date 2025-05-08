@@ -156,3 +156,55 @@
           transform: scale(1.03);
 }
 
+.card {
+  &.course-card {
+    .card-img-top {
+      height: 160px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .progress {
+      height: 5px;
+      border-radius: 0;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+
+  &.test-card {
+    .shadow {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .icon-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  &.instructor-card {
+    .card-img {
+      width: 100%;
+      height: auto;
+    }
+
+    .card-img-overlay {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+
+      .badge-wrapper {
+        width: 100%;
+        margin-top: auto;
+        text-align: end;
+      }
+    }
+  }
+}
+

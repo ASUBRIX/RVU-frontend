@@ -76,6 +76,10 @@
   border: none;
 }
 
+.dropdown-toggle::after {
+  content: none !important;
+}
+
 // Dropdown custom size
 @include media-breakpoint-down(lg) {
   .dropdown-width-lg{

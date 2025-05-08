@@ -15,7 +15,259 @@
 //
 
 // Accordion collapse plus/minus icon
-.accordion{
+.accordion{//
+  // accordion.scss
+  // Extended from Bootstrap
+  //
+  
+  //
+  // Bootstrap Overrides
+  //
+  .accordion .accordion-button {
+    text-align: left;
+  }
+  
+  // Accordion collapse plus/minus icon
+  .accordion {
+    .accordion-item {
+      color: $accordion-color;
+    }
+    
+    &.accordion-icon {
+      .accordion-header {
+        position: relative;
+  
+        .accordion-button {
+          background: transparent;
+          border: none;
+          position: relative;
+          
+          // Plus/Minus icon
+          &::after {
+            content: "";
+            background: var(--#{$prefix}gray-800) !important;
+            width: 10px;
+            height: 2px;
+            display: block;
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%) rotate(0deg);
+            transition: $transition-base;
+          }
+  
+          &[aria-expanded="false"]::after {
+            transform: translateY(-50%) rotate(90deg);
+          }
+  
+          &[aria-expanded="true"]::after {
+            transform: translateY(-50%) rotate(0deg);
+          }
+        }
+      }
+  
+      .accordion-collapse {
+        border: none;
+      }
+  
+      .accordion-body {
+        padding: 0.2rem 0.5rem 0.5rem 1rem;
+      }
+    }
+  }
+  
+  // Accordion circle
+  .accordion {
+    &.accordion-circle {
+      .accordion-item {
+        border-radius: $border-radius !important;
+        border: 1px $border-style rgba($secondary, $soft-alpha + 0.1);
+      }
+  
+      .accordion-header {
+        position: relative;
+  
+        .accordion-button {
+          background: transparent;
+          color: var(--#{$prefix}gray-800);
+          border: none;
+          font-size: inherit;
+          padding-left: 2.7rem;
+  
+          &::before {
+            content: "";
+            background: var(--#{$prefix}primary);
+            width: 12px;
+            height: 12px;
+            border-radius: 100%;
+            position: absolute;
+            top: 50%;
+            left: 17px;
+            transform: translateY(-50%);
+            transition: $transition-base;
+          }
+  
+          &[aria-expanded="true"]::before {
+            visibility: visible;
+          }
+  
+          &[aria-expanded="false"]::before {
+            visibility: hidden;
+          }
+        }
+      }
+  
+      .accordion-collapse {
+        border: none;
+      }
+  
+      .accordion-body {
+        padding: 0.5rem 2rem 1.5rem 2rem;
+      }
+    }
+  }
+  
+  // Small screens adjustments
+  @include media-breakpoint-down(sm) {
+    .accordion-circle .accordion-body {
+      padding: 0.6rem 1.5rem 0.5rem 1.5rem !important;
+    }
+    .accordion-circle .accordion-header .accordion-button {
+      padding-left: 2.5rem !important;
+    }
+  }
+  
+  // Accordion with light background
+  .accordion.accordion-bg-light {
+    .accordion-item {
+      border: none;
+      background-color: transparent;
+    }
+  
+    .accordion-button {
+      background-color: var(--#{$prefix}light) !important;
+      color: var(--#{$prefix}gray-800) !important;
+  
+      &::after {
+        background: var(--#{$prefix}dark) !important;
+      }
+    }
+  }
+  
+  // Accordion with border
+  .accordion.accordion-border {
+    .accordion-item {
+      border: none;
+      background-color: transparent;
+    }
+  
+    .accordion-button {
+      border: $input-border-width $border-style $input-border-color !important;
+      color: var(--#{$prefix}gray-800) !important;
+  
+      &::after {
+        background: var(--#{$prefix}dark) !important;
+      }
+    }
+  }
+  
+  // Accordion with shadow
+  .accordion.accordion-shadow {
+    .accordion-item {
+      border: none;
+    }
+  
+    .accordion-button {
+      background-color: var(--#{$prefix}body-bg) !important;
+      color: var(--#{$prefix}gray-800) !important;
+      box-shadow: $box-shadow-sm;
+  
+      &::after {
+        background: var(--#{$prefix}dark) !important;
+      }
+    }
+  }
+  
+  // Small screens adjustments
+  @include media-breakpoint-down(sm) {
+    .accordion-icon .accordion-body {
+      padding: 0.6rem 0.5rem 0.5rem 0.5rem !important;
+    }
+    .accordion-header .accordion-button {
+      padding-left: 1.3rem !important;
+    }
+  }
+  
+  // Accordion flush
+  .accordion.accordion-flush {
+    .accordion-item {
+      background-color: transparent;
+    }
+  
+    .accordion-button {
+      padding: 1rem 0rem;
+      background-color: transparent;
+  
+      &::after {
+        background-size: 0.825rem;
+        width: 0.825rem;
+        height: 0.825rem;
+      }
+    }
+  
+    .accordion-body {
+      padding: 0.5rem 1.5rem;
+    }
+  }
+  
+  // Accordion flush light theme
+  .accordion.accordion-flush-light {
+    .accordion-item {
+      background-color: transparent;
+      border-bottom: $border-width $border-style rgba($secondary, $soft-alpha);
+    }
+  
+    .accordion-button {
+      background: transparent;
+      padding: 15px;
+      border: none;
+      color: var(--#{$prefix}gray-800);
+  
+      &[aria-expanded="true"] {
+        background-color: var(--#{$prefix}light);
+        color: var(--#{$prefix}gray-800);
+        box-shadow: none;
+        border-radius: $border-radius;
+      }
+    }
+  }
+  
+  // Accordion with dark active background
+  .accordion.accordion-active-dark {
+    .accordion-item {
+      border-radius: $border-radius;
+  
+      &:not(:first-of-type) {
+        border-top: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
+      }
+  
+      .accordion-button {
+        background-color: var(--#{$prefix}light);
+  
+        &[aria-expanded="true"] {
+          background: var(--#{$prefix}dark) !important;
+          color: var(--#{$prefix}white);
+          border-bottom-left-radius: 0 !important;
+          border-bottom-right-radius: 0 !important;
+  
+          &::after {
+            background: var(--#{$prefix}white) !important;
+          }
+        }
+      }
+    }
+  }
+  
   .accordion-item {
     color: $accordion-color;
   }
@@ -304,3 +556,4 @@
     }
   }
 }
+

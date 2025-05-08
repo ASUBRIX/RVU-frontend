@@ -32,6 +32,12 @@ import instructor6 from '@/assets/images/instructor/06.jpg';
 import instructor8 from '@/assets/images/instructor/08.jpg';
 import instructor10 from '@/assets/images/instructor/10.jpg';
 import instructor11 from '@/assets/images/instructor/11.jpg';
+import kannan from '@/assets/images/instructor/kannan_l.jpg';
+import kaviyazhagan from '@/assets/images/instructor/kaviyazhagan_r.jpg';
+import manojkumar from '@/assets/images/instructor/manojkumar_v.jpg';
+import prabakaran from '@/assets/images/instructor/prabakaran_m.jpg';
+import prashanth from '@/assets/images/instructor/prashanth_j.jpg';
+import ramasamy from '@/assets/images/instructor/ramasamy_a.jpg';
 import university1 from '@/assets/images/university/01.jpg';
 import university2 from '@/assets/images/university/02.jpg';
 import university3 from '@/assets/images/university/03.jpg';
@@ -63,14 +69,15 @@ import mastercardImg from '@/assets/images/client/mastercard.svg';
 import paypalImg from '@/assets/images/client/paypal.svg';
 import { FaTv, FaUserGraduate, FaUserTie } from 'react-icons/fa';
 import { BsBook, BsFileEarmarkPdf, BsSoundwave, BsStopwatchFill } from 'react-icons/bs';
+
 export const coursesData = [{
   id: '1',
   image: courseImg8,
-  badge: {
-    text: 'All level',
+  badge:{
+    text: 'pdf',
     class: 'bg-purple text-purple'
   },
-  title: 'Sketch from A to Z: for app designer',
+  title: 'UPSC FOUNDATION BATCH',
   description: 'Proposal indulged no do sociable he throwing settling.',
   rating: {
     review: 2000,
@@ -100,7 +107,7 @@ export const coursesData = [{
     text: 'Beginner',
     class: 'bg-success text-success'
   },
-  title: 'Graphic Design Masterclass',
+  title: 'NCERT CRASH COURSE',
   description: 'Rooms oh fully taken by worse do Points afraid but may end Rooms Points afraid but may end Rooms',
   rating: {
     review: 6500,
@@ -130,7 +137,7 @@ export const coursesData = [{
     text: 'Beginner',
     class: 'bg-success text-success'
   },
-  title: 'Create a Design System in Figma',
+  title: 'RRB NTPC MOCK TEST SERIES',
   description: 'Rooms oh fully taken by worse do. Points afraid but may end afraid but may end.',
   rating: {
     review: 3500,
@@ -728,10 +735,10 @@ export const eventsData = [{
 export const instructorsData = [{
   id: '401',
   title: 'Build your brand & business',
-  image: instructor2,
+  image: prabakaran,
   students: 25,
   tasks: 15,
-  name: 'Jacqueline Miller',
+  name: 'Prabakaran M',
   subject: 'Computer Teacher',
   rating: 4.5,
   college: 'Eastbay College',
@@ -742,10 +749,10 @@ export const instructorsData = [{
 }, {
   id: '402',
   title: 'Master in logo design',
-  image: instructor1,
+  image: manojkumar,
   students: 118,
   tasks: 9,
-  name: 'Samuel Bishop',
+  name: 'Manojkumar V',
   subject: 'Marketing Teacher',
   rating: 4.5,
   college: 'VNSGU College',
@@ -755,10 +762,10 @@ export const instructorsData = [{
 }, {
   id: '403',
   title: 'Create brand using vector illustration',
-  image: instructor8,
+  image: ramasamy,
   students: 92,
   tasks: 38,
-  name: 'Dennis Barrett',
+  name: 'Ramasamy A',
   subject: 'Science Teacher',
   rating: 4.5,
   college: 'Sigma College',
@@ -769,10 +776,10 @@ export const instructorsData = [{
 }, {
   id: '404',
   title: 'Develop your marketing skills style',
-  image: instructor4,
+  image: prashanth,
   students: 82,
   tasks: 5,
-  name: 'Carolyn Ortiz',
+  name: 'Prashanth J',
   subject: 'Economy Teacher',
   rating: 4.5,
   college: 'Cambridge College',
@@ -782,10 +789,10 @@ export const instructorsData = [{
 }, {
   id: '405',
   title: 'Build your own responsive website',
-  image: instructor3,
+  image: kaviyazhagan,
   students: 50,
   tasks: 10,
-  name: 'Billy Vasquez',
+  name: 'Kaviyazhagan R',
   subject: 'Computer Teacher',
   rating: 4.5,
   college: 'LPU College',
@@ -796,10 +803,10 @@ export const instructorsData = [{
 }, {
   id: '406',
   title: 'Become a professional product photographer',
-  image: instructor6,
+  image: kannan,
   students: 50,
   tasks: 10,
-  name: 'Samuel Bishop',
+  name: 'Kannan L',
   subject: 'Computer Teacher',
   rating: 4.7,
   college: 'NIT College',
@@ -807,32 +814,6 @@ export const instructorsData = [{
   description: 'Contrasted oh estimating instrument. Size like body some one had. Are conduct viewing boy minutes warrant the expense.',
   totalCourses: 25,
   verified: true
-}, {
-  id: '407',
-  title: 'Developed your photo editing skills',
-  image: instructor10,
-  students: 50,
-  tasks: 10,
-  name: 'Lori Stevens',
-  subject: 'Computer Teacher',
-  rating: 4.9,
-  college: 'Oxford University',
-  department: 'Medical Science',
-  description: 'Yet no jokes worse her why. Bed one supposing breakfast day fulfilled off depending questions. Whatever boy her exertion his extended. Ecstatic followed handsome drawings.',
-  totalCourses: 25
-}, {
-  id: '408',
-  title: 'Master logo design',
-  image: instructor11,
-  students: 50,
-  tasks: 10,
-  name: 'Joan Wallace',
-  subject: 'Computer Teacher',
-  rating: 4.9,
-  college: 'LPU College',
-  department: 'Graphic Designer',
-  description: 'Tt so contrasted oh estimating instrument. Size like body some one had. Are conduct viewing boy minutes warrant the expense.',
-  totalCourses: 25
 }];
 export const collegesData = [{
   id: '201',
@@ -879,79 +860,127 @@ export const collegesData = [{
   courses: ['Engineer', 'BBA', 'BCA', 'BSC', 'MBBS'],
   features: ['Library', 'Canteen', 'Stationary', 'Hostel', 'Playground']
 }];
-export const courseCategories = [{
-  id: '501',
-  title: 'Data Science',
-  image: dataScienceImg,
-  courses: 15,
-  variant: 'bg-success'
-}, {
-  id: '502',
-  title: 'IT & Software',
-  image: onlineImg,
-  courses: 22,
-  variant: 'bg-orange'
-}, {
-  id: '503',
-  title: 'Engineering',
-  image: engineeringImg,
-  courses: 53,
-  variant: 'bg-danger'
-}, {
-  id: '504',
-  title: 'Web Development',
-  image: codingImg,
-  courses: 25,
-  variant: 'bg-purple'
-}, {
-  id: '505',
-  title: 'Finance',
-  image: profitImg,
-  courses: 20,
-  variant: 'bg-info'
-}, {
-  id: '506',
-  title: 'Medical',
-  image: medicalImg,
-  courses: 10,
-  variant: 'bg-blue'
-}, {
-  id: '507',
-  title: 'Architecture',
-  image: homeImg,
-  courses: 30,
-  variant: 'bg-warning'
-}, {
-  id: '508',
-  title: 'Art & Design',
-  image: artistImg,
-  courses: 35,
-  variant: 'bg-dark'
-}, {
-  id: '509',
-  title: 'Photography',
-  image: photographyImg,
-  courses: 20,
-  variant: 'bg-purple'
-}, {
-  id: '510',
-  title: 'Musics',
-  image: musicImg,
-  courses: 10,
-  variant: 'bg-danger'
-}, {
-  id: '511',
-  title: 'Marketing',
-  image: marketingImg,
-  courses: 30,
-  variant: 'bg-success'
-}, {
-  id: '512',
-  title: 'Accounting',
-  image: accountImg,
-  courses: 35,
-  variant: 'bg-primary'
-}];
+// export const courseCategories = [{
+//   id: '501',
+//   title: 'Data Science',
+//   image: dataScienceImg,
+//   courses: 15,
+//   variant: 'bg-success'
+// }, {
+//   id: '502',
+//   title: 'IT & Software',
+//   image: onlineImg,
+//   courses: 22,
+//   variant: 'bg-orange'
+// }, {
+//   id: '503',
+//   title: 'Engineering',
+//   image: engineeringImg,
+//   courses: 53,
+//   variant: 'bg-danger'
+// }, {
+//   id: '504',
+//   title: 'Web Development',
+//   image: codingImg,
+//   courses: 25,
+//   variant: 'bg-purple'
+// }, {
+//   id: '505',
+//   title: 'Finance',
+//   image: profitImg,
+//   courses: 20,
+//   variant: 'bg-info'
+// }, {
+//   id: '506',
+//   title: 'Medical',
+//   image: medicalImg,
+//   courses: 10,
+//   variant: 'bg-blue'
+// }, {
+//   id: '507',
+//   title: 'Architecture',
+//   image: homeImg,
+//   courses: 30,
+//   variant: 'bg-warning'
+// }, {
+//   id: '508',
+//   title: 'Art & Design',
+//   image: artistImg,
+//   courses: 35,
+//   variant: 'bg-dark'
+// }, {
+//   id: '509',
+//   title: 'Photography',
+//   image: photographyImg,
+//   courses: 20,
+//   variant: 'bg-purple'
+// }, {
+//   id: '510',
+//   title: 'Musics',
+//   image: musicImg,
+//   courses: 10,
+//   variant: 'bg-danger'
+// }, {
+//   id: '511',
+//   title: 'Marketing',
+//   image: marketingImg,
+//   courses: 30,
+//   variant: 'bg-success'
+// }, {
+//   id: '512',
+//   title: 'Accounting',
+//   image: accountImg,
+//   courses: 35,
+//   variant: 'bg-primary'
+// }];
+export const courseCategories = [
+  {
+    id: '1',
+    title: 'Test Seriese',
+    subcategories: []
+  },
+  {
+    id: '2',
+    title: 'TNPSC',
+    subcategories: [
+      { id: 'tnpsc-1', title: 'GROUP 4' },
+      { id: 'tnpsc-2', title: 'GROUP 2/2A' },
+      { id: 'tnpsc-3', title: 'GENERAL STUDIES' },
+      { id: 'tnpsc-4', title: 'GROUP 1' },
+      { id: 'tnpsc-5', title: 'GROUP 2' },
+      { id: 'tnpsc-6', title: 'TEST SERIES' },
+      { id: 'tnpsc-7', title: 'ECONOMICS' },
+      { id: 'tnpsc-8', title: 'MATHS' },
+      { id: 'tnpsc-9', title: 'POLITY' },
+      { id: 'tnpsc-10', title: 'UNIT 9' },
+      { id: 'tnpsc-11', title: 'UNIT 8' },
+      { id: 'tnpsc-12', title: 'HISTORY' },
+      { id: 'tnpsc-13', title: 'CIVIL' },
+      { id: 'tnpsc-14', title: 'AE' },
+      { id: 'tnpsc-15', title: 'INM' },
+      { id: 'tnpsc-16', title: 'ncert' },
+      { id: 'tnpsc-17', title: 'UPSC' },
+      { id: 'tnpsc-18', title: 'TNPSC' },
+    ]
+  },
+  {
+    id: '3',
+    title: 'UPSC - CSE',
+    subcategories: [
+      { id: 'upsc-1', title: 'ncert' }
+    ]
+  },
+  {
+    id: '4',
+    title: 'Bank Exam',
+    subcategories: []
+  },
+  {
+    id: '5',
+    title: 'Railway Exams',
+    subcategories: []
+  }
+];
 export const billingHistoryData = [{
   id: '3001',
   name: 'Sketch from A to Z: for app designer',

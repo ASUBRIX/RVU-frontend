@@ -1,0 +1,42 @@
+// Custom navigation pills styles
+.custom-nav-pills {
+  display: flex;
+  gap: 1rem;
+  
+  .custom-nav-item {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .custom-nav-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: $primary;
+    color: $white;
+    border: 2px solid transparent;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    
+    &:hover, &:focus {
+      background-color: darken($primary, 15%);
+      color: $white;
+      text-decoration: none;
+    }
+    
+    &.active {
+      background-color: transparent;
+      color: $primary;
+      border: 2px solid $primary;
+      
+      &:hover, &:focus {
+        background-color: transparent;
+        color: darken($primary, 15%);
+        border-color: darken($primary, 15%);
+      }
+    }
+  }
+}

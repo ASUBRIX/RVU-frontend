@@ -1,15 +1,16 @@
-import { developedBy, developedByLink } from '@/context/constants';
 import { Link } from 'react-router-dom';
-import logoLight from '@/assets/images/logo-light.svg';
 import { Col, Container, Row } from 'react-bootstrap';
 import { FaFacebook, FaInstagram, FaLinkedinIn, FaTwitter } from 'react-icons/fa';
+import { developedBy, developedByLink } from '@/context/constants';
+import logoLight from '@/assets/images/logo-light.svg';
+
 const Footer = () => {
-  return <footer className="bg-dark p-3">
+  return (
+    <footer className="bg-dark p-3">
       <Container>
         <Row className="align-items-center">
           <Col md={4} className="text-center text-md-start mb-3 mb-md-0">
             <Link to="/">
-
               <img className="h-20px" src={logoLight} height={20} width={94} alt="logo" />
             </Link>
           </Col>
@@ -48,6 +49,8 @@ const Footer = () => {
           </Col>
         </Row>
       </Container>
-    </footer>;
+    </footer>
+  );
 };
+
 export default Footer;

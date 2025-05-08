@@ -1,21 +1,19 @@
 import Footer from '@/components/Footer';
 import PageMetaData from '@/components/PageMetaData';
 import About from './components/About';
-import Clients from './components/Clients';
 import Hero from './components/Hero';
-import Team from './components/Team';
-import TopNavigationBar from './components/TopNavigationBar';
+import TopNavigationBar from '@/components/TopNavigationBar';
+import HeroImage from './components/HeroImage';
 const AboutUs = () => {
   return <>
       <PageMetaData title="About Us" />
       <TopNavigationBar />
       <main>
+        <HeroImage/>
         <Hero />
         <About />
-        <Clients />
-        <Team />
       </main>
-      <Footer className="bg-light" />
+      <Footer className="custom-footer" />
     </>;
 };
 export default AboutUs;

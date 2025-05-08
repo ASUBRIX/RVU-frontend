@@ -29,3 +29,110 @@
     transform: none !important;
   }
 }
+
+// Fix dropdown menu positioning
+.content-list, .video-modules-list {
+  position: relative;
+  
+  .card {
+    position: relative;
+    overflow: visible;
+    
+    .dropdown {
+      position: static;
+      
+      .dropdown-menu {
+        position: absolute !important;
+        inset: auto 0 auto auto !important;
+        margin: 0 !important;
+        transform: translate3d(0px, 40px, 0px) !important;
+        z-index: 1000;
+        min-width: 10rem;
+        padding: 0.5rem 0;
+        font-size: 1rem;
+        text-align: left;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 0.25rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+        &.show {
+          display: block;
+        }
+      }
+      
+      .dropdown-toggle {
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+// Ensure proper stacking context
+.card {
+  .card-body {
+    position: relative;
+    overflow: visible;
+  }
+}
+
+// Style dropdown items
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Custom scrollbar for sidebar
+.sidebar {
+  .overflow-auto {
+    margin-right: -4px;
+    padding-right: 4px;
+    position: relative;
+    z-index: 4;
+    
+    &::-webkit-scrollbar {
+      width: 4px;
+      background-color: transparent;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+      margin: 1rem 0;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: var(--bs-primary);
+      opacity: 0.8;
+      min-height: 40px;
+      
+      &:hover {
+        background-color: var(--bs-primary);
+        opacity: 1;
+      }
+    }
+    
+    // Firefox scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: var(--bs-primary) transparent;
+    
+    // Firefox specific margin
+    scrollbar-margin: 1rem 0;
+  }
+
+  // Override any padding from sidebar-admin
+  .sidebar-content {
+    padding: 0 !important;
+  }
+
+  // Settings menu z-index
+  .position-sticky {
+    z-index: 3;
+    background-color: var(--bs-theme-secondary);
+  }
+}

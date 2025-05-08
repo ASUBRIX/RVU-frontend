@@ -4,7 +4,7 @@ import Payouts from './components/Payouts';
 const PayoutPage = () => {
   return <>
       <PageMetaData title="Payout" />
-      <PayoutBoxs />
+      {/* <PayoutBoxs /> */}
       <Payouts />
     </>;
 };

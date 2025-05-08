@@ -4,6 +4,9 @@
 // Uncomment below code and change primary color code to set different primary(i.e. light color of your primary) color in dark mode only.
 
 /*User CSS*/
+@import "components/permissions-table";
+@import "components/search-input";
+@import "components/custom-nav-pills";
 
 // [data-bs-theme="dark"] {
 //   --bs-primary: #19f032 !important;

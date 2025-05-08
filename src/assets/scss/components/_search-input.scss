@@ -1,0 +1,21 @@
+.search-input {
+  max-width: 400px; // Set to the expanded width by default
+  width: 100%;
+  border: none;
+
+  .form-control {
+    &:focus {
+      box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); // Optional focus shadow
+      background-color: var(--bs-white); // Keep background white
+    }
+  }
+
+  .input-group {
+    &:focus-within {
+      .input-group-text {
+        border-color: var(--bs-primary); // Match border color with input on focus
+        border-right: 1px solid var(--bs-primary);
+      }
+    }
+  }
+}

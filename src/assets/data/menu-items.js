@@ -1,12 +1,25 @@
+/**
+ * Admin pages SCSS files location:
+ * - Dashboard: src/assets/scss/components/admin/dashboard.scss
+ * - Courses: src/assets/scss/components/admin/courses.scss
+ * - Test Management: src/assets/scss/components/admin/content-management.scss
+ * - Banners: src/assets/scss/components/admin/banners.scss
+ * - Student Management: src/assets/scss/components/admin/student-management.scss
+ * - Faculty Management: src/assets/scss/components/admin/faculty-management.scss
+ * - Chat Section: src/assets/scss/components/admin/chat.scss
+ * - Enquiries: src/assets/scss/components/admin/enquiries.scss
+ * - Reports & Analytics: src/assets/scss/components/admin/reports.scss
+ * - Admin Settings: src/assets/scss/components/admin/settings.scss
+ */
+
 import { BsBasket, BsBasketFill, BsCardChecklist, BsCartCheck, BsCartCheckFill, BsCreditCard2Front, BsCreditCard2FrontFill, BsFileCheckFill, BsFileEarmarkPlusFill, BsFolderCheck, BsGear, BsGraphUp, BsGridFill, BsHouse, BsLock, BsPencilSquare, BsPeople, BsQuestionDiamond, BsStar, BsStarFill, BsTrash, BsUiChecksGrid, BsUiRadiosGrid, BsWallet2 } from 'react-icons/bs';
-import { FaBasketballBall, FaChartBar, FaCog, FaEdit, FaFacebook, FaLinkedinIn, FaRegCommentDots, FaRegFileAlt, FaTrashAlt, FaUserCog } from 'react-icons/fa';
+import { FaBasketballBall, FaChartBar, FaCog, FaEdit, FaFacebook, FaLinkedinIn, FaRegCommentDots, FaRegFileAlt, FaTrashAlt, FaUserCog, FaMicroblog  } from 'react-icons/fa';
 import { FaChartLine, FaUserGraduate, FaUserTie, FaWallet } from 'react-icons/fa6';
 import clientUnitLogo1 from '@/assets/images/client/uni-logo-01.svg';
 import clientUnitLogo2 from '@/assets/images/client/uni-logo-02.svg';
 import clientUnitLogo3 from '@/assets/images/client/uni-logo-03.svg';
 import clientUnitLogo4 from '@/assets/images/client/uni-logo-04.svg';
 import { FcGoogle } from 'react-icons/fc';
-import { FaEllipsisH } from 'react-icons/fa';
 export const CATEGORY_MENU_ITEMS = [{
   key: 'category',
   label: 'Category',
@@ -108,73 +121,44 @@ export const CATEGORY_MENU_ITEMS = [{
     parentKey: 'category'
   }]
 }];
-export const INSTRUCTOR_MENU_ITEMS = [{
-  key: 'dashboard',
-  label: 'Dashboard',
-  icon: BsUiChecksGrid,
-  url: '/instructor/dashboard',
-  parentKey: 'instructor'
-}, {
-  key: 'courses',
-  label: 'My Courses',
-  icon: BsBasket,
-  url: '/instructor/manage-course',
-  parentKey: 'instructor'
-}, {
-  key: 'quiz',
-  label: 'Quiz',
-  icon: BsQuestionDiamond,
-  url: '/instructor/quiz',
-  parentKey: 'instructor'
-}, {
-  key: 'earnings',
-  label: 'Earnings',
-  icon: BsGraphUp,
-  url: '/instructor/earning',
-  parentKey: 'instructor'
-}, {
-  key: 'students',
-  label: 'Students',
-  icon: BsPeople,
-  url: '/instructor/student-list',
-  parentKey: 'instructor'
-}, {
-  key: 'orders',
-  label: 'Orders',
-  icon: BsFolderCheck,
-  url: '/instructor/order',
-  parentKey: 'instructor'
-}, {
-  key: 'reviews',
-  label: 'Reviews',
-  icon: BsStar,
-  url: '/instructor/review',
-  parentKey: 'instructor'
-}, {
-  key: 'profile',
-  label: 'Edit Profile',
-  icon: BsPencilSquare,
-  url: '/instructor/edit-profile',
-  parentKey: 'instructor'
-}, {
-  key: 'payout',
-  label: 'Payout',
-  icon: BsWallet2,
-  url: '/instructor/payout',
-  parentKey: 'instructor'
-}, {
-  key: 'setting',
-  label: 'Setting',
-  icon: BsGear,
-  url: '/instructor/setting',
-  parentKey: 'instructor'
-}, {
-  key: 'delete',
-  label: 'Delete Profile',
-  icon: BsTrash,
-  url: '/instructor/delete-account',
-  parentKey: 'instructor'
-}];
+export const INSTRUCTOR_MENU_ITEMS = [
+  {
+    key: 'profile',
+    label: 'Dashboard',
+    icon: BsPencilSquare,
+    url: '/student/dashboard',
+    parentKey: 'instructor'
+  },
+  {
+    key: 'courses',
+    label: 'My Courses',
+    icon: BsBasket,
+    url: '/student/my-courses',
+    parentKey: 'instructor'
+  },
+  {
+    key: 'chat',
+    label: 'Chat with Admin',
+    icon: FaRegCommentDots,
+    url: '/student/chat',
+    parentKey: 'instructor'
+  },
+  {
+    key: 'orders',
+    label: 'Free Tests',
+    icon: BsFolderCheck,
+    url: '/student/test-details',
+    parentKey: 'instructor'
+  },
+
+  {
+    key: 'payout',
+    label: 'Payment History',
+    icon: BsWallet2,
+    url: '/student/payment-history',
+    parentKey: 'instructor'
+  },
+];
 export const STUDENT_MENU_ITEMS = [{
   key: 'dashboard',
   label: 'Dashboard',
@@ -236,13 +220,13 @@ export const STUDENT_MENU_ITEMS = [{
   url: '/student/delete-account',
   parentKey: 'student'
 }
-// {
-//   key: 'level',
-//   label: 'Dropdown level',
-//   icon: BsLock,
-//   url: '/student/dropdown-level',
-//   parentKey: 'student',
-// },
+  // {
+  //   key: 'level',
+  //   label: 'Dropdown level',
+  //   icon: BsLock,
+  //   url: '/student/dropdown-level',
+  //   parentKey: 'student',
+  // },
 ];
 export const APP_MENU_ITEMS = [{
   key: 'demos',
@@ -261,7 +245,7 @@ export const APP_MENU_ITEMS = [{
   }, {
     key: 'academy',
     label: 'Home Academy',
-    url: '/demos/academy/home',
+    url: '/academy/home',
     parentKey: 'demos'
   }, {
     key: 'course-home',
@@ -805,93 +789,53 @@ export const ADMIN_MENU_ITEMS = [{
   icon: BsHouse,
   url: '/admin/dashboard'
 }, {
-  key: 'pages',
-  isTitle: true,
-  label: 'Pages'
-}, {
   key: 'courses',
   label: 'Courses',
   icon: BsBasket,
-  children: [{
-    key: 'all-courses',
-    label: 'All Courses',
-    parentKey: 'courses',
-    url: '/admin/all-courses'
-  }, {
-    key: 'course-category',
-    label: 'Course Category',
-    url: '/admin/course-category',
-    parentKey: 'courses'
-  }, {
-    key: 'course-detail',
-    label: 'Course Detail',
-    url: '/admin/course-detail',
-    parentKey: 'courses'
-  }]
+  url: '/admin/all-courses'
 }, {
-  key: 'students',
-  label: 'Students',
+  key: 'contents',
+  label: 'Test Management',
+  icon: FaRegFileAlt,
+  url: '/admin/test-management'
+}, {
+  key: 'student-management',
+  label: 'Student Management',
   icon: FaUserGraduate,
-  url: '/admin/students'
+  url: '/admin/student-management'
 }, {
-  key: 'instructors',
-  label: 'Instructors',
+  key: 'faculty-management',
+  label: 'Faculties Management',
   icon: FaUserTie,
-  children: [{
-    key: 'instructors',
-    label: 'Instructors',
-    url: '/admin/instructors',
-    parentKey: 'instructors'
-  }, {
-    key: 'instructor-detail',
-    label: 'Instructor Detail',
-    url: '/admin/instructor-detail',
-    parentKey: 'instructors'
-  }, {
-    key: 'instructor-requests',
-    label: 'Instructor Requests',
-    url: '/admin/instructor-requests',
-    parentKey: 'instructors',
-    badge: '2'
-  }]
+  url: '/admin/faculty-management'
 }, {
-  key: 'reviews',
-  label: 'Reviews',
+  key: 'blog-management',
+  label: 'Blog Management',
+  icon: FaMicroblog,
+  url: '/admin/blog-management'
+}, {
+  key: 'chat',
+  label: 'Chat Section',
   icon: FaRegCommentDots,
-  url: '/admin/reviews'
+  url: '/admin/chat'
 }, {
-  key: 'earnings',
-  label: 'Earnings',
+  key: 'enquiries',
+  label: 'Enquiries',
+  icon: BsQuestionDiamond,
+  url: '/admin/enquiries'
+}, {
+  key: 'reports',
+  label: 'Reports & Analytics',
   icon: FaChartBar,
-  url: '/admin/earnings'
-}, {
-  key: 'admin-settings',
-  label: 'Admin Settings',
-  icon: FaUserCog,
-  url: '/admin/admin-settings'
-}, {
-  key: 'authentication',
-  label: 'Authentication',
-  icon: BsLock,
   children: [{
-    key: 'sign-up',
-    label: 'Sign Up',
-    url: '/auth/sign-up',
-    parentKey: 'authentication'
+    key: 'course-reports',
+    label: 'Course Reports',
+    url: '/admin/reports/courses',
+    parentKey: 'reports'
   }, {
-    key: 'sign-in',
-    label: 'Sign In',
-    url: '/auth/sign-in',
-    parentKey: 'authentication'
-  }, {
-    key: 'forgot-password',
-    label: 'Forgot Password',
-    url: '/auth/forgot-password',
-    parentKey: 'authentication'
-  }, {
-    key: 'error-404',
-    label: 'Error 404',
-    url: '/admin/not-found',
-    parentKey: 'authentication'
+    key: 'payment-reports',
+    label: 'Payment Reports',
+    url: '/admin/reports/payments',
+    parentKey: 'reports'
   }]
 }];

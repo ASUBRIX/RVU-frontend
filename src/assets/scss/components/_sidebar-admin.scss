@@ -7,6 +7,128 @@
   position: relative;
   padding: 0;
 
+  &.navbar-expand-xl {
+    width: 16.25rem;
+
+    .sidebar-content {
+      width: 16.25rem;
+      height: 100%;
+      position: relative;
+    }
+
+    // Sidebar menu container
+    .sidebar-menu-container {
+      flex-grow: 1;
+      overflow: auto;
+      min-height: 0;
+      margin-bottom: 60px;
+      height: calc(100vh - 60px);
+
+      // Custom scrollbar styling
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--#{$prefix}primary);
+        border-radius: 4px;
+
+        &:hover {
+          background-color: var(--#{$prefix}primary-hover);
+        }
+      }
+
+      // Firefox scrollbar
+      scrollbar-width: thin;
+      scrollbar-color: var(--#{$prefix}primary) transparent;
+    }
+
+    // Dropdown menu scrollbar
+    .nav.flex-column {
+      max-height: calc(100vh - 200px);
+      overflow-y: auto;
+
+      // Custom scrollbar styling
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--#{$prefix}primary);
+        border-radius: 4px;
+
+        &:hover {
+          background-color: var(--#{$prefix}primary-hover);
+        }
+      }
+
+      // Firefox scrollbar
+      scrollbar-width: thin;
+      scrollbar-color: var(--#{$prefix}primary) transparent;
+    }
+
+    // Admin settings styles
+    .admin-settings-wrapper {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 16.25rem;
+      background: var(--#{$prefix}theme-secondary);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 1040;
+    }
+
+    .admin-settings-menu {
+      padding: 0.75rem 1rem;
+      width: 100%;
+      z-index: 1030;
+      background: var(--#{$prefix}theme-secondary);
+      box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    @include media-breakpoint-down(xl) {
+      .admin-settings-wrapper {
+        width: 16.25rem;
+      }
+    }
+  }
+
+  // Sidebar menu container
+  .sidebar-menu-container {
+    flex-grow: 1;
+    overflow: auto;
+    min-height: 0;
+    margin-bottom: 60px;
+  }
+
+  // Admin settings styles
+  .admin-settings-wrapper {
+    position: fixed;
+    bottom: 0;
+    width: inherit;
+    background: var(--#{$prefix}theme-secondary);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1040;
+  }
+
+  .admin-settings-menu {
+    padding: 0.75rem 1rem;
+    width: 100%;
+    z-index: 1030;
+    background: var(--#{$prefix}theme-secondary);
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.2);
+  }
+
   &.navbar-expand {
     @each $breakpoint in map-keys($grid-breakpoints) {
       $next: breakpoint-next($breakpoint, $grid-breakpoints);
@@ -14,8 +136,15 @@
 
       // Styling for navbar-expand
       &#{$infix} {
-
         // Navbar styling for all screen sizes
+        .navbar-brand-item {
+          height: 50px;
+          width: auto;
+        }
+        .navbar-admin-logo {
+          height: 100px;
+          width: auto;
+        }
 
         .sidebar-content {
           padding: 0 1rem 1rem;
@@ -23,19 +152,31 @@
           height: 100%;
         }
 
+        // Mobile specific styles
+        @include media-breakpoint-down($next) {
+          .admin-settings-wrapper {
+            width: 100%; // Full width for mobile
+          }
+
+          .sidebar-offcanvas {
+            width: 16.25rem !important; // Force sidebar width in mobile
+          }
+        }
+
         .offcanvas {
           width: auto;
         }
 
         // Sidebar menu item hover and active
-        .sidebar-content .navbar-nav>.nav-item>.nav-link[data-bs-toggle=collapse][aria-expanded=true] {
+        .sidebar-content .navbar-nav > .nav-item > .nav-link[data-bs-toggle='collapse'][aria-expanded='true'] {
           background: rgba(var(--#{$prefix}primary-rgb), 0.1);
           color: var(--#{$prefix}primary) !important;
           border-radius: $border-radius;
         }
 
+        // Text colors for sidebar with theme-secondary background
         .sidebar-content .navbar-nav .nav-link {
-          color: var(--#{$prefix}white);
+          color: rgba(var(--#{$prefix}white-rgb), 0.85);
         }
 
         .sidebar-content .navbar-nav .nav-link:focus {
@@ -44,27 +185,33 @@
 
         .sidebar-content .navbar-nav .nav-link.active {
           color: var(--#{$prefix}primary) !important;
+          background-color: rgba(var(--#{$prefix}white-rgb), 0.1);
+          border-radius: $border-radius;
         }
 
         .sidebar-content .navbar-nav .nav-link:hover {
           color: var(--#{$prefix}primary) !important;
+          background-color: rgba(var(--#{$prefix}white-rgb), 0.05);
+          border-radius: $border-radius;
         }
 
         // Sidebar menu dropdown arrow
-        .sidebar-content .nav-item [data-bs-toggle=collapse] {
+        .sidebar-content .nav-item [data-bs-toggle='collapse'] {
           position: relative;
 
           &:before,
           &:after {
-            content: "";
-            background: #ddd;
+            content: '';
+            background: rgba(var(--#{$prefix}white-rgb), 0.7);
             border-radius: 1px;
             display: block;
             position: absolute;
             height: 2px;
             width: 7px;
             margin: auto 12px;
-            transition: transform 0.3s cubic-bezier(0.8, 0.2, 0.5, 0.1), background 0.2s ease-in-out;
+            transition:
+              transform 0.3s cubic-bezier(0.8, 0.2, 0.5, 0.1),
+              background 0.2s ease-in-out;
             top: 0;
             bottom: 0;
           }
@@ -79,7 +226,7 @@
             right: 5px;
           }
 
-          &[aria-expanded=true] {
+          &[aria-expanded='true'] {
             &:before {
               transform: rotate(40deg);
               background: var(--#{$prefix}primary);
@@ -128,14 +275,19 @@
 
           .navbar-brand {
             padding: 1.3rem;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+          }
+
+          .navbar-nav {
+            margin-bottom: 100px;
           }
 
           .navbar-nav .nav-item {
             position: relative;
           }
-
         }
-
 
         // Navbar styling for navbar collapse
         @include media-breakpoint-down($next) {
@@ -152,7 +304,7 @@
             padding: 1rem;
           }
 
-          .navbar-nav>.nav-item>.nav-link {
+          .navbar-nav > .nav-item > .nav-link {
             padding: 0.2rem;
             margin-bottom: 0;
             font-size: 0.938rem;
@@ -162,7 +314,6 @@
             border-bottom: 0;
             padding: 0;
           }
-
         }
       }
     }
@@ -171,7 +322,7 @@
 
 //Sidebar menu icon
 .sidebar-offcanvas-menu {
-  background-color: rgba(var(--#{$prefix}primary-rgb), 0.1);
+  background-color: var(--#{$prefix}theme-secondary);
   border-radius: $border-radius;
 }
 
@@ -250,19 +401,16 @@
   z-index: 1;
 }
 
-
-
 .admin-offcanvas-menu {
-
   // Sidebar menu item hover and active
-  .nav-item>.nav-link[data-bs-toggle=collapse][aria-expanded=true] {
+  .nav-item > .nav-link[data-bs-toggle='collapse'][aria-expanded='true'] {
     background: rgba(var(--#{$prefix}primary-rgb), 0.1);
     color: var(--#{$prefix}primary) !important;
     border-radius: $border-radius;
   }
 
   .nav-link {
-    color: var(--#{$prefix}white);
+    color: rgba(var(--#{$prefix}white-rgb), 0.85);
   }
 
   .nav-link:focus {
@@ -271,27 +419,33 @@
 
   .nav-link.active {
     color: var(--#{$prefix}primary) !important;
+    background-color: rgba(var(--#{$prefix}white-rgb), 0.1);
+    border-radius: $border-radius;
   }
 
   .nav-link:hover {
     color: var(--#{$prefix}primary) !important;
+    background-color: rgba(var(--#{$prefix}white-rgb), 0.05);
+    border-radius: $border-radius;
   }
 
   // Sidebar menu dropdown arrow
-  .nav-item [data-bs-toggle=collapse] {
+  .nav-item [data-bs-toggle='collapse'] {
     position: relative;
 
     &:before,
     &:after {
-      content: "";
-      background: #ddd;
+      content: '';
+      background: rgba(var(--#{$prefix}white-rgb), 0.7);
       border-radius: 1px;
       display: block;
       position: absolute;
       height: 2px;
       width: 7px;
       margin: auto 12px;
-      transition: transform 0.3s cubic-bezier(0.8, 0.2, 0.5, 0.1), background 0.2s ease-in-out;
+      transition:
+        transform 0.3s cubic-bezier(0.8, 0.2, 0.5, 0.1),
+        background 0.2s ease-in-out;
       top: 0;
       bottom: 0;
     }
@@ -306,7 +460,7 @@
       right: 5px;
     }
 
-    &[aria-expanded=true] {
+    &[aria-expanded='true'] {
       &:before {
         transform: rotate(40deg);
         background: var(--#{$prefix}primary);

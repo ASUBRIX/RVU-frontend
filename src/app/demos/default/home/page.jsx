@@ -7,8 +7,10 @@ import PopularCourse from './components/PopularCourse';
 import Reviews from './components/Reviews';
 import TopNavbar1 from './components/TopNavbar1';
 import TrendingCourses from './components/TrendingCourses';
-const HomePage = () => {
-  return <>
+
+const DemosDefault = () => {
+  return (
+    <>
       <PageMetaData title="Home" />
       <TopNavbar1 />
       <main>
@@ -20,6 +22,8 @@ const HomePage = () => {
         <Reviews />
       </main>
       <Footer />
-    </>;
+    </>
+  );
 };
-export default HomePage;
+
+export default DemosDefault;

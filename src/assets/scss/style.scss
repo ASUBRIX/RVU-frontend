@@ -4,11 +4,18 @@
 // Bootstrap variables
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark";
+
+@import 'custom/footer';
+@import 'custom/contact-map';
+@import 'custom/logo';
+
+// filepath: e:\LearningApp\src\assets\scss\style.scss
+@import 'components/question-styles';
+@import 'components/price-card';
+@import 'components/hero-slider';
 
 // Theme variables
 @import "variables";
-@import "variables-dark";
 
 // User variables
 @import "user-variables";
@@ -46,15 +53,62 @@
 @import "components/utilities";
 @import "components/sidebar-admin";
 @import "components/vendor/choices";
-@import "components/vendor/tiny-slider";
 @import "components/vendor/apexchart";
 @import "components/vendor/stepper";
 @import "components/vendor/video-plyr";
 @import "components/vendor/quill";
 @import "components/vendor/custom-scrollbar";
+@import "components/whatsapp";
+@import "components/content-management";
+@import "components/enquiries";
 
-// Theme dark
-@import "dark-mode";
+// Custom styles
+@import "custom/details";
 
 // In this scss you can write your scss/css
 @import "user";
+
+@import "components/details-page";
+
+// Components
+@import "components/hero";
+@import "components/images";
+@import "components/avatar";
+@import "components/general";
+@import "components/utilities";
+@import "components/whatsapp";
+@import "components/enquiries";
+@import "components/tables";
+@import "components/details-page";
+@import "components/banner-management";
+@import "components/sidebar-admin";
+@import "components/content-management";
+
+// Custom styles
+@import "custom/reboot";
+@import "custom/utilities";
+@import "custom/type";
+@import "custom/card";
+@import "custom/buttons";
+@import "custom/breadcrumb";
+@import "custom/pagination";
+@import "custom/navbar";
+@import "custom/nav";
+@import "custom/dropdowns";
+@import "custom/progress";
+@import "custom/list-group";
+@import "custom/tables";
+@import "custom/popupmodal";
+@import "custom/logo";
+@import "custom/footer";
+@import "custom/resource-carousel";
+@import "custom/accordion";
+
+// Import all scss files
+@import 'components/banner-management';
+@import 'components/student-management';
+@import 'components/faculty-management';
+
+@import "components/chat";
+
+@import "components/admin-settings";

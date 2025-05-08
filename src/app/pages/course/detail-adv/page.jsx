@@ -1,7 +1,7 @@
 import Footer from '@/components/Footer';
 import PageMetaData from '@/components/PageMetaData';
 import CourseDetails from './components/CourseDetails';
-import TopNavigationBar from './components/TopNavigationBar';
+import TopNavigationBar from '@/components/TopNavigationBar';
 const CourseAdvanceDetails = () => {
   return <>
       <PageMetaData title="Course Advance" />

@@ -5,8 +5,8 @@ const PageBanner = () => {
         <Row>
           <Col xs={12}>
             <div className="bg-light p-4 text-center rounded-3">
-              <h1 className="m-0">Course Grid Minimal</h1>
-              <div className="d-flex justify-content-center">
+              <h1 className="m-0">Course's For You</h1>
+              {/* <div className="d-flex justify-content-center">
                 <nav aria-label="breadcrumb">
                   <ol className="breadcrumb breadcrumb-dots mb-0">
                     <li className="breadcrumb-item">
@@ -17,7 +17,7 @@ const PageBanner = () => {
                     </li>
                   </ol>
                 </nav>
-              </div>
+              </div> */}
             </div>
           </Col>
         </Row>

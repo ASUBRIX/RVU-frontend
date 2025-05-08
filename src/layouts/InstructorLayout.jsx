@@ -10,8 +10,8 @@ import { Col, Container, Offcanvas, OffcanvasBody, OffcanvasHeader, OffcanvasTit
 import { FaSignOutAlt } from 'react-icons/fa';
 import { Link, useLocation } from 'react-router-dom';
 const Banner = lazy(() => import('@/components/InstructorLayoutComponents/Banner'));
-const Footer = lazy(() => import('@/components/InstructorLayoutComponents/Footer'));
-const TopNavigationBar = lazy(() => import('@/components/InstructorLayoutComponents/TopNavigationBar'));
+const Footer = lazy(() => import('@/components//Footer'));
+const TopNavigationBar = lazy(() => import('@/components/TopNavigationBar'));
 const VerticalMenu = () => {
   const {
     pathname
@@ -80,7 +80,7 @@ const InstructorLayout = ({
       </main>
 
       <Suspense>
-        <Footer />
+        <Footer className="custom-footer"/>
       </Suspense>
     </>;
 };

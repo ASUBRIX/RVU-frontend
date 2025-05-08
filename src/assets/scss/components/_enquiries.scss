@@ -1,0 +1,137 @@
+// Enquiries component styles
+
+// Icon utility for enquiry page
+.icon-md {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+// Message truncation styles
+.enquiry-message {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+// Status badge enhancements
+.badge-status {
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 0.35em 1.2em;
+  border-radius: 50rem;
+  display: inline-block;
+  text-transform: capitalize;
+  
+  &.badge-new {
+    background-color: rgba(25, 177, 89, 0.12);
+    color: #19b159;
+  }
+  
+  &.badge-pending {
+    background-color: rgba(247, 183, 49, 0.12);
+    color: #f7b731;
+  }
+  
+  &.badge-responded {
+    background-color: rgba(1, 184, 255, 0.12);
+    color: #01b8ff;
+  }
+  
+  &.badge-closed {
+    background-color: rgba(var(--bs-secondary-rgb), 0.1);
+    color: var(--bs-secondary);
+  }
+}
+
+// Table improvements for enquiry listing
+.enquiries-table {
+  th {
+    font-weight: 600;
+    color: var(--bs-gray-700);
+  }
+  
+  td {
+    vertical-align: middle;
+  }
+  
+  .avatar-column {
+    width: 250px;
+  }
+  
+  .message-column {
+    min-width: 250px;
+    max-width: 300px;
+  }
+  
+  .time-column, .status-column {
+    width: 120px;
+  }
+  
+  .action-column {
+    width: 100px;
+    text-align: center;
+  }
+}
+
+// Search input styles
+.search-input {
+  .input-group {
+    .input-group-text {
+      background-color: var(--bs-white);
+      border-color: var(--bs-gray-200);
+    }
+    
+    .form-control {
+      height: 48px;
+      border-color: var(--bs-gray-200);
+      
+      &:focus {
+        box-shadow: none;
+        border-color: var(--bs-primary);
+      }
+    }
+  }
+}
+
+// Sort dropdown styles
+.form-select {
+  height: 48px;
+  border-color: var(--bs-gray-200);
+  min-width: 180px;
+  padding: 0.5rem 2.25rem 0.5rem 1rem;
+  background-position: right 0.75rem center;
+  
+  &:focus {
+    box-shadow: none;
+    border-color: var(--bs-primary);
+  }
+}
+
+// Empty state for no results
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 2.5rem;
+    color: var(--bs-gray-400);
+    margin-bottom: 1rem;
+  }
+  
+  .empty-title {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  .empty-description {
+    color: var(--bs-gray-600);
+    max-width: 300px;
+    margin: 0 auto;
+  }
+} 

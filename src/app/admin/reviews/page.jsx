@@ -1,3 +1,7 @@
+/**
+ * SCSS file: src/assets/scss/components/admin/reviews.scss
+ */
+
 import PageMetaData from '@/components/PageMetaData';
 import { Row } from 'react-bootstrap';
 import Reviews from './components/Reviews';

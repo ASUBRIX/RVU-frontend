@@ -19,7 +19,7 @@
 //
 // Slider arrow
 //
-.tns-controls{
+.tns-controls {
   [data-controls] {
     position: absolute;
     top: 50%;
@@ -36,21 +36,20 @@
     color: var(--#{$prefix}white);
     border: none;
     margin: 0 10px;
-    &:hover{
+    &:hover {
       background-color: var(--#{$prefix}primary);
       color: var(--#{$prefix}white);
     }
-    i{
+    i {
       line-height: inherit;
     }
   }
-}
-
-.tns-controls [data-controls='prev'] {
-  left: 0;
-}
-.tns-controls [data-controls='next'] {
-  right: 0;
+  [data-controls='prev'] {
+    left: 0;
+  }
+  [data-controls='next'] {
+    right: 0;
+  }
 }
 
 /* rtl:raw:

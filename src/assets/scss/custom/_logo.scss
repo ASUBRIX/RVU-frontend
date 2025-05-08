@@ -1,0 +1,15 @@
+.logo-image {
+    height: 75px !important;
+    width: 275px !important;
+  }
+.logo-image-footer {
+    height: 60px !important;
+    width: 250px !important;
+  }
+
+  @media (max-width: 576px) {
+    .logo-image {
+        height: 55px !important;
+        width: 190px !important;
+    }
+}

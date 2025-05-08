@@ -1,59 +1,32 @@
-export const questionsData = [{
-  id: '1',
-  title: 'How can we help?',
-  description: 'Yet remarkably appearance gets him his projection. Diverted endeavor bed peculiar men the not desirous. Acuteness abilities ask can offending furnished fulfilled sex. Warrant fifteen exposed ye at mistake. Blush since so in noisy still built up an again. As young ye hopes no he place means. Partiality diminution gay yet entreaties admiration. In mention perhaps attempt pointed suppose. Unknown ye chamber of warrant of Norland arrived.'
-}, {
-  id: '2',
-  title: 'How to edit my Profile?',
-  description: 'What deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. Improved own provided blessing may peculiar domestic. Sight house has sex never. No visited raising gravity outward subject my cottage Mr be.'
-}, {
-  id: '3',
-  title: 'How much should I offer the sellers?',
-  description: 'Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. Improved own provided blessing may peculiar domestic. Sight house has sex never. No visited raising gravity outward subject my cottage Mr be. Hold do at tore in park feet near my case. Invitation at understood occasional sentiments insipidity inhabiting in. Off melancholy alteration principles old. Is do speedily kindness properly oh. Respect article painted cottage he is offices parlors.'
-}, {
-  id: '4',
-  title: 'Installation Guide',
-  description: 'What deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. Improved own provided blessing may peculiar domestic. Sight house has sex never. No visited raising gravity outward subject my cottage Mr be.At the moment, we only accept Credit/Debit cards and Paypal payments. Paypal is the easiest way to make payments online. While checking out your order. Be sure to fill in correct details for fast & hassle-free payment processing.'
-}, {
-  id: '5',
-  title: 'Additional Options and Services',
-  description: 'Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. Improved own provided blessing may peculiar domestic. Sight house has sex never. No visited raising gravity outward subject my cottage Mr be. Hold do at tore in park feet near my case. Invitation at understood occasional sentiments insipidity inhabiting in. Off melancholy alteration principles old. Is do speedily kindness properly oh. Respect article painted cottage he is offices parlors.'
-}, {
-  id: '6',
-  title: "What's are the difference between a college and a university?",
-  description: 'Post no so what deal evil rent by real in. But her ready least set lived spite solid. September how men saw tolerably two behavior arranging. She offices for highest and replied one venture pasture. Applauded no discovery in newspaper allowance am northward. Frequently partiality possession resolution at or appearance unaffected me. Engaged its was the evident pleased husband. Ye goodness felicity do disposal dwelling no. First am plate jokes to began to cause a scale. Subjects he prospect elegance followed no overcame possible it on. Improved own provided blessing may peculiar domestic. Sight house has sex never. No visited raising gravity outward subject my cottage Mr be. Hold do at tore in park feet near my case. Invitation at understood occasional sentiments insipidity inhabiting in. Off melancholy alteration principles old. Is do speedily kindness properly oh. Respect article painted cottage he is offices parlors.'
-}];
-export const topicData = [{
-  title: 'Business',
-  totalCourse: 21
-}, {
-  title: 'Development',
-  totalCourse: 86
-}, {
-  title: 'Design',
-  totalCourse: 92
-}, {
-  title: 'Marketing',
-  totalCourse: 62
-}, {
-  title: 'Technology',
-  totalCourse: 31
-}, {
-  title: 'Course Taking',
-  totalCourse: 6
-}, {
-  title: 'Getting Started',
-  totalCourse: 28
-}, {
-  title: 'Mobile',
-  totalCourse: 18
-}, {
-  title: 'Payment Option',
-  totalCourse: 32
-}, {
-  title: 'Account & Profile',
-  totalCourse: 56
-}, {
-  title: 'Course taking',
-  totalCourse: 45
-}];
+export const questionsData = [
+  {
+    id: '1',
+    title: 'How can we assist with your learning journey?',
+    description: 'Our platform offers a variety of courses, learning paths, and resources to help you succeed. Whether you need help selecting a course, understanding course content, or troubleshooting issues, we are here to guide you. Explore FAQs, reach out to support, or browse our help center for quick solutions.'
+  },
+  {
+    id: '2',
+    title: 'How do I edit my profile?',
+    description: 'You can update your profile details, including your name, email, and profile picture, by navigating to the “Profile” section in your account settings. Keeping your profile updated helps personalize your learning experience and ensures smooth communication with instructors and peers.'
+  },
+  {
+    id: '3',
+    title: 'How do I enroll in a course?',
+    description: 'Enrolling in a course is simple. Browse our course catalog, select a course that interests you, and click the "Enroll" button. If the course requires payment, follow the checkout process. Once enrolled, you can start learning immediately from your dashboard.'
+  },
+  {
+    id: '4',
+    title: 'How do I install the learning app?',
+    description: 'To access our courses on the go, download our learning app from the App Store (iOS) or Google Play Store (Android). After installation, log in using your account credentials to access your enrolled courses, track progress, and interact with instructors and fellow learners.'
+  },
+  {
+    id: '5',
+    title: 'What additional learning resources are available?',
+    description: 'In addition to our courses, we offer supplementary resources such as downloadable study guides, interactive quizzes, discussion forums, and one-on-one mentorship sessions. These resources help reinforce your learning and provide opportunities for deeper engagement with the content.'
+  },
+  {
+    id: '6',
+    title: 'What is the difference between a college and a university?',
+    description: 'A college typically offers undergraduate degrees, certificates, or diploma programs, focusing on specific fields of study. Universities, on the other hand, provide both undergraduate and graduate programs, including master’s and doctoral degrees, and often conduct research. The best choice depends on your educational and career goals.'
+  }
+];

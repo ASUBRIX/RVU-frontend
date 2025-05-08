@@ -1,86 +1,80 @@
-import ChoicesFormInput from '@/components/form/ChoicesFormInput';
-import { getAllCourses } from '@/helpers/data';
-import { Button, Col, Container, FormControl, Row } from 'react-bootstrap';
-import { FaSearch } from 'react-icons/fa';
+import { useState } from 'react';
+import { Dropdown, ButtonGroup, Container, Row, Col, FormControl } from 'react-bootstrap';
+import { RiArrowDropDownLine } from 'react-icons/ri';
 import CourseCard from './CourseCard';
 import Pagination from './Pagination';
 import { useFetchData } from '@/hooks/useFetchData';
+import { getAllCourses } from '@/helpers/data';
+
 const Courses = () => {
-  const allCourses = useFetchData(getAllCourses);
-  return <section className="pt-0">
+  const allCourses = useFetchData(getAllCourses) || [];
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const categories = {
+    'TNPSC': ['GROUP 4', 'GROUP 2/2A', 'GENERAL STUDIES', 'GROUP 1', 'GROUP 2', 'ECONOMICS', 'MATHS', 'POLITY', 'UNIT 9', 'UNIT 8', 'HISTORY', 'CIVIL', 'AE', 'INM', 'NCERT'],
+    'UPSC - CSE': ['NCERT'],
+    'Bank Exam': [],
+    'TEST SERIES': [],
+    'Railway Exams': []
+  };
+
+  return (
+    <section className="pt-0">
       <Container>
+        {/* Search & Filters */}
         <form className="bg-light border p-4 rounded-3 my-4 z-index-9 position-relative">
-          <Row className="g-3">
-            <Col xl={3}>
-              <FormControl className="me-1" type="search" placeholder="Enter keyword" />
+          <Row className="g-3 align-items-center">
+            <Col xl={3} lg={4} md={6}>
+              <FormControl type="search" placeholder="Enter keyword" />
             </Col>
-            <Col xl={8}>
-              <Row className="g-3">
-                <Col sm={6} md={3} className="pb-2 pb-md-0">
-                  <ChoicesFormInput className="form-select form-select-sm js-choice" aria-label=".form-select-sm example">
-                    <option>Categories</option>
-                    <option>All</option>
-                    <option>Development</option>
-                    <option>Design</option>
-                    <option>Accounting</option>
-                    <option>Translation</option>
-                    <option>Finance</option>
-                    <option>Legal</option>
-                    <option>Photography</option>
-                    <option>Writing</option>
-                    <option>Marketing</option>
-                  </ChoicesFormInput>
-                </Col>
-                <Col sm={6} md={3} className="pb-2 pb-md-0">
-                  <ChoicesFormInput className="form-select form-select-sm js-choice" aria-label=".form-select-sm example">
-                    <option>Price level</option>
-                    <option>All</option>
-                    <option>Free</option>
-                    <option>Paid</option>
-                  </ChoicesFormInput>
-                </Col>
-                <Col sm={6} md={3} className="pb-2 pb-md-0">
-                  <ChoicesFormInput className="form-select form-select-sm js-choice" aria-label=".form-select-sm example">
-                    <option>Skill level</option>
-                    <option>All levels</option>
-                    <option>Beginner</option>
-                    <option>Intermediate</option>
-                    <option>Advanced</option>
-                  </ChoicesFormInput>
-                </Col>
-                <Col sm={6} md={3} className="pb-2 pb-md-0">
-                  <ChoicesFormInput className="form-select form-select-sm js-choice" aria-label=".form-select-sm example">
-                    <option>Language</option>
-                    <option>English</option>
-                    <option>Francas</option>
-                    <option>Russian</option>
-                    <option>Hindi</option>
-                    <option>Bengali</option>
-                    <option>Spanish</option>
-                  </ChoicesFormInput>
-                </Col>
-              </Row>
-            </Col>
-            <Col xl={1}>
-              <Button variant="primary" type="button" className="mb-0 rounded z-index-1 w-100">
-                <FaSearch />
-              </Button>
+            <Col xl={9} lg={8} md={6}>
+              <div className="d-flex flex-wrap gap-3">
+                {Object.entries(categories).map(([filter, subcategories]) => (
+                  <Dropdown as={ButtonGroup} key={filter}>
+                    <Dropdown.Toggle variant="light" className="d-flex align-items-center">
+                      {filter} <RiArrowDropDownLine size={22} />
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu style={filter === 'TNPSC' ? { columnCount: 2, columnGap: '10px', minWidth: '300px' } : {}}>
+                      {subcategories.length > 0 ? (
+                        subcategories.map((item) => (
+                          <Dropdown.Item key={item} onClick={() => setSelectedCategory(item)}>
+                            {item}
+                          </Dropdown.Item>
+                        ))
+                      ) : (
+                        <Dropdown.Item disabled>No options available</Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                ))}
+              </div>
             </Col>
           </Row>
         </form>
+
+        {/* Course Listings */}
         <Row className="mt-3">
           <Col xs={12}>
             <Row className="g-4">
-              {allCourses?.slice(0, 12).map((course, idx) => <Col sm={6} lg={4} xl={3} key={idx}>
-                  <CourseCard course={course} />
-                </Col>)}
+              {allCourses.length > 0 ? (
+                allCourses.slice(0, 12).map((course, idx) => (
+                  <Col sm={6} lg={4} xl={3} key={idx}>
+                    <CourseCard course={course} />
+                  </Col>
+                ))
+              ) : (
+                <p>No courses available.</p>
+              )}
             </Row>
+            {/* Pagination */}
             <Col xs={12}>
               <Pagination />
             </Col>
           </Col>
         </Row>
       </Container>
-    </section>;
+    </section>
+  );
 };
+
 export default Courses;

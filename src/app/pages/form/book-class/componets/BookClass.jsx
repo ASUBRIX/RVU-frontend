@@ -1,16 +1,10 @@
 import child from '@/assets/images/element/child.svg';
 import help from '@/assets/images/element/help.svg';
-import avatar1 from '@/assets/images/avatar/01.jpg';
-import avatar2 from '@/assets/images/avatar/02.jpg';
-import avatar3 from '@/assets/images/avatar/03.jpg';
-import avatar4 from '@/assets/images/avatar/04.jpg';
-import avatar5 from '@/assets/images/avatar/05.jpg';
 import ChoicesFormInput from '@/components/form/ChoicesFormInput';
 import TextFormInput from '@/components/form/TextFormInput';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import * as yup from 'yup';
 const BookClass = () => {
   const contactFormSchema = yup.object({

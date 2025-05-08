@@ -1,4 +1,11 @@
+/**
+ * Admin Layout SCSS:
+ * src/assets/scss/components/admin/layout.scss
+ * - Includes styles for sidebar, navbar, and overall admin layout structure
+ */
+
 import logoImg from '@/assets/images/logo-light.svg';
+import logoImg2 from '@/assets/images/py_circle_logo.png';
 import AppMenu from '@/components/admin/AppMenu';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useLayoutContext } from '@/context/useLayoutContext';
@@ -7,70 +14,82 @@ import { lazy } from 'react';
 import { Offcanvas, OffcanvasBody, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { BsGearFill, BsGlobe, BsPower } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
+
 const NavbarTopbar = lazy(() => import('@/components/adminLayoutComponents/NavbarTopbar'));
-const AdminLayout = ({
-  children
-}) => {
-  const {
-    width
-  } = useViewPort();
-  const {
-    appMenuControl
-  } = useLayoutContext();
-  const {
-    removeSession
-  } = useAuthContext();
-  return <main>
-      <nav className="navbar sidebar navbar-expand-xl navbar-dark bg-dark">
+
+const AdminLayout = ({ children }) => {
+  const { width } = useViewPort();
+  const { appMenuControl } = useLayoutContext();
+  const { removeSession } = useAuthContext();
+
+  const SettingsMenu = () => (
+    <div className="admin-settings-menu">
+      <div className="d-flex align-items-center justify-content-between text-primary-hover">
+        <OverlayTrigger overlay={<Tooltip id="tooltip-settings">Settings</Tooltip>}>
+          <Link className="h5 mb-0 text-white" to="/admin/admin-settings">
+            <BsGearFill />
+          </Link>
+        </OverlayTrigger>
+        <OverlayTrigger overlay={<Tooltip id="tooltip-home">Home</Tooltip>}>
+          <Link className="h5 mb-0 text-white" to="/">
+            <BsGlobe />
+          </Link>
+        </OverlayTrigger>
+        <OverlayTrigger overlay={<Tooltip id="tooltip-signout">Sign out</Tooltip>}>
+          <Link className="h5 mb-0 text-white" onClick={removeSession} to="/auth/sign-in">
+            <BsPower />
+          </Link>
+        </OverlayTrigger>
+      </div>
+    </div>
+  );
+
+  return (
+    <main>
+      <nav className="navbar sidebar navbar-expand-xl navbar-dark bg-theme-secondary">
         <div className="d-flex align-items-center">
-          <Link className="navbar-brand" to="/">
-            <img className="navbar-brand-item" src={logoImg} alt="logo" />
+          <Link className="navbar-brand m-0" to="/">
+            <img className="navbar-admin-logo" src={logoImg2} alt="logo" />
           </Link>
         </div>
-        {width >= 1200 ? <div className="sidebar-content d-flex flex-column bg-dark">
-            <AppMenu />
-            <div className="px-3 mt-auto pt-3">
-              <div className="d-flex align-items-center justify-content-between text-primary-hover">
-                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Settings</Tooltip>}>
-                  <Link className="h5 mb-0 text-body" to="/admin/admin-settings" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
-                    <BsGearFill />
-                  </Link>
-                </OverlayTrigger>
-                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Home</Tooltip>}>
-                  <Link className="h5 mb-0 text-body" to="/" data-bs-toggle="tooltip" data-bs-placement="top" title="Home">
-                    <BsGlobe />
-                  </Link>
-                </OverlayTrigger>
-                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Sign out</Tooltip>}>
-                  <Link className="h5 mb-0 text-body" onClick={removeSession} to="/auth/sign-in" data-bs-toggle="tooltip" data-bs-placement="top" title="Sign out">
-                    <BsPower />
-                  </Link>
-                </OverlayTrigger>
+        
+        {width >= 1200 ? (
+          <div className="sidebar-content d-flex flex-column bg-theme-secondary">
+            <div className="sidebar-menu-container">
+              <div className="px-3">
+                <AppMenu />
               </div>
             </div>
-          </div> : <Offcanvas className="flex-row custom-scrollbar h-100 " show={appMenuControl.open} placement="start" onHide={appMenuControl.toggle}>
-            <OffcanvasBody className="admin-offcanvas-menu d-flex flex-column bg-dark">
-              <AppMenu />
-              <div className="px-3 mt-auto pt-3">
-                <div className="d-flex align-items-center justify-content-between text-primary-hover">
-                  <Link className="h5 mb-0 text-body" to="/admin/admin-settings" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
-                    <BsGearFill />
-                  </Link>
-                  <Link className="h5 mb-0 text-body" to="/" data-bs-toggle="tooltip" data-bs-placement="top" title="Home">
-                    <BsGlobe />
-                  </Link>
-                  <Link className="h5 mb-0 text-body" onClick={removeSession} to="/auth/sign-in" data-bs-toggle="tooltip" data-bs-placement="top" title="Sign out">
-                    <BsPower />
-                  </Link>
+            <div className="admin-settings-wrapper">
+              <SettingsMenu />
+            </div>
+          </div>
+        ) : (
+          <Offcanvas 
+            className="sidebar-offcanvas h-100" 
+            show={appMenuControl.open} 
+            placement="start" 
+            onHide={appMenuControl.toggle}
+          >
+            <OffcanvasBody className="d-flex flex-column bg-theme-secondary p-0">
+              <div className="sidebar-menu-container">
+                <div className="px-3">
+                  <AppMenu />
                 </div>
               </div>
+              <div className="admin-settings-wrapper">
+                <SettingsMenu />
+              </div>
             </OffcanvasBody>
-          </Offcanvas>}
+          </Offcanvas>
+        )}
       </nav>
       <div className="page-content">
         <NavbarTopbar />
-        <div className="page-content-wrapper border">{children}</div>
+        <div className="page-content-wrapper border m-0 p-0">{children}</div>
       </div>
-    </main>;
+    </main>
+  );
 };
+
 export default AdminLayout;

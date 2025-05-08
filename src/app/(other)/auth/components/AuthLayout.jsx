@@ -14,7 +14,7 @@ const AuthLayout = ({
             <Col xs={12} lg={6} className="d-md-flex align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100">
               <div className="p-3 p-lg-5">
                 <div className="text-center">
-                  <h2 className="fw-bold">Welcome to our largest community</h2>
+                  <h2 className="fw-bold">Welcome to Pudhuyugam Academy</h2>
                   <p className="mb-0 h6 fw-light">Let&apos;s learn something new today!</p>
                 </div>
                 <img src={elementImg} className="mt-5" alt="element" />

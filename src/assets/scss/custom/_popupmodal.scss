@@ -1,0 +1,35 @@
+.contact-modal {
+    border-radius: 16px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  }
+  
+  .contact-header {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    padding: 1.5rem;
+  }
+  
+  .input-field {
+    border-radius: 8px;
+    height: 58px;
+    padding-left: 12px; // Adjusts input padding since icons were removed
+  }
+  
+  .textarea-field {
+    height: 120px;
+    border-radius: 8px;
+    padding: 12px;
+  }
+  
+  .send-button {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(110, 142, 251, 0.3);
+    display: flex;
+    align-items: center;
+  }
+  

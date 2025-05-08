@@ -48,12 +48,21 @@
 //Nav pill primary soft
 .nav-pill-soft .nav-link {
   background-color: rgba(var(--#{$prefix}primary-rgb), 0.1);
-  color: var(--#{$prefix}primary);
+  color: var(--#{$prefix}gray-700);
   border: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(var(--#{$prefix}primary-rgb), 0.2);
+    color: var(--#{$prefix}primary);
+  }
 }
+
 .nav-pill-soft .nav-link.active, .nav-pill-soft .show > .nav-link {
   color: var(--#{$prefix}white) !important;
   background-color: var(--#{$prefix}primary);
+  box-shadow: 0 2px 5px rgba(var(--#{$prefix}primary-rgb), 0.2);
 }
 
 //Nav pill dark soft
@@ -135,8 +144,22 @@
   border-radius: $border-radius;
 }
 
-
-
-
-
-
+//Nav tabs theme-secondary
+.bg-theme-secondary {
+  .nav-link {
+    color: var(--#{$prefix}white);
+    border-radius: $border-radius-lg;
+    padding: 0.825rem;
+    margin-bottom: 5px;
+    
+    &:hover {
+      color: var(--#{$prefix}primary);
+      background-color: rgba(var(--#{$prefix}white-rgb), 0.1);
+    }
+  }
+  .nav-link.active, .show > .nav-link {
+    color: var(--#{$prefix}theme-secondary) !important;
+    background-color: var(--#{$prefix}white);
+    border-radius: $border-radius;
+  }
+}

@@ -1,0 +1,119 @@
+.resource-carousel-container {
+  margin: 0;
+  width: 100%;
+  
+  .custom-carousel {
+    padding: 0;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .custom-carousel .img-box {
+    width: 100%;
+    position: relative;
+    padding-top: 56.25%;  // 16:9 aspect ratio (9/16 * 100)
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    border: none;
+  }
+
+  .custom-carousel .img-box img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .custom-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white !important;
+    border: none;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.5) !important;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0;
+  }
+
+  .custom-control:hover,
+  .custom-control:active,
+  .custom-control:focus {
+    color: white !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+  }
+
+  .carousel-control-prev {
+    left: 20px;
+  }
+
+  .carousel-control-next {
+    right: 20px;
+  }
+
+  .carousel-indicators {
+    position: absolute;
+    bottom: -35px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .carousel-indicators button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    border: none;
+    transition: background-color 0.3s ease;
+    margin: 0 4px;
+  }
+
+  .carousel-indicators .active {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  // Show controls on hover
+  &:hover {
+    .custom-control {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    margin: 0;
+    
+    .custom-carousel .img-box {
+      padding-top: 56.25%;
+      border-radius: 4px;
+    }
+    
+    .custom-control {
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+      opacity: 1;
+    }
+    
+    .carousel-control-prev {
+      left: 10px;
+    }
+    
+    .carousel-control-next {
+      right: 10px;
+    }
+  }
+}

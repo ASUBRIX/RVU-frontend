@@ -21,7 +21,7 @@ const Banner = ({
               <Row className="d-flex justify-content-between">
                 <Col xs={'auto'} className="mt-4 mt-md-0">
                   <div className="avatar avatar-xxl mt-n3">
-                    <img className="avatar-img rounded-circle border border-white border-3 shadow" src={avatar1} alt="avatar" />
+                    <img className="avatar-img rounded-circle border-white border-3 shadow" src={avatar1} alt="avatar" />
                   </div>
                 </Col>
                 <Col className="d-md-flex justify-content-between align-items-center mt-4">

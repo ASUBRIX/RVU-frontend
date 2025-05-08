@@ -1,0 +1,135 @@
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  th {
+    background: #f8f9fa;
+    padding: 16px;
+    font-weight: 600;
+    color: #344767;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #edf2f7;
+  }
+
+  td {
+    padding: 16px;
+    color: #64748b;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    &.active {
+      background: #dcfce7;
+      color: #15803d;
+      &::before { background: #15803d; }
+    }
+
+    &.blocked {
+      background: #fee2e2;
+      color: #b91c1c;
+      &::before { background: #b91c1c; }
+    }
+
+    &.pending {
+      background: #fef3c7;
+      color: #b45309;
+      &::before { background: #b45309; }
+    }
+
+    &.inactive {
+      background: #f1f5f9;
+      color: #64748b;
+      &::before { background: #64748b; }
+    }
+  }
+
+  .action-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    
+    &.view {
+      background: #eff6ff;
+      color: #2563eb;
+      &:hover { background: #dbeafe; }
+    }
+
+    &.block {
+      background: #fee2e2;
+      color: #b91c1c;
+      &:hover { background: #fecaca; }
+    }
+
+    &.unblock {
+      background: #dcfce7;
+      color: #15803d;
+      &:hover { background: #bbf7d0; }
+    }
+  }
+
+  .details-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    .modal-header {
+      margin-bottom: 24px;
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+      }
+    }
+
+    .detail-row {
+      display: flex;
+      margin-bottom: 16px;
+      
+      .label {
+        width: 140px;
+        font-weight: 500;
+        color: #64748b;
+      }
+      
+      .value {
+        flex: 1;
+        color: #1e293b;
+      }
+    }
+  }
+} 
