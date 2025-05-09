@@ -1,7 +1,7 @@
 import { Card, Form, Alert, Spinner } from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import 'react-quill/dist/quill.snow.css'; 
 import { useAuthContext } from '@/context/useAuthContext';
 import httpClient from '../../../../helpers/httpClient';
 
