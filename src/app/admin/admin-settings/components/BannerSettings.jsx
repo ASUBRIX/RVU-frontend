@@ -1,72 +1,119 @@
-import { useState } from 'react'
-import { Button, Card, Form, Modal } from 'react-bootstrap'
-import { BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs'
-import { FiSearch } from 'react-icons/fi'
-import { FaPlus } from 'react-icons/fa'
+import { useEffect, useState } from 'react';
+import { Button, Card, Form, Modal, Spinner } from 'react-bootstrap';
+import { BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { FiSearch } from 'react-icons/fi';
+import { FaPlus } from 'react-icons/fa';
+import {
+  fetchBanners,
+  createBanner,
+  updateBanner,
+  deleteBanner,
+} from '@/helpers/bannerApi';
 
 const BannerSettings = () => {
-  const [banners, setBanners] = useState([
-    {
-      id: 1,
-      title: 'Banner One',
-      image: '/path/to/banner1.jpg',
-      link: '#',
-      description: 'Main homepage banner',
-    },
-    {
-      id: 2,
-      title: 'Banner Two',
-      image: '/path/to/banner2.jpg',
-      link: '#',
-      description: 'Secondary promotional banner',
-    },
-  ])
+  const [banners, setBanners] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBanner, setSelectedBanner] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
+  const [title, setTitle] = useState('');
+  const [link, setLink] = useState('');
+  const [description, setDescription] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [bannerToDelete, setBannerToDelete] = useState(null);
 
-  const [showModal, setShowModal] = useState(false)
-  const [selectedBanner, setSelectedBanner] = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [sortBy, setSortBy] = useState('newest')
+  const loadBanners = async () => {
+    try {
+      const { data } = await fetchBanners({ search: searchQuery, sort: sortBy });
+      setBanners(data);
+    } catch (err) {
+      console.error('Failed to load banners:', err);
+    }
+  };
+
+  useEffect(() => {
+    loadBanners();
+  }, [searchQuery, sortBy]);
 
   const handleAddBanner = () => {
-    setSelectedBanner(null)
-    setShowModal(true)
-  }
+    setSelectedBanner(null);
+    setTitle('');
+    setLink('');
+    setDescription('');
+    setImageFile(null);
+    setShowModal(true);
+  };
 
   const handleEditBanner = (banner) => {
-    setSelectedBanner(banner)
-    setShowModal(true)
-  }
+    setSelectedBanner(banner);
+    setTitle(banner.title);
+    setLink(banner.link || '');
+    setDescription(banner.description || '');
+    setImageFile(null);
+    setShowModal(true);
+  };
 
-  const handleViewBanner = (banner) => {
-    console.log('Viewing banner:', banner)
-  }
+  const handleSaveBanner = async () => {
+    if (!title) return alert('Title is required');
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('link', link);
+    formData.append('description', description);
+    if (imageFile) formData.append('image', imageFile);
+
+    try {
+      setLoading(true);
+      if (selectedBanner) {
+        await updateBanner(selectedBanner.id, formData);
+      } else {
+        await createBanner(formData);
+      }
+      setShowModal(false);
+      loadBanners();
+    } catch (err) {
+      console.error('Failed to save banner:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmDeleteBanner = (banner) => {
+    setBannerToDelete(banner);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!bannerToDelete) return;
+    try {
+      await deleteBanner(bannerToDelete.id);
+      loadBanners();
+    } catch (err) {
+      console.error('Failed to delete banner:', err);
+    } finally {
+      setShowConfirmModal(false);
+      setBannerToDelete(null);
+    }
+  };
 
   const handleCloseModal = () => {
-    setShowModal(false)
-    setSelectedBanner(null)
-  }
-
-  const filteredBanners = banners.filter(
-    (banner) =>
-      banner.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      banner.description.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+    setShowModal(false);
+    setSelectedBanner(null);
+  };
 
   return (
     <>
-      {/* Header */}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
         <div>
           <h4 className="mb-0">Banner Management</h4>
           <p className="text-muted mb-0">Manage website banners and promotional content</p>
         </div>
         <Button className="btn-add-content d-flex align-items-center" onClick={handleAddBanner}>
-          <FaPlus className="me-2" />
-          Add New Banner
+          <FaPlus className="me-2" /> Add New Banner
         </Button>
       </div>
 
-      {/* Search and Sort */}
       <div className="row g-3 align-items-center mb-3">
         <div className="col-md-8">
           <div className="search-input">
@@ -84,23 +131,19 @@ const BannerSettings = () => {
             </div>
           </div>
         </div>
-        <div className="col-md-4">
-          <div className="d-flex align-items-center justify-content-end">
-            <label className="me-2 text-nowrap fw-medium">Sort by:</label>
-            <Form.Select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="form-select"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="title">Title</option>
-            </Form.Select>
-          </div>
+        <div className="col-md-4 d-flex justify-content-end">
+          <Form.Select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="w-auto"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="title">Title</option>
+          </Form.Select>
         </div>
       </div>
 
-      {/* Table */}
       <Card className="border-0">
         <Card.Body className="p-0">
           <table className="admin-table">
@@ -112,19 +155,16 @@ const BannerSettings = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredBanners.map((banner) => (
+              {banners.map((banner) => (
                 <tr key={banner.id}>
                   <td>{banner.title}</td>
                   <td>{banner.description}</td>
-                  <td>
+                  <td className="text-end">
                     <div className="d-flex justify-content-end gap-2">
-                      <Button variant="light" size="sm" className="action-btn" onClick={() => handleViewBanner(banner)}>
-                        <BsEye />
-                      </Button>
                       <Button variant="light" size="sm" className="action-btn" onClick={() => handleEditBanner(banner)}>
                         <BsPencilSquare />
                       </Button>
-                      <Button variant="light" size="sm" className="action-btn text-danger">
+                      <Button variant="light" size="sm" className="action-btn text-danger" onClick={() => confirmDeleteBanner(banner)}>
                         <BsTrash />
                       </Button>
                     </div>
@@ -136,7 +176,6 @@ const BannerSettings = () => {
         </Card.Body>
       </Card>
 
-      {/* Banner Modal  */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>{selectedBanner ? 'Edit Banner' : 'Add New Banner'}</Modal.Title>
@@ -148,51 +187,69 @@ const BannerSettings = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter banner title"
-                defaultValue={selectedBanner?.title}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </Form.Group>
-
             <Form.Group className="mb-3">
-              <Form.Label>Image (1126px x 400px) <span className="text-danger">*</span></Form.Label>
+              <Form.Label>Image <span className="text-danger">*</span></Form.Label>
               <Form.Control
                 type="file"
                 accept="image/*"
+                onChange={(e) => setImageFile(e.target.files[0])}
                 required={!selectedBanner}
               />
             </Form.Group>
-
             <Form.Group className="mb-3">
               <Form.Label>Link</Form.Label>
               <Form.Control
                 type="url"
                 placeholder="Enter banner link"
-                defaultValue={selectedBanner?.link}
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
               />
             </Form.Group>
-
             <Form.Group className="mb-3">
               <Form.Label>Description</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
                 placeholder="Enter banner description"
-                defaultValue={selectedBanner?.description}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+          <Button variant="secondary" onClick={handleCloseModal}>Cancel</Button>
+          <Button variant="primary" onClick={handleSaveBanner} disabled={loading}>
+            {loading ? <Spinner animation="border" size="sm" /> : selectedBanner ? 'Update Banner' : 'Add Banner'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete the banner <strong>{bannerToDelete?.title}</strong>?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary">
-            {selectedBanner ? 'Update Banner' : 'Add Banner'}
+          <Button variant="danger" onClick={handleConfirmDelete}>
+            Yes, Delete
           </Button>
         </Modal.Footer>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default BannerSettings
+export default BannerSettings;
+
+

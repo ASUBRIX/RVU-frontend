@@ -8,7 +8,8 @@ This document provides comprehensive documentation for the Learning Application'
 - Routing: React Router DOM 6.26.0
 - State Management: React Hook Form 7.52.1
 - UI Components: React Bootstrap 2.10.7
-- Backend/Database: Firebase 11.4.0
+- Backend/Database for Mobile: Firebase 11.4.0
+- SQL Database: PostgreSQL
 - HTTP Client: Axios 1.7.3
 
 ## Authentication Routes
