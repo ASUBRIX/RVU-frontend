@@ -1,7 +1,7 @@
 import { Card, Form, Alert, Spinner } from 'react-bootstrap';
 import { useState, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import 'react-quill/dist/quill.snow.css';
 import { useAuthContext } from '@/context/useAuthContext';
 import httpClient from '../../../../helpers/httpClient';
 
@@ -88,7 +88,7 @@ const TermsConditions = () => {
         message: response.data.message || 'Terms and conditions updated successfully'
       });
       
-      console.log("Terms and Conditions saved:", response.data);
+      console.log("Terms and Conditions saved successfully:", response.data);
       setLoading(false);
     } catch (error) {
       console.error('Error updating terms:', error);
