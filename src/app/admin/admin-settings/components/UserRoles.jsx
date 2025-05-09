@@ -46,6 +46,21 @@ const UserRoles = () => {
     setShowPermissions(true)
   }
 
+  const handleSavePermissions = () => {
+    console.log('Saving permissions for', selectedRole.name, permissions);
+    setShowPermissions(false);
+  }
+
+  const handlePermissionChange = (module, action, value) => {
+    setPermissions(prev => ({
+      ...prev,
+      [module]: {
+        ...prev[module],
+        [action]: value
+      }
+    }))
+  }
+
   const handleAddRole = () => {
     if (newRoleName.trim()) {
       const newRole = {
@@ -139,11 +154,39 @@ const UserRoles = () => {
                 <tr key={page}>
                   <td>{idx + 1}</td>
                   <td className="module-name text-capitalize">{page}</td>
-                  <td>{perms.create !== undefined && <Form.Check type="checkbox" defaultChecked={perms.create} />}</td>
-                  <td>{perms.update !== undefined && <Form.Check type="checkbox" defaultChecked={perms.update} />}</td>
-                  <td>{perms.delete !== undefined && <Form.Check type="checkbox" defaultChecked={perms.delete} />}</td>
                   <td>
-                    <Form.Check type="checkbox" defaultChecked={perms.view} />
+                    {perms.create !== undefined && (
+                      <Form.Check
+                        type="checkbox"
+                        checked={perms.create}
+                        onChange={(e) => handlePermissionChange(page, 'create', e.target.checked)}
+                      />
+                    )}
+                  </td>
+                  <td>
+                    {perms.update !== undefined && (
+                      <Form.Check
+                        type="checkbox"
+                        checked={perms.update}
+                        onChange={(e) => handlePermissionChange(page, 'update', e.target.checked)}
+                      />
+                    )}
+                  </td>
+                  <td>
+                    {perms.delete !== undefined && (
+                      <Form.Check
+                        type="checkbox"
+                        checked={perms.delete}
+                        onChange={(e) => handlePermissionChange(page, 'delete', e.target.checked)}
+                      />
+                    )}
+                  </td>
+                  <td>
+                    <Form.Check
+                      type="checkbox"
+                      checked={perms.view}
+                      onChange={(e) => handlePermissionChange(page, 'view', e.target.checked)}
+                    />
                   </td>
                 </tr>
               ))}
@@ -154,7 +197,7 @@ const UserRoles = () => {
           <Button variant="secondary" onClick={() => setShowPermissions(false)}>
             Cancel
           </Button>
-          <Button className="bg-primary border-0">Save Changes</Button>
+          <Button className="bg-primary border-0" onClick={handleSavePermissions}>Save Changes</Button>
         </Modal.Footer>
       </Modal>
 
