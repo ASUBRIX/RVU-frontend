@@ -1,137 +1,60 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card, Button, Row, Col, Form, InputGroup, Modal, Tabs, Tab } from 'react-bootstrap';
-import { FaSearch, FaPlus, FaEdit, FaTrash, FaDownload, FaUpload, FaFilter } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaDownload, FaUpload, FaFilter } from 'react-icons/fa';
 import StudentTable from './StudentTable';
 import StudentForm from './StudentForm';
+import { useAuthContext } from '@/context/useAuthContext';
+import { addStudent } from '@/helpers/studentService';
 
 const StudentManagement = () => {
+  const { user } = useAuthContext();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentStudent, setCurrentStudent] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
+  const [students, setStudents] = useState([]);
 
-  // Sample student data
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      enrollmentId: 'ST-2023-001',
-      name: 'John Smith',
-      email: 'john.smith@example.com',
-      phone: '+1 (555) 123-4567',
-      enrollmentDate: '2023-01-15',
-      courses: ['Advanced JavaScript', 'React Development'],
-      status: 'active',
-      paymentStatus: 'paid',
-      avatar: 'default-male'
-    },
-    {
-      id: 2,
-      enrollmentId: 'ST-2023-002',
-      name: 'Emily Johnson',
-      email: 'emily.johnson@example.com',
-      phone: '+1 (555) 234-5678',
-      enrollmentDate: '2023-02-20',
-      courses: ['Python for Data Science'],
-      status: 'active',
-      paymentStatus: 'pending',
-      avatar: 'default-female'
-    },
-    {
-      id: 3,
-      enrollmentId: 'ST-2023-003',
-      name: 'Michael Brown',
-      email: 'michael.brown@example.com',
-      phone: '+1 (555) 345-6789',
-      enrollmentDate: '2023-01-10',
-      courses: ['Web Development Bootcamp', 'SQL Database Design'],
-      status: 'inactive',
-      paymentStatus: 'paid',
-      avatar: 'default-male'
-    },
-    {
-      id: 4,
-      enrollmentId: 'ST-2023-004',
-      name: 'Sarah Davis',
-      email: 'sarah.davis@example.com',
-      phone: '+1 (555) 456-7890',
-      enrollmentDate: '2023-03-05',
-      courses: ['Machine Learning Fundamentals'],
-      status: 'active',
-      paymentStatus: 'paid',
-      avatar: 'default-female'
-    },
-    {
-      id: 5,
-      enrollmentId: 'ST-2023-005',
-      name: 'David Wilson',
-      email: 'david.wilson@example.com',
-      phone: '+1 (555) 567-8901',
-      enrollmentDate: '2023-02-15',
-      courses: ['Mobile App Development with Flutter'],
-      status: 'active',
-      paymentStatus: 'paid',
-      avatar: 'default-male'
-    },
-    {
-      id: 6,
-      enrollmentId: 'ST-2023-006',
-      name: 'Jessica Taylor',
-      email: 'jessica.taylor@example.com',
-      phone: '+1 (555) 678-9012',
-      enrollmentDate: '2023-03-20',
-      courses: ['AWS Certification Course'],
-      status: 'inactive',
-      paymentStatus: 'pending',
-      avatar: 'default-female'
+  const handleAddStudent = async (studentData) => {
+    console.log("calling add student");
+
+    try {
+      const response = await addStudent(studentData, user.token);
+      setStudents(prev => [...prev, response.student]);
+      setShowAddModal(false);
+    } catch (error) {
+      console.error('Error adding student:', error);
+      alert('Failed to add student.');
     }
-  ]);
-
-  // Handle adding a new student
-  const handleAddStudent = (student) => {
-    const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
-    const newEnrollmentId = `ST-${new Date().getFullYear()}-${String(newId).padStart(3, '0')}`;
-    
-    const newStudent = {
-      id: newId,
-      enrollmentId: newEnrollmentId,
-      ...student,
-      enrollmentDate: new Date().toISOString().split('T')[0]
-    };
-    
-    setStudents([...students, newStudent]);
-    setShowAddModal(false);
   };
 
-  // Handle editing a student
   const handleEditStudent = (updatedStudent) => {
-    setStudents(students.map(student => 
+    setStudents(students.map(student =>
       student.id === updatedStudent.id ? updatedStudent : student
     ));
     setShowEditModal(false);
   };
 
-  // Handle deleting a student
   const handleDeleteStudent = () => {
     setStudents(students.filter(student => student.id !== currentStudent.id));
     setShowDeleteModal(false);
   };
 
-  // Filter students based on search term and status filter
   const filteredStudents = useMemo(() => {
     return students.filter(student => {
-      const matchesSearch = 
-        student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.enrollmentId.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesFilter = 
-        filter === 'all' || 
+      const matchesSearch =
+        student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.enrollmentId?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesFilter =
+        filter === 'all' ||
         (filter === 'active' && student.status === 'active') ||
         (filter === 'inactive' && student.status === 'inactive') ||
         (filter === 'pending' && student.paymentStatus === 'pending');
-      
+
       return matchesSearch && matchesFilter;
     });
   }, [students, searchTerm, filter]);
@@ -167,7 +90,7 @@ const StudentManagement = () => {
                 <InputGroup.Text className="bg-light border-0">
                   <FaFilter className="text-muted" />
                 </InputGroup.Text>
-                <Form.Select 
+                <Form.Select
                   className="border-0 bg-light"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
@@ -193,34 +116,8 @@ const StudentManagement = () => {
 
       <Tabs defaultActiveKey="allStudents" className="mb-4">
         <Tab eventKey="allStudents" title="All Students">
-          <StudentTable 
-            students={filteredStudents} 
-            onEdit={(student) => {
-              setCurrentStudent(student);
-              setShowEditModal(true);
-            }}
-            onDelete={(student) => {
-              setCurrentStudent(student);
-              setShowDeleteModal(true);
-            }}
-          />
-        </Tab>
-        <Tab eventKey="active" title="Active Students">
-          <StudentTable 
-            students={filteredStudents.filter(s => s.status === 'active')} 
-            onEdit={(student) => {
-              setCurrentStudent(student);
-              setShowEditModal(true);
-            }}
-            onDelete={(student) => {
-              setCurrentStudent(student);
-              setShowDeleteModal(true);
-            }}
-          />
-        </Tab>
-        <Tab eventKey="inactive" title="Inactive Students">
-          <StudentTable 
-            students={filteredStudents.filter(s => s.status === 'inactive')} 
+          <StudentTable
+            students={filteredStudents}
             onEdit={(student) => {
               setCurrentStudent(student);
               setShowEditModal(true);
@@ -233,63 +130,16 @@ const StudentManagement = () => {
         </Tab>
       </Tabs>
 
-      {/* Add Student Modal */}
-      <Modal
-        show={showAddModal}
-        onHide={() => setShowAddModal(false)}
-        size="lg"
-        centered
-      >
+      <Modal show={showAddModal} onHide={() => setShowAddModal(false)} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Add New Student</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <StudentForm onSubmit={handleAddStudent} />
+          <StudentForm onSubmit={handleAddStudent} onCancel={() => setShowAddModal(false)} />
         </Modal.Body>
-      </Modal>
-
-      {/* Edit Student Modal */}
-      <Modal
-        show={showEditModal}
-        onHide={() => setShowEditModal(false)}
-        size="lg"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Student</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {currentStudent && (
-            <StudentForm student={currentStudent} onSubmit={handleEditStudent} />
-          )}
-        </Modal.Body>
-      </Modal>
-
-      {/* Delete Confirmation Modal */}
-      <Modal
-        show={showDeleteModal}
-        onHide={() => setShowDeleteModal(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {currentStudent && (
-            <p>Are you sure you want to delete <strong>{currentStudent.name}</strong>? This action cannot be undone.</p>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDeleteStudent}>
-            Delete
-          </Button>
-        </Modal.Footer>
       </Modal>
     </div>
   );
 };
 
-export default StudentManagement; 
+export default StudentManagement;
