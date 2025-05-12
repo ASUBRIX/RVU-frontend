@@ -3,7 +3,7 @@ import axios from 'axios';
 function HttpClient() {
   // Create an axios instance with proper configuration
   const instance = axios.create({
-    baseURL: 'http://localhost:4001',
+    baseURL: 'http://localhost:5000',
     timeout: 15000
     // Remove default Content-Type header
   });
