@@ -18,7 +18,6 @@ const StudentManagement = () => {
   const [students, setStudents] = useState([]);
 
   const handleAddStudent = async (studentData) => {
-    console.log("calling add student");
 
     try {
       const response = await addStudent(studentData, user.token);
