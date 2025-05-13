@@ -4,6 +4,7 @@ import { Container, Button, Form, Modal } from 'react-bootstrap'
 import { FaPlus, FaEye  } from 'react-icons/fa'
 import { FiSearch } from 'react-icons/fi'
 import { BsFileEarmarkRichtext, BsFileEarmarkBreak } from "react-icons/bs";
+import { getBlogs, createBlog, updateBlog, deleteBlog } from '../../../helpers/blogApi';
 
 const BlogManagement = () => {
   // State for blog posts
@@ -42,78 +43,91 @@ const BlogManagement = () => {
   const [showOnlyPublished, setShowOnlyPublished] = useState(false)
 
   // Mock function to load posts
-  useEffect(() => {
-    // Sample blog data
-    const initialBlogPosts = [
-      {
-        id: 1,
-        title: 'Getting Started with React',
-        date: 'March 25, 2025',
-        author: 'Jane Doe',
-        excerpt:
-          'React is a popular JavaScript library for building user interfaces. In this post, we will explore the basics of React and how to get started with your first app.',
-        content:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-        imageUrl: 'https://www.adverity.com/hubfs/6%20Key%20Digital%20Marketing%20Metrics%20for%202025%20blog%20hero.png',
-        tags: ['React', 'JavaScript', 'Web Development'],
-        isPublished: true,
-      },
-      {
-        id: 2,
-        title: 'Styling in React with SCSS',
-        date: 'March 20, 2025',
-        author: 'John Smith',
-        excerpt:
-          'SCSS is a powerful CSS preprocessor that can help you write more maintainable styles for your React applications. Learn how to integrate SCSS with React.',
-        content:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-        imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
-        tags: ['SCSS', 'CSS', 'Styling', 'React'],
-        isPublished: true,
-      },
-      {
-        id: 3,
-        title: 'State Management in React Applications',
-        date: 'March 15, 2025',
-        author: 'Sarah Johnson',
-        excerpt:
-          'Managing state in React applications can be challenging. In this post, we will look at different approaches to state management and when to use each one.',
-        content:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-        imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
-        tags: ['React', 'State Management', 'Redux', 'Context API'],
-        isPublished: true,
-      },
-      {
-        id: 4,
-        title: 'Building Accessible React Components',
-        date: 'March 10, 2025',
-        author: 'Alex Williams',
-        excerpt:
-          'Accessibility is crucial for modern web applications. Discover how to create React components that are accessible to all users, including those with disabilities.',
-        content:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-        imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
-        tags: ['React', 'Accessibility', 'a11y', 'Web Development'],
-        isPublished: true,
-      },
-      {
-        id: 5,
-        title: 'React Performance Optimization Techniques',
-        date: 'March 5, 2025',
-        author: 'Jamie Lee',
-        excerpt:
-          'Optimizing React application performance is essential for providing a smooth user experience. Learn about memoization, code splitting, and other optimization techniques.',
-        content:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-        imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
-        tags: ['React', 'Performance', 'Optimization', 'JavaScript'],
-        isPublished: true,
-      },
-    ]
+  // useEffect(() => {
+  //   // Sample blog data
+  //   const initialBlogPosts = [
+  //     {
+  //       id: 1,
+  //       title: 'Getting Started with React',
+  //       date: 'March 25, 2025',
+  //       author: 'Jane Doe',
+  //       excerpt:
+  //         'React is a popular JavaScript library for building user interfaces. In this post, we will explore the basics of React and how to get started with your first app.',
+  //       content:
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
+  //       imageUrl: 'https://www.adverity.com/hubfs/6%20Key%20Digital%20Marketing%20Metrics%20for%202025%20blog%20hero.png',
+  //       tags: ['React', 'JavaScript', 'Web Development'],
+  //       isPublished: true,
+  //     },
+  //     {
+  //       id: 2,
+  //       title: 'Styling in React with SCSS',
+  //       date: 'March 20, 2025',
+  //       author: 'John Smith',
+  //       excerpt:
+  //         'SCSS is a powerful CSS preprocessor that can help you write more maintainable styles for your React applications. Learn how to integrate SCSS with React.',
+  //       content:
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
+  //       imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
+  //       tags: ['SCSS', 'CSS', 'Styling', 'React'],
+  //       isPublished: true,
+  //     },
+  //     {
+  //       id: 3,
+  //       title: 'State Management in React Applications',
+  //       date: 'March 15, 2025',
+  //       author: 'Sarah Johnson',
+  //       excerpt:
+  //         'Managing state in React applications can be challenging. In this post, we will look at different approaches to state management and when to use each one.',
+  //       content:
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
+  //       imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
+  //       tags: ['React', 'State Management', 'Redux', 'Context API'],
+  //       isPublished: true,
+  //     },
+  //     {
+  //       id: 4,
+  //       title: 'Building Accessible React Components',
+  //       date: 'March 10, 2025',
+  //       author: 'Alex Williams',
+  //       excerpt:
+  //         'Accessibility is crucial for modern web applications. Discover how to create React components that are accessible to all users, including those with disabilities.',
+  //       content:
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
+  //       imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
+  //       tags: ['React', 'Accessibility', 'a11y', 'Web Development'],
+  //       isPublished: true,
+  //     },
+  //     {
+  //       id: 5,
+  //       title: 'React Performance Optimization Techniques',
+  //       date: 'March 5, 2025',
+  //       author: 'Jamie Lee',
+  //       excerpt:
+  //         'Optimizing React application performance is essential for providing a smooth user experience. Learn about memoization, code splitting, and other optimization techniques.',
+  //       content:
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
+  //       imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
+  //       tags: ['React', 'Performance', 'Optimization', 'JavaScript'],
+  //       isPublished: true,
+  //     },
+  //   ]
 
-    setBlogPosts(initialBlogPosts)
-  }, [])
+  //   setBlogPosts(initialBlogPosts)
+  // }, [])
+
+  useEffect(() => {
+  fetchBlogs();
+}, []);
+
+const fetchBlogs = async () => {
+  try {
+    const res = await getBlogs();
+    setBlogPosts(res.data);
+  } catch (err) {
+    console.error('Failed to load blogs:', err);
+  }
+};
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -153,55 +167,65 @@ const BlogManagement = () => {
   }
 
   // Handle form submission for creating or updating a post
-  const handleSubmit = (e) => {
-    e.preventDefault()
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log("handle submit is calling");
 
-    // Format the tags from comma-separated string to array
-    const formattedTags = formData.tags.split(',').map((tag) => tag.trim())
+  // Format the tags from comma-separated string to array
+  const formattedTags = formData.tags.split(',').map((tag) => tag.trim());
+  console.log('Formatted Tags:', formattedTags);
 
-    // Get today's date if no date is provided
-    const submitDate =
-      formData.date ||
-      new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    
-    // In a real application, you would upload the file to a server here
-    // and get back a URL. For this example, we'll use the preview URL
-    const imageUrl = imagePreview || formData.imageUrl
+  // Use today's date if none provided
+  const submitDate =
+    formData.date ||
+    new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
 
+  // Use uploaded preview or existing image URL
+  const imageUrl = imagePreview || formData.imageUrl;
+
+  try {
     if (editMode) {
-      // Update existing post
-      const updatedPosts = blogPosts.map((post) =>
-        post.id === parseInt(formData.id) 
-          ? { 
-              ...formData, 
-              date: submitDate, 
-              tags: formattedTags, 
-              id: parseInt(formData.id),
-              imageUrl: imageUrl
-            } 
-          : post,
-      )
-      setBlogPosts(updatedPosts)
-    } else {
-      // Create new post
-      const newPost = {
+      // Update blog via API
+      const updatedPost = {
         ...formData,
-        id: Date.now(), // Generate a unique ID
         date: submitDate,
         tags: formattedTags,
-        imageUrl: imageUrl
-      }
-      setBlogPosts([...blogPosts, newPost])
+        imageUrl
+      };
+      const res = await updateBlog(formData.id, updatedPost);
+      console.log("Blog updated:", res.data);
+
+      // Update frontend list
+      setBlogPosts((prev) =>
+        prev.map((post) => (post.id === res.data.id ? res.data : post))
+      );
+    } else {
+      // Create new blog via API
+      const newPost = {
+        ...formData,
+        date: submitDate,
+        tags: formattedTags,
+        imageUrl
+      };
+      const res = await createBlog(newPost);
+      console.log("New Blog Post:", res.data);
+
+      // Add new blog to frontend list
+      setBlogPosts((prev) => [...prev, res.data]);
     }
 
     // Reset form and close modal
-    resetForm()
-    setShowAddModal(false)
+    resetForm();
+    setShowAddModal(false);
+  } catch (err) {
+    console.error("Error saving blog post:", err);
   }
+};
+
 
   // Handle edit button click
   const handleEdit = (post) => {
