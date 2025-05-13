@@ -1,28 +1,24 @@
 import axios from 'axios';
 
 function HttpClient() {
-  // Create an axios instance with proper configuration
   const instance = axios.create({
     baseURL: 'http://localhost:5000',
-    timeout: 15000
-    // Remove default Content-Type header
+    timeout: 15000,
   });
-  
-  // Add a request interceptor to set Content-Type only for non-FormData requests
+
   instance.interceptors.request.use(
     (config) => {
-      // If the request data is FormData, don't set Content-Type (browser will set it)
       if (!(config.data instanceof FormData)) {
         config.headers['Content-Type'] = 'application/json';
       }
-      
+
       console.log('HttpClient Request:', {
         url: config.url,
         method: config.method,
         headers: config.headers,
-        isFormData: config.data instanceof FormData
+        isFormData: config.data instanceof FormData,
       });
-      
+
       return config;
     },
     (error) => {
@@ -30,13 +26,13 @@ function HttpClient() {
       return Promise.reject(error);
     }
   );
-  
+
   instance.interceptors.response.use(
     (response) => {
       console.log('HttpClient Response:', {
         status: response.status,
         statusText: response.statusText,
-        url: response.config.url
+        url: response.config.url,
       });
       return response;
     },
@@ -46,24 +42,24 @@ function HttpClient() {
         console.error('Error Response:', {
           status: error.response.status,
           statusText: error.response.statusText,
-          data: error.response.data
+          data: error.response.data,
         });
       } else if (error.request) {
         console.error('No Response Received:', {
           url: error.config?.url,
-          method: error.config?.method
+          method: error.config?.method,
         });
       }
       return Promise.reject(error);
     }
   );
-  
+
   return {
     get: instance.get,
     post: instance.post,
     patch: instance.patch,
     put: instance.put,
-    delete: instance.delete
+    delete: instance.delete,
   };
 }
 

@@ -190,6 +190,7 @@ const FacultyManagement = () => {
               </div>
             </div>
           </div>
+          
         </Container>
       </div>
 

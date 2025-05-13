@@ -19,7 +19,7 @@ const About = () => {
           </Col>
           <Col lg={6} className="d-flex align-items-center">
             <div className="ps-lg-4">
-              <h2 className="mb-4">35,000+ happy students joined with us to achieve their goals Development Mode</h2>
+              <h2 className="mb-4">35,000+ happy students joined with us to achieve their goals</h2>
               <p className="mb-4">
                 Pudhuyugam Academy embarked on a resolute mission to deliver top-notch education for a spectrum of competitive examinations. Our academy
                 has been on a transformative journey, sculpting the futures of aspirants by providing unparalleled guidance. Our mission extends beyond

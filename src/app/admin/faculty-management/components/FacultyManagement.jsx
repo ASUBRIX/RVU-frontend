@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from 'react';
+// ---------- FacultyManagement.jsx ----------
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Button, Row, Col, Form, InputGroup, Modal, Tabs, Tab } from 'react-bootstrap';
 import { FaSearch, FaPlus, FaFilter, FaDownload, FaUpload } from 'react-icons/fa';
 import FacultyTable from './FacultyTable';
 import FacultyForm from './FacultyForm';
+import { getAllFaculties, createFaculty, updateFaculty, deleteFaculty } from '@/api/facultyApi';
 
 const FacultyManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -11,137 +13,72 @@ const FacultyManagement = () => {
   const [currentFaculty, setCurrentFaculty] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
+  const [faculties, setFaculties] = useState([]);
 
-  // Sample faculty data
-  const [faculties, setFaculties] = useState([
-    {
-      id: 1,
-      facultyId: 'FAC-2023-001',
-      name: 'Dr. Robert Anderson',
-      email: 'robert.anderson@example.com',
-      phone: '+1 (555) 987-6543',
-      department: 'Computer Science',
-      designation: 'Professor',
-      joiningDate: '2021-06-15',
-      subjects: ['Advanced Algorithms', 'Data Structures'],
-      status: 'active',
-      qualification: 'Ph.D in Computer Science',
-      experience: '12 years',
-      avatar: 'default-male'
-    },
-    {
-      id: 2,
-      facultyId: 'FAC-2023-002',
-      name: 'Dr. Jennifer Lee',
-      email: 'jennifer.lee@example.com',
-      phone: '+1 (555) 876-5432',
-      department: 'Data Science',
-      designation: 'Associate Professor',
-      joiningDate: '2022-01-10',
-      subjects: ['Machine Learning', 'Statistical Analysis'],
-      status: 'active',
-      qualification: 'Ph.D in Statistics',
-      experience: '8 years',
-      avatar: 'default-female'
-    },
-    {
-      id: 3,
-      facultyId: 'FAC-2023-003',
-      name: 'Prof. David Miller',
-      email: 'david.miller@example.com',
-      phone: '+1 (555) 765-4321',
-      department: 'Web Development',
-      designation: 'Assistant Professor',
-      joiningDate: '2022-03-20',
-      subjects: ['Front-end Development', 'UI/UX Design'],
-      status: 'inactive',
-      qualification: "Master's in Computer Applications",
-      experience: '6 years',
-      avatar: 'default-male'
-    },
-    {
-      id: 4,
-      facultyId: 'FAC-2023-004',
-      name: 'Dr. Maria Garcia',
-      email: 'maria.garcia@example.com',
-      phone: '+1 (555) 654-3210',
-      department: 'Database Management',
-      designation: 'Professor',
-      joiningDate: '2021-08-15',
-      subjects: ['SQL Advanced', 'NoSQL Databases'],
-      status: 'active',
-      qualification: 'Ph.D in Database Systems',
-      experience: '15 years',
-      avatar: 'default-female'
-    },
-    {
-      id: 5,
-      facultyId: 'FAC-2023-005',
-      name: 'Prof. James Wilson',
-      email: 'james.wilson@example.com',
-      phone: '+1 (555) 543-2109',
-      department: 'Cybersecurity',
-      designation: 'Associate Professor',
-      joiningDate: '2022-05-01',
-      subjects: ['Network Security', 'Ethical Hacking'],
-      status: 'active',
-      qualification: 'Ph.D in Cybersecurity',
-      experience: '10 years',
-      avatar: 'default-male'
+  useEffect(() => {
+    fetchFaculties();
+  }, []);
+
+  const fetchFaculties = async () => {
+    try {
+      const res = await getAllFaculties();
+      setFaculties(res.data);
+    } catch (err) {
+      console.error('Error fetching faculties:', err);
     }
-  ]);
-
-  // Handle adding a new faculty
-  const handleAddFaculty = (faculty) => {
-    const newId = faculties.length > 0 ? Math.max(...faculties.map(f => f.id)) + 1 : 1;
-    const newFacultyId = `FAC-${new Date().getFullYear()}-${String(newId).padStart(3, '0')}`;
-    
-    const newFaculty = {
-      id: newId,
-      facultyId: newFacultyId,
-      ...faculty,
-      joiningDate: faculty.joiningDate || new Date().toISOString().split('T')[0]
-    };
-    
-    setFaculties([...faculties, newFaculty]);
-    setShowAddModal(false);
   };
 
-  // Handle editing a faculty
-  const handleEditFaculty = (updatedFaculty) => {
-    setFaculties(faculties.map(faculty => 
-      faculty.id === updatedFaculty.id ? updatedFaculty : faculty
-    ));
-    setShowEditModal(false);
+  const handleAddFaculty = async (faculty) => {
+    if (!faculty) return;
+    try {
+      const newFacultyId = `FAC-${new Date().getFullYear()}-${String(Date.now()).slice(-3)}`;
+      const res = await createFaculty({ ...faculty, facultyId: newFacultyId });
+      setFaculties((prev) => [...prev, res.data]);
+      setShowAddModal(false);
+    } catch (err) {
+      console.error('Error adding faculty:', err);
+    }
   };
 
-  // Handle deleting a faculty
-  const handleDeleteFaculty = () => {
-    setFaculties(faculties.filter(faculty => faculty.id !== currentFaculty.id));
-    setShowDeleteModal(false);
+  const handleEditFaculty = async (updatedFaculty) => {
+    try {
+      const res = await updateFaculty(updatedFaculty.id, updatedFaculty);
+      setFaculties((prev) => prev.map((f) => (f.id === updatedFaculty.id ? res.data : f)));
+      setShowEditModal(false);
+    } catch (err) {
+      console.error('Error updating faculty:', err);
+    }
   };
 
-  // Filter faculties based on search term and department filter
+  const handleDeleteFaculty = async () => {
+    try {
+      await deleteFaculty(currentFaculty.id);
+      setFaculties((prev) => prev.filter((f) => f.id !== currentFaculty.id));
+      setShowDeleteModal(false);
+    } catch (err) {
+      console.error('Error deleting faculty:', err);
+    }
+  };
+
   const filteredFaculties = useMemo(() => {
-    return faculties.filter(faculty => {
-      const matchesSearch = 
+    return faculties.filter((faculty) => {
+      const matchesSearch =
         faculty.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         faculty.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         faculty.facultyId.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesFilter = 
-        filter === 'all' || 
+
+      const matchesFilter =
+        filter === 'all' ||
         (filter === 'active' && faculty.status === 'active') ||
         (filter === 'inactive' && faculty.status === 'inactive') ||
         filter === faculty.department;
-      
+
       return matchesSearch && matchesFilter;
     });
   }, [faculties, searchTerm, filter]);
 
-  // Get unique departments for filter dropdown
   const departments = useMemo(() => {
-    return [...new Set(faculties.map(faculty => faculty.department))];
+    return [...new Set(faculties.map((f) => f.department))];
   }, [faculties]);
 
   return (
@@ -175,7 +112,7 @@ const FacultyManagement = () => {
                 <InputGroup.Text className="bg-light border-0">
                   <FaFilter className="text-muted" />
                 </InputGroup.Text>
-                <Form.Select 
+                <Form.Select
                   className="border-0 bg-light"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
@@ -184,7 +121,7 @@ const FacultyManagement = () => {
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                   <option disabled>─────────────</option>
-                  {departments.map(dept => (
+                  {departments.map((dept) => (
                     <option key={dept} value={dept}>{dept}</option>
                   ))}
                 </Form.Select>
@@ -204,8 +141,8 @@ const FacultyManagement = () => {
 
       <Tabs defaultActiveKey="allFaculties" className="mb-4">
         <Tab eventKey="allFaculties" title="All Faculty">
-          <FacultyTable 
-            faculties={filteredFaculties} 
+          <FacultyTable
+            faculty={filteredFaculties}
             onEdit={(faculty) => {
               setCurrentFaculty(faculty);
               setShowEditModal(true);
@@ -217,8 +154,8 @@ const FacultyManagement = () => {
           />
         </Tab>
         <Tab eventKey="active" title="Active Faculty">
-          <FacultyTable 
-            faculties={filteredFaculties.filter(f => f.status === 'active')} 
+          <FacultyTable
+            faculty={filteredFaculties.filter((f) => f.status === 'active')}
             onEdit={(faculty) => {
               setCurrentFaculty(faculty);
               setShowEditModal(true);
@@ -230,8 +167,8 @@ const FacultyManagement = () => {
           />
         </Tab>
         <Tab eventKey="inactive" title="Inactive Faculty">
-          <FacultyTable 
-            faculties={filteredFaculties.filter(f => f.status === 'inactive')} 
+          <FacultyTable
+            faculty={filteredFaculties.filter((f) => f.status === 'inactive')}
             onEdit={(faculty) => {
               setCurrentFaculty(faculty);
               setShowEditModal(true);
@@ -244,13 +181,7 @@ const FacultyManagement = () => {
         </Tab>
       </Tabs>
 
-      {/* Add Faculty Modal */}
-      <Modal
-        show={showAddModal}
-        onHide={() => setShowAddModal(false)}
-        size="lg"
-        centered
-      >
+      <Modal show={showAddModal} onHide={() => setShowAddModal(false)} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Add New Faculty</Modal.Title>
         </Modal.Header>
@@ -259,48 +190,29 @@ const FacultyManagement = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Edit Faculty Modal */}
-      <Modal
-        show={showEditModal}
-        onHide={() => setShowEditModal(false)}
-        size="lg"
-        centered
-      >
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Edit Faculty</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {currentFaculty && (
-            <FacultyForm faculty={currentFaculty} onSubmit={handleEditFaculty} />
-          )}
+          {currentFaculty && <FacultyForm faculty={currentFaculty} onSubmit={handleEditFaculty} />}
         </Modal.Body>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
-      <Modal
-        show={showDeleteModal}
-        onHide={() => setShowDeleteModal(false)}
-        centered
-      >
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {currentFaculty && (
-            <p>Are you sure you want to delete <strong>{currentFaculty.name}</strong>? This action cannot be undone.</p>
-          )}
+          {currentFaculty && <p>Are you sure you want to delete <strong>{currentFaculty.name}</strong>?</p>}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDeleteFaculty}>
-            Delete
-          </Button>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+          <Button variant="danger" onClick={handleDeleteFaculty}>Delete</Button>
         </Modal.Footer>
       </Modal>
     </div>
   );
 };
 
-export default FacultyManagement; 
+export default FacultyManagement;
