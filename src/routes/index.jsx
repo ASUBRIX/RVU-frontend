@@ -123,6 +123,7 @@ const FacultyManagement = lazy(() => import('@/app/admin/faculty-management/page
 const BlogManagement = lazy(() => import('@/app/admin/blog-management/page'))
 const EnquiriesPage = lazy(() => import('@/app/admin/enquiries/page'))
 const AnnouncementPage = lazy(()=>import("@/app/admin/announcement-management/page"))
+const CurrentAffairsPage = lazy(()=>import("@/app/admin/current-affairs/page"))
 
 // Add this import for Reports & Analytics
 const ReportsPage = lazy(() => import('@/app/admin/reports/page'))
@@ -658,6 +659,12 @@ export const adminRoutes = [
     path: '/admin/faculty-management',
     name: 'Faculty Management',
     element: <FacultyManagement />,
+  },
+  {
+    path:'/admin/current-affairs',
+    name:'Current Affairs',
+    element:<CurrentAffairsPage />
+
   },
   {
     path: '/admin/chat',

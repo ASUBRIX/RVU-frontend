@@ -821,7 +821,13 @@ export const ADMIN_MENU_ITEMS = [{
   label: 'Announcements',
   icon: FaMicroblog,
   url: '/admin/announcements'
-}, {
+},{
+  key:'current-affairs',
+  label:"Current Affairs",
+  icon:FaMicroblog,
+  url:"/admin/current-affairs"
+},
+{
   key: 'chat',
   label: 'Chat Section',
   icon: FaRegCommentDots,
