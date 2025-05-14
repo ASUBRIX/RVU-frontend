@@ -19,6 +19,8 @@ import clientUnitLogo1 from '@/assets/images/client/uni-logo-01.svg';
 import clientUnitLogo2 from '@/assets/images/client/uni-logo-02.svg';
 import clientUnitLogo3 from '@/assets/images/client/uni-logo-03.svg';
 import clientUnitLogo4 from '@/assets/images/client/uni-logo-04.svg';
+import clientUnitLogo5 from '@/assets/images/client/uni-logo-04.svg';
+
 import { FcGoogle } from 'react-icons/fc';
 export const CATEGORY_MENU_ITEMS = [{
   key: 'category',
@@ -813,6 +815,12 @@ export const ADMIN_MENU_ITEMS = [{
   label: 'Blog Management',
   icon: FaMicroblog,
   url: '/admin/blog-management'
+},
+  {
+  key: 'announcement-management',
+  label: 'Announcements',
+  icon: FaMicroblog,
+  url: '/admin/announcements'
 }, {
   key: 'chat',
   label: 'Chat Section',
@@ -837,5 +845,6 @@ export const ADMIN_MENU_ITEMS = [{
     label: 'Payment Reports',
     url: '/admin/reports/payments',
     parentKey: 'reports'
-  }]
+  },
+]
 }];

@@ -122,6 +122,7 @@ const StudentManagement = lazy(() => import('@/app/admin/student-management/page
 const FacultyManagement = lazy(() => import('@/app/admin/faculty-management/page'))
 const BlogManagement = lazy(() => import('@/app/admin/blog-management/page'))
 const EnquiriesPage = lazy(() => import('@/app/admin/enquiries/page'))
+const AnnouncementPage = lazy(()=>import("@/app/admin/announcement-management/page"))
 
 // Add this import for Reports & Analytics
 const ReportsPage = lazy(() => import('@/app/admin/reports/page'))
@@ -673,5 +674,11 @@ export const adminRoutes = [
     name: 'Reports & Analytics',
     element: <ReportsPage />,
   },
+
+  {
+    path:'/admin/announcements',
+    name:"Announcements",
+    element: <AnnouncementPage />
+  }
 ]
 export const appRoutes = [...initialRoutes, ...demosRoutes, ...otherRoutes, ...pagesRoutes, ...helpRoutes]
