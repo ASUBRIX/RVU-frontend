@@ -1,25 +1,46 @@
-import { Form } from 'react-bootstrap'
-import { courseCategories } from '@/assets/data/products'
-import { BiCategory } from 'react-icons/bi'
-import { MdOutlineCategory } from 'react-icons/md'
-import { HiOutlineStatusOnline } from 'react-icons/hi'
+// === Updated CourseFilters.jsx ===
+import { useEffect, useState } from 'react';
+import { Form, Spinner } from 'react-bootstrap';
+import { BiCategory } from 'react-icons/bi';
+import { MdOutlineCategory } from 'react-icons/md';
+import { HiOutlineStatusOnline } from 'react-icons/hi';
+import { FiX } from 'react-icons/fi';
+import { getCourseCategories } from '../../../../helpers/courseApi';
 
 const featureOptions = [
   { value: 'live', label: 'Live Class' },
   { value: 'test', label: 'Tests' },
   { value: 'free', label: 'Free Content' },
   { value: 'videos', label: 'Videos' },
-]
+];
 
 const CourseFilters = ({ filters, setFilters }) => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const handleFilterChange = (field, value) => {
     setFilters((prev) => ({
       ...prev,
       [field]: value,
-    }))
-  }
+    }));
+  };
 
-  const hasActiveFilters = Object.values(filters).some((value) => value !== '')
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const res = await getCourseCategories();
+        setCategories(res.data);
+      } catch (err) {
+        console.error('Failed to load categories', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const hasActiveFilters = Object.values(filters).some((value) => value !== '');
 
   return (
     <div className="filter-group">
@@ -34,7 +55,8 @@ const CourseFilters = ({ filters, setFilters }) => {
                   subCategory: '',
                   status: '',
                 })
-              }>
+              }
+            >
               Clear all
               <FiX className="ms-1" size={16} />
             </button>
@@ -48,18 +70,23 @@ const CourseFilters = ({ filters, setFilters }) => {
           <BiCategory className="text-muted me-2" size={18} />
           <label className="form-label mb-0 text-muted small">Categories</label>
         </div>
-        <Form.Select
-          value={filters.category}
-          onChange={(e) => handleFilterChange('category', e.target.value)}
-          className="form-select border-0 bg-light rounded-3 shadow-none"
-          size="sm">
-          <option value="">All Categories</option>
-          {courseCategories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.title}
-            </option>
-          ))}
-        </Form.Select>
+        {loading ? (
+          <Spinner animation="border" size="sm" />
+        ) : (
+          <Form.Select
+            value={filters.category}
+            onChange={(e) => handleFilterChange('category', e.target.value)}
+            className="form-select border-0 bg-light rounded-3 shadow-none"
+            size="sm"
+          >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.title}>
+                {category.title}
+              </option>
+            ))}
+          </Form.Select>
+        )}
       </div>
 
       {/* Sub Categories */}
@@ -73,9 +100,10 @@ const CourseFilters = ({ filters, setFilters }) => {
           onChange={(e) => handleFilterChange('subCategory', e.target.value)}
           className="form-select border-0 bg-light rounded-3 shadow-none"
           size="sm"
-          disabled={!filters.category}>
+          disabled={!filters.category}
+        >
           <option value="">All Sub Categories</option>
-          {/* Add sub-categories based on selected category */}
+          {/* Future: load dynamically based on selected category */}
         </Form.Select>
       </div>
 
@@ -113,21 +141,24 @@ const CourseFilters = ({ filters, setFilters }) => {
           </div>
           <div className="d-flex flex-wrap gap-2">
             {Object.entries(filters).map(([key, value]) => {
-              if (!value) return null
+              if (!value) return null;
               return (
                 <span key={key} className="badge bg-primary bg-opacity-10 text-primary rounded-pill">
                   {value}
-                  <button className="btn btn-link btn-sm text-primary p-0 ms-2" onClick={() => handleFilterChange(key, '')}>
+                  <button
+                    className="btn btn-link btn-sm text-primary p-0 ms-2"
+                    onClick={() => handleFilterChange(key, '')}
+                  >
                     <FiX size={14} />
                   </button>
                 </span>
-              )
+              );
             })}
           </div>
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CourseFilters
+export default CourseFilters;

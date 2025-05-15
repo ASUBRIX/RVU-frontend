@@ -1,33 +1,52 @@
-import avatar5 from '@/assets/images/avatar/05.jpg';
-import courses1 from '@/assets/images/courses/4by3/01.jpg';
+// === Updated MarketingCourse.jsx ===
+import { useEffect, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Row } from 'react-bootstrap';
 import { FaStar } from 'react-icons/fa';
+import { getCourseById } from '@/api/course';
+import { useParams } from 'react-router-dom';
+
 const MarketingCourse = () => {
-  return <Col xxl={6}>
+  const { id } = useParams();
+  const [course, setCourse] = useState(null);
+
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const res = await getCourseById(id);
+        setCourse(res.data);
+      } catch (err) {
+        console.error('Failed to load course data:', err);
+      }
+    };
+
+    fetchCourse();
+  }, [id]);
+
+  if (!course) return null;
+
+  return (
+    <Col xxl={6}>
       <Card className="bg-transparent border rounded-3 h-100">
         <CardHeader className="bg-light border-bottom">
-          <h5 className="card-header-title">The Complete Digital Marketing Course - 12 Courses in 1</h5>
+          <h5 className="card-header-title">{course.title}</h5>
         </CardHeader>
         <CardBody>
           <Row className="g-4">
             <Col md={6}>
-              <img src={courses1} className="rounded" alt="courses" />
+              <img src={course.thumbnail} className="rounded" alt="course thumbnail" />
             </Col>
             <Col md={6}>
-              <p className="mb-3">
-                Satisfied conveying a dependent contented he gentleman agreeable do be. Warrant private blushes removed an in equally totally if.
-                Delivered dejection necessary objection do Mr prevailed. Mr feeling does chiefly cordial in do.
-              </p>
-              <h5 className="mb-3">$295.55</h5>
+              <p className="mb-3">{course.short_description}</p>
+              <h5 className="mb-3">₹{course.price}</h5>
               <div className="d-sm-flex align-items-center">
                 <div className="avatar avatar-md">
-                  <img className="avatar-img rounded-circle" src={avatar5} alt="avatar" />
+                  <img className="avatar-img rounded-circle" src={course.instructor?.avatar || ''} alt="instructor" />
                 </div>
                 <div className="ms-sm-3 mt-2 mt-sm-0">
                   <h6 className="mb-0">
-                    <a href="#">By Jacqueline Miller</a>
+                    <a href="#">By {course.instructor?.name}</a>
                   </h6>
-                  <p className="mb-0 small">Founder Eduport company</p>
+                  <p className="mb-0 small">Instructor</p>
                 </div>
               </div>
             </Col>
@@ -36,16 +55,16 @@ const MarketingCourse = () => {
             <Col md={6}>
               <ul className="list-group list-group-borderless">
                 <li className="list-group-item">
-                  <span>release date:</span>
-                  <span className="h6 mb-0">29 Aug 2020</span>
+                  <span>Release date:</span>
+                  <span className="h6 mb-0">{new Date(course.created_at).toLocaleDateString()}</span>
                 </li>
                 <li className="list-group-item">
                   <span>Total Hour:</span>
-                  <span className="h6 mb-0">4h 50m</span>
+                  <span className="h6 mb-0">{course.total_duration}</span>
                 </li>
                 <li className="list-group-item">
                   <span>Total Enrolled:</span>
-                  <span className="h6 mb-0">12,000+</span>
+                  <span className="h6 mb-0">{course.total_enrolled || 0}</span>
                 </li>
                 <li className="list-group-item">
                   <span>Certificate:</span>
@@ -57,20 +76,20 @@ const MarketingCourse = () => {
               <ul className="list-group list-group-borderless">
                 <li className="list-group-item">
                   <span>Skills:</span>
-                  <span className="h6 mb-0">All level</span>
+                  <span className="h6 mb-0">{course.level}</span>
                 </li>
                 <li className="list-group-item">
                   <span>Total Lecture:</span>
-                  <span className="h6 mb-0">30</span>
+                  <span className="h6 mb-0">{course.total_lectures}</span>
                 </li>
                 <li className="list-group-item">
                   <span>Language:</span>
-                  <span className="h6 mb-0">English</span>
+                  <span className="h6 mb-0">{course.language}</span>
                 </li>
                 <li className="list-group-item">
                   <span>Review:</span>
                   <span className="h6 mb-0">
-                    4.5
+                    {course.rating?.star || 0}
                     <FaStar className="text-warning ms-1" />
                   </span>
                 </li>
@@ -79,6 +98,8 @@ const MarketingCourse = () => {
           </Row>
         </CardBody>
       </Card>
-    </Col>;
+    </Col>
+  );
 };
+
 export default MarketingCourse;

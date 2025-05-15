@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Modal, Table } from 'react-bootstrap';
-import {
-  getCurrentAffairs,
-  createCurrentAffair,
-  updateCurrentAffair,
-  deleteCurrentAffair
-} from '../../../helpers/currentAffairsApi';
+import {getCurrentAffairs,createCurrentAffair,updateCurrentAffair,deleteCurrentAffair} from '../../../helpers/currentAffairsApi';
 
 const CurrentAffairsPage = () => {
   const [affairs, setAffairs] = useState([]);

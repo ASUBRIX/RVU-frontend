@@ -1,13 +1,14 @@
+// === Updated CourseSearch.jsx ===
 import { Form, InputGroup } from 'react-bootstrap';
 import { FiSearch } from 'react-icons/fi';
 
 const CourseSearch = ({ searchQuery, setSearchQuery }) => {
   return (
     <div className="search-input">
-      <div className="input-group">
-        <span className="input-group-text border-end-0">
+      <InputGroup>
+        <InputGroup.Text className="border-end-0">
           <FiSearch className="text-muted" />
-        </span>
+        </InputGroup.Text>
         <Form.Control
           type="text"
           placeholder="Search courses..."
@@ -15,9 +16,9 @@ const CourseSearch = ({ searchQuery, setSearchQuery }) => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border-start-0 ps-0 rounded-end"
         />
-      </div>
+      </InputGroup>
     </div>
   );
 };
 
-export default CourseSearch; 
+export default CourseSearch;

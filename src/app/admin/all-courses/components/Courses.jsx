@@ -1,19 +1,14 @@
-import { coursesData } from '@/assets/data/products';
-import ChoicesFormInput from '@/components/form/ChoicesFormInput';
-import { Button, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
+// === Updated Courses.jsx ===
+import { useEffect, useState } from 'react';
+import { Button, Card, CardBody, CardFooter, CardHeader, Col, Row, Spinner } from 'react-bootstrap';
 import { FaAngleLeft, FaAngleRight, FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-const CourseCard = ({
-  image,
-  title,
-  avatar,
-  name,
-  date,
-  price,
-  status,
-  badge
-}) => {
-  return <tr>
+import { getAllCourses } from '../../../../helpers/courseApi';
+import ChoicesFormInput from '@/components/form/ChoicesFormInput';
+
+const CourseCard = ({ image, title, avatar, name, date, price, status, badge }) => {
+  return (
+    <tr>
       <td>
         <div className="d-flex align-items-center position-relative">
           <div className="w-60px">
@@ -36,34 +31,48 @@ const CourseCard = ({
           </div>
         </div>
       </td>
-      <td>{date.toLocaleDateString()}</td>
+      <td>{new Date(date).toLocaleDateString()}</td>
       <td>
-
-        <span className={`badge text-bg-${badge.text === 'Beginner' ? 'primary' : badge.text === 'All level' ? 'orange' : 'purple'}`}>
-          {badge.text}
-        </span>
+        <span className={`badge text-bg-${badge === 'Beginner' ? 'primary' : badge === 'All level' ? 'orange' : 'purple'}`}>{badge}</span>
       </td>
       <td>{price}</td>
       <td>
-
-        <span className={`badge text-${status === 'pending' ? 'warning' : 'success'} bg-${status === 'pending' ? 'warning' : 'success'} bg-opacity-15 `}>
-          {status}
-        </span>
+        <span className={`badge text-${status === 'pending' ? 'warning' : 'success'} bg-${status === 'pending' ? 'warning' : 'success'} bg-opacity-15 `}>{status}</span>
       </td>
-      {status === 'pending' ? <td>
-          <Button variant="success-soft" size="sm" className="me-1 mb-1 mb-md-0">
-            Approve
-          </Button>
-          <button className="btn btn-sm btn-secondary-soft mb-0">Reject</button>
-        </td> : <td>
-          <Button variant="dark" size="sm" className="me-1 mb-1 mb-md-0">
-            Edit
-          </Button>
-        </td>}
-    </tr>;
+      <td>
+        {status === 'pending' ? (
+          <>
+            <Button variant="success-soft" size="sm" className="me-1 mb-1 mb-md-0">Approve</Button>
+            <button className="btn btn-sm btn-secondary-soft mb-0">Reject</button>
+          </>
+        ) : (
+          <Button variant="dark" size="sm" className="me-1 mb-1 mb-md-0">Edit</Button>
+        )}
+      </td>
+    </tr>
+  );
 };
+
 const Courses = () => {
-  return <Card className="bg-transparent border">
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await getAllCourses();
+        setCourses(res.data);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  return (
+    <Card className="bg-transparent border">
       <CardHeader className="bg-light border-bottom">
         <Row className="g-3 align-items-center justify-content-between">
           <Col md={8}>
@@ -88,73 +97,59 @@ const Courses = () => {
         </Row>
       </CardHeader>
       <CardBody>
-        <div className="table-responsive border-0 rounded-3">
-          <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
-            <thead>
-              <tr>
-                <th scope="col" className="border-0 rounded-start">
-                  Course Name
-                </th>
-                <th scope="col" className="border-0">
-                  Instructor
-                </th>
-                <th scope="col" className="border-0">
-                  Added Date
-                </th>
-                <th scope="col" className="border-0">
-                  Type
-                </th>
-                <th scope="col" className="border-0">
-                  Price
-                </th>
-                <th scope="col" className="border-0">
-                  Status
-                </th>
-                <th scope="col" className="border-0 rounded-end">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {coursesData.slice(0, 8).map((item, idx) => <CourseCard key={idx} {...item} />)}
-            </tbody>
-          </table>
-        </div>
+        {loading ? (
+          <div className="text-center py-5">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        ) : (
+          <div className="table-responsive border-0 rounded-3">
+            <table className="table table-dark-gray align-middle p-4 mb-0 table-hover">
+              <thead>
+                <tr>
+                  <th scope="col" className="border-0 rounded-start">Course Name</th>
+                  <th scope="col" className="border-0">Instructor</th>
+                  <th scope="col" className="border-0">Added Date</th>
+                  <th scope="col" className="border-0">Type</th>
+                  <th scope="col" className="border-0">Price</th>
+                  <th scope="col" className="border-0">Status</th>
+                  <th scope="col" className="border-0 rounded-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {courses.map((course, idx) => (
+                  <CourseCard
+                    key={idx}
+                    image={course.thumbnail}
+                    title={course.title}
+                    avatar={course.instructor_avatar || '/avatar/default.jpg'}
+                    name={course.instructor_name || 'Unknown'}
+                    date={course.created_at}
+                    price={`₹${course.price}`}
+                    status={course.review_status}
+                    badge={course.level}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </CardBody>
       <CardFooter className="bg-transparent pt-0">
         <div className="d-sm-flex justify-content-sm-between align-items-sm-center">
-          <p className="mb-0 text-center text-sm-start">Showing 1 to 8 of 20 entries</p>
+          <p className="mb-0 text-center text-sm-start">Showing 1 to {courses.length} of {courses.length} entries</p>
           <nav className="d-flex justify-content-center mb-0" aria-label="navigation">
             <ul className="pagination pagination-sm pagination-primary-soft d-inline-block d-md-flex rounded mb-0">
-              <li className="page-item mb-0">
-                <a className="page-link" href="#" tabIndex={-1}>
-                  <FaAngleLeft />
-                </a>
-              </li>
-              <li className="page-item mb-0">
-                <a className="page-link" href="#">
-                  1
-                </a>
-              </li>
-              <li className="page-item mb-0 active">
-                <a className="page-link" href="#">
-                  2
-                </a>
-              </li>
-              <li className="page-item mb-0">
-                <a className="page-link" href="#">
-                  3
-                </a>
-              </li>
-              <li className="page-item mb-0">
-                <a className="page-link" href="#">
-                  <FaAngleRight />
-                </a>
-              </li>
+              <li className="page-item mb-0"><a className="page-link" href="#" tabIndex={-1}><FaAngleLeft /></a></li>
+              <li className="page-item mb-0"><a className="page-link" href="#">1</a></li>
+              <li className="page-item mb-0 active"><a className="page-link" href="#">2</a></li>
+              <li className="page-item mb-0"><a className="page-link" href="#">3</a></li>
+              <li className="page-item mb-0"><a className="page-link" href="#"><FaAngleRight /></a></li>
             </ul>
           </nav>
         </div>
       </CardFooter>
-    </Card>;
+    </Card>
+  );
 };
+
 export default Courses;

@@ -1,27 +1,34 @@
-import { Card, Col, Row, Badge } from 'react-bootstrap';
-import { coursesData } from '@/assets/data/products';
-import { FaClock, FaUserGraduate, FaStar } from 'react-icons/fa';
+// === Updated CourseGrid.jsx ===
+import { useEffect, useState } from 'react';
+import { Card, Col, Row, Badge, Spinner } from 'react-bootstrap';
+import { FaStar } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { getAllCourses } from '../../../../helpers/courseApi';
 
 const CourseGrid = ({ searchQuery, sortBy, filters }) => {
-  // Filter and sort courses
-  const filteredCourses = coursesData
-    .filter(course => {
-      // Search filter
-      if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase())) {
-        return false;
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllCourses();
+        setCourses(response.data);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      } finally {
+        setLoading(false);
       }
-      
-      // Category filter
-      if (filters.category && course.category !== filters.category) {
-        return false;
-      }
-      
-      // Status filter
-      if (filters.status && course.status !== filters.status) {
-        return false;
-      }
-      
+    };
+    fetchCourses();
+  }, []);
+
+  const filteredCourses = courses
+    .filter((course) => {
+      if (searchQuery && !course.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (filters.category && course.category !== filters.category) return false;
+      if (filters.status && course.status !== filters.status) return false;
       return true;
     })
     .sort((a, b) => {
@@ -35,65 +42,53 @@ const CourseGrid = ({ searchQuery, sortBy, filters }) => {
         case 'top_selling':
           return b.enrolled - a.enrolled;
         case 'most_popular':
-          return b.rating.review - a.rating.review;
+          return b.review_count - a.review_count;
         case 'newest':
         default:
-          return new Date(b.date) - new Date(a.date);
+          return new Date(b.created_at) - new Date(a.created_at);
       }
     });
+
+  if (loading) {
+    return <div className="text-center py-5"><Spinner animation="border" variant="primary" /></div>;
+  }
 
   return (
     <Row className="g-4">
       {filteredCourses.map((course) => (
         <Col sm={6} lg={6} xl={4} key={course.id}>
-          <Link 
-            to={`/admin/edit-course/${course.id}`} 
-            className="text-decoration-none"
-          >
+          <Link to={`/admin/edit-course/${course.id}`} className="text-decoration-none">
             <Card className="h-100 shadow-sm hover-shadow transition-all border-0">
               <div className="position-relative">
-                <div 
+                <div
                   className="card-img-top"
                   style={{
                     height: '160px',
-                    backgroundImage: `url(${course.image})`,
+                    backgroundImage: `url(${course.thumbnail})`,
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundPosition: 'center',
                   }}
                 />
-                <Badge 
-                  bg={course.status === 'Live' ? 'success' : 'warning'} 
+                <Badge
+                  bg={course.visibility_status === 'published' ? 'success' : 'warning'}
                   className="position-absolute top-0 end-0 m-2"
                 >
-                  {course.status}
+                  {course.visibility_status}
                 </Badge>
               </div>
               <Card.Body className="p-3">
-                <Badge 
+                <Badge
                   bg="light"
                   className="text-dark px-2 py-1 rounded-pill fw-normal mb-2"
                 >
-                  {course.category}
+                  {course.category || 'General'}
                 </Badge>
-                
-                <h5 className="card-title mb-2 text-dark">
-                  {course.title}
-                </h5>
-                
+                <h5 className="card-title mb-2 text-dark">{course.title}</h5>
                 <div className="d-flex justify-content-between align-items-center">
-                  <div className="d-flex align-items-center">
-                    <h4 className="mb-0 text-success fw-bold">
-                      ₹{course.price}
-                    </h4>
-                    {course.originalPrice && (
-                      <span className="text-muted text-decoration-line-through ms-2">
-                        ₹{course.originalPrice}
-                      </span>
-                    )}
-                  </div>
+                  <h4 className="mb-0 text-success fw-bold">₹{course.price}</h4>
                   <div className="d-flex align-items-center small">
                     <FaStar className="text-warning me-1" />
-                    <span className="text-warning fw-bold">{course.rating.star}</span>
+                    <span className="text-warning fw-bold">{course.rating || '4.0'}</span>
                   </div>
                 </div>
               </Card.Body>
@@ -101,7 +96,6 @@ const CourseGrid = ({ searchQuery, sortBy, filters }) => {
           </Link>
         </Col>
       ))}
-      
       {filteredCourses.length === 0 && (
         <Col xs={12}>
           <div className="text-center py-5">
@@ -117,4 +111,4 @@ const CourseGrid = ({ searchQuery, sortBy, filters }) => {
   );
 };
 
-export default CourseGrid; 
+export default CourseGrid;

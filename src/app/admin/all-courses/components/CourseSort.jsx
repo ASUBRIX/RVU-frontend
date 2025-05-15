@@ -1,7 +1,9 @@
+// === Updated CourseSort.jsx ===
 import { Form } from 'react-bootstrap';
 
 const sortOptions = [
   { value: 'newest', label: 'Newest' },
+  { value: 'oldest', label: 'Oldest' },
   { value: 'name', label: 'Course Name' },
   { value: 'price_low_high', label: 'Price (Low to High)' },
   { value: 'price_high_low', label: 'Price (High to Low)' },
@@ -14,7 +16,8 @@ const CourseSort = ({ sortBy, setSortBy }) => {
     <Form.Select
       value={sortBy}
       onChange={(e) => setSortBy(e.target.value)}
-      className="form-select"
+      className="form-select border-0 bg-light shadow-none"
+      size="sm"
     >
       {sortOptions.map((option) => (
         <option key={option.value} value={option.value}>
@@ -25,4 +28,4 @@ const CourseSort = ({ sortBy, setSortBy }) => {
   );
 };
 
-export default CourseSort; 
+export default CourseSort;

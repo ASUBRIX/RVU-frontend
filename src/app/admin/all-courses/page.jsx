@@ -1,27 +1,39 @@
-/**
- * SCSS file: src/assets/scss/components/admin/courses.scss
- */
+// === Updated AllCourses.jsx ===
+import PageMetaData from '@/components/PageMetaData';
+import { Container } from 'react-bootstrap';
+import CourseGrid from './components/CourseGrid';
+import CourseFilters from './components/CourseFilters';
+import CourseSearch from './components/CourseSearch';
+import CourseSort from './components/CourseSort';
+import { useState, useEffect } from 'react';
+import { FaPlus } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+import { getAllCourses } from '../../../helpers/courseApi';
 
-import PageMetaData from '@/components/PageMetaData'
-import { Container } from 'react-bootstrap'
-import CourseGrid from './components/CourseGrid'
-import CourseFilters from './components/CourseFilters'
-import CourseSearch from './components/CourseSearch'
-import CourseSort from './components/CourseSort'
-import { useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
-import { Button } from 'react-bootstrap'
 const AllCourses = () => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [sortBy, setSortBy] = useState('newest')
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
   const [filters, setFilters] = useState({
     category: '',
     subCategory: '',
     status: '',
-  })
+  });
+  const [courses, setCourses] = useState([]);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await getCourses();
+        setCourses(res.data);
+      } catch (error) {
+        console.error('Failed to fetch courses:', error);
+      }
+    };
+    fetchCourses();
+  }, []);
 
   return (
     <>
@@ -57,7 +69,7 @@ const AllCourses = () => {
             <div className="col-md-8">
               <CourseSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
             </div>
-            
+
             <div className="col-md-4">
               <div className="d-flex align-items-center justify-content-end">
                 <label className="me-2 text-nowrap fw-medium">Sort by:</label>
@@ -90,14 +102,20 @@ const AllCourses = () => {
               </div>
 
               <div className="card-body p-4">
-                <CourseGrid searchQuery={searchQuery} sortBy={sortBy} filters={filters} />
+                <CourseGrid
+                  searchQuery={searchQuery}
+                  sortBy={sortBy}
+                  filters={filters}
+                  courses={courses}
+                />
               </div>
             </div>
           </div>
         </div>
       </Container>
     </>
-  )
-}
+  );
+};
 
-export default AllCourses
+export default AllCourses;
+
