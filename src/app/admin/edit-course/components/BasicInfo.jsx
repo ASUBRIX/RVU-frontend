@@ -1,4 +1,3 @@
-// === Updated MarketingCourse.jsx ===
 import { Form, Button, Modal, Dropdown } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { getCourseCategories, createCategoryWithSubcategories } from '../../../../helpers/courseApi';
@@ -31,16 +30,16 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
   }, []);
 
   const handleCategoryChange = (e) => {
-    const value = e.target.value;
+    const value = e.target.value.toString(); // cast to string
     setSelectedCategories((prev) =>
       prev.includes(value) ? prev.filter((cat) => cat !== value) : [...prev, value]
     );
   };
 
   const handleSubcategoryChange = (e) => {
-    const value = e.target.value;
+    const value = e.target.value.toString(); // cast to string
     setSelectedSubcategories((prev) =>
-      prev.includes(value) ? prev.filter((subcat) => subcat !== value) : [...prev, value]
+      prev.includes(value) ? prev.filter((sub) => sub !== value) : [...prev, value]
     );
   };
 
@@ -76,12 +75,17 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
   };
 
   const toggleAddSubcategory = () => setIsAddingSubcategory(!isAddingSubcategory);
-  const handleAddSubcategoryField = () => setNewSubcategories([...newSubcategories, '']);
+
+  const handleAddSubcategoryField = () => {
+    setNewSubcategories([...newSubcategories, '']);
+  };
+
   const handleRemoveSubcategoryField = (index) => {
     const updated = [...newSubcategories];
     updated.splice(index, 1);
     setNewSubcategories(updated);
   };
+
   const handleSubcategoryInputChange = (index, value) => {
     const updated = [...newSubcategories];
     updated[index] = value;
@@ -91,7 +95,6 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
   return (
     <div>
       <h4 className="mb-4">Basic Information</h4>
-
       <Form>
         <Form.Group className="mb-4">
           <Form.Label className="fw-medium">Course Name</Form.Label>
@@ -111,7 +114,11 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
 
         <Form.Group className="mb-4">
           <Form.Label className="fw-medium">Course Thumbnail</Form.Label>
-          <div className={`upload-box bg-light rounded-3 p-4 text-center ${thumbnail ? 'has-image' : ''}`} style={{ border: '2px dashed #dee2e6', cursor: 'pointer' }} onClick={() => document.getElementById('thumbnail-input').click()}>
+          <div
+            className={`upload-box bg-light rounded-3 p-4 text-center ${thumbnail ? 'has-image' : ''}`}
+            style={{ border: '2px dashed #dee2e6', cursor: 'pointer' }}
+            onClick={() => document.getElementById('thumbnail-input').click()}
+          >
             {thumbnail ? (
               <img src={thumbnail} alt="Thumbnail Preview" className="img-fluid rounded-3" style={{ maxHeight: '200px' }} />
             ) : (
@@ -128,11 +135,15 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
         <Form.Group className="mb-4">
           <div className="d-flex justify-content-between align-items-center mb-2">
             <Form.Label className="fw-medium mb-0">Categories</Form.Label>
-            <Button variant="outline-primary" size="sm" onClick={() => {
-              setNewCategory('');
-              setNewSubcategories(['']);
-              setShowNewCategoryModal(true);
-            }}>
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => {
+                setNewCategory('');
+                setNewSubcategories(['']);
+                setShowNewCategoryModal(true);
+              }}
+            >
               Create New Category
             </Button>
           </div>
@@ -140,7 +151,12 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
             {categoriesData.map((category) => (
               <div key={category.id} className="mb-2">
                 <div className="d-flex align-items-center mb-2">
-                  <Button variant="link" className="p-0 text-dark me-2" onClick={() => toggleCategoryExpand(category.id)} style={{ textDecoration: 'none' }}>
+                  <Button
+                    variant="link"
+                    className="p-0 text-dark me-2"
+                    onClick={() => toggleCategoryExpand(category.id)}
+                    style={{ textDecoration: 'none' }}
+                  >
                     {expandedCategories.includes(category.id) ? <FaChevronDown size={14} /> : <FaChevronRight size={14} />}
                   </Button>
                   <div className="form-check mb-0">
@@ -149,10 +165,12 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
                       className="form-check-input"
                       id={`category-${category.id}`}
                       value={category.id}
-                      checked={selectedCategories.includes(category.id)}
+                      checked={selectedCategories.includes(category.id.toString())}
                       onChange={handleCategoryChange}
                     />
-                    <label className="form-check-label fw-medium" htmlFor={`category-${category.id}`}>{category.title}</label>
+                    <label className="form-check-label fw-medium" htmlFor={`category-${category.id}`}>
+                      {category.title}
+                    </label>
                   </div>
                 </div>
                 {expandedCategories.includes(category.id) && category.subcategories && (
@@ -164,10 +182,12 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
                           className="form-check-input"
                           id={`subcategory-${sub.id}`}
                           value={sub.id}
-                          checked={selectedSubcategories.includes(sub.id)}
+                          checked={selectedSubcategories.includes(sub.id.toString())}
                           onChange={handleSubcategoryChange}
                         />
-                        <label className="form-check-label" htmlFor={`subcategory-${sub.id}`}>{sub.title}</label>
+                        <label className="form-check-label" htmlFor={`subcategory-${sub.id}`}>
+                          {sub.title}
+                        </label>
                       </div>
                     ))}
                   </div>
@@ -211,7 +231,12 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
                         className="bg-light border-0 me-2"
                       />
                       {newSubcategories.length > 1 && (
-                        <Button variant="outline-danger" size="sm" onClick={() => handleRemoveSubcategoryField(index)} className="p-1">
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleRemoveSubcategoryField(index)}
+                          className="p-1"
+                        >
                           <FaTrash size={14} />
                         </Button>
                       )}
@@ -258,7 +283,12 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
                         className="bg-light border-0 me-2"
                       />
                       {newSubcategories.length > 1 && (
-                        <Button variant="outline-danger" size="sm" onClick={() => handleRemoveSubcategoryField(index)} className="p-1">
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleRemoveSubcategoryField(index)}
+                          className="p-1"
+                        >
                           <FaTrash size={14} />
                         </Button>
                       )}
@@ -275,7 +305,15 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="light" onClick={() => setShowNewCategoryModal(false)}>Cancel</Button>
-            <Button variant="primary" onClick={handleNewCategory} disabled={isAddingSubcategory ? !parentCategory || newSubcategories.some((sub) => !sub.trim()) : !newCategory || newSubcategories.some((sub) => !sub.trim())}>
+            <Button
+              variant="primary"
+              onClick={handleNewCategory}
+              disabled={
+                isAddingSubcategory
+                  ? !parentCategory || newSubcategories.some((sub) => !sub.trim())
+                  : !newCategory || newSubcategories.some((sub) => !sub.trim())
+              }
+            >
               {isAddingSubcategory ? 'Add Subcategories' : 'Create Category'}
             </Button>
           </Modal.Footer>
@@ -284,15 +322,27 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
         <div className="d-flex justify-content-between mt-4">
           <Button variant="light" className="px-4 border-theme-secondary text-theme-secondary" disabled>Previous</Button>
           <div className="d-flex gap-3">
-            <Button variant="light" className="px-4 border-theme-secondary text-theme-secondary" onClick={() => {
-              if (window.confirm('Are you sure you want to cancel? Unsaved changes will be lost.')) {
-                navigate('/admin/all-courses');
-              }
-            }}>Cancel</Button>
-            <Button variant="light" className="px-4 bg-theme-secondary text-white" onClick={() => {
-              setProgress(45);
-              setActiveStep(2);
-            }}>Next</Button>
+            <Button
+              variant="light"
+              className="px-4 border-theme-secondary text-theme-secondary"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to cancel? Unsaved changes will be lost.')) {
+                  navigate('/admin/all-courses');
+                }
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="light"
+              className="px-4 bg-theme-secondary text-white"
+              onClick={() => {
+                setProgress(45);
+                setActiveStep(2);
+              }}
+            >
+              Next
+            </Button>
           </div>
         </div>
       </Form>
@@ -301,4 +351,5 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
 };
 
 export default BasicInfo;
+
 
