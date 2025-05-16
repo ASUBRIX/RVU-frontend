@@ -22,7 +22,7 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd Learning-Application-Web
+            cd Learning-Application-Web-Dev
 
             echo "Pulling latest code..."
             git pull origin development
