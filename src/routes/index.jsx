@@ -596,7 +596,7 @@ export const adminRoutes = [
     element: <BlogManagement />,
   },
   {
-    path: '/admin/edit-course',
+    path: '/admin/edit-course/:id',
     name: 'Create Course',
     element: <EditCourse />,
   },

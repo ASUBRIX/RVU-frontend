@@ -26,7 +26,7 @@ const AllCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await getCourses();
+        const res = await getAllCourses();
         setCourses(res.data);
       } catch (error) {
         console.error('Failed to fetch courses:', error);
@@ -34,6 +34,10 @@ const AllCourses = () => {
     };
     fetchCourses();
   }, []);
+
+  const handleCreateNewCourse = () => {
+    navigate('/admin/edit-course/new');
+  };
 
   return (
     <>
@@ -58,7 +62,7 @@ const AllCourses = () => {
                 </ol>
               </nav>
             </div>
-            <Button className="btn-add-content d-flex align-items-center" onClick={() => navigate('/admin/edit-course')}>
+            <Button className="btn-add-content d-flex align-items-center" onClick={handleCreateNewCourse}>
               <FaPlus className="me-2" />
               Create New Course
             </Button>
@@ -118,4 +122,3 @@ const AllCourses = () => {
 };
 
 export default AllCourses;
-

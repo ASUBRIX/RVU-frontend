@@ -1,12 +1,7 @@
 import { Form, Button, Card } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  getPricingPlans,
-  createPricingPlan,
-  updatePricingPlan,
-  deletePricingPlan
-} from '../../../../helpers/pricingPlansApi';
+import {getPricingPlans,createPricingPlan,updatePricingPlan,deletePricingPlan} from '../../../../helpers/pricingPlansApi';
 
 const PricingPlans = ({ setActiveStep, setProgress }) => {
   const { courseId } = useParams();

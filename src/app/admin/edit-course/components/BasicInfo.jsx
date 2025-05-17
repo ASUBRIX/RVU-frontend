@@ -30,7 +30,7 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
   }, []);
 
   const handleCategoryChange = (e) => {
-    const value = e.target.value.toString(); // cast to string
+    const value = e.target.value.toString(); 
     setSelectedCategories((prev) =>
       prev.includes(value) ? prev.filter((cat) => cat !== value) : [...prev, value]
     );
