@@ -828,6 +828,13 @@ export const ADMIN_MENU_ITEMS = [{
   url:"/admin/current-affairs"
 },
 {
+  key:'coupons',
+  label:'coupon-management',
+  icon:FaMicroblog,
+  url:"/admin/coupons"
+
+},
+{
   key: 'chat',
   label: 'Chat Section',
   icon: FaRegCommentDots,

@@ -124,6 +124,7 @@ const BlogManagement = lazy(() => import('@/app/admin/blog-management/page'))
 const EnquiriesPage = lazy(() => import('@/app/admin/enquiries/page'))
 const AnnouncementPage = lazy(()=>import("@/app/admin/announcement-management/page"))
 const CurrentAffairsPage = lazy(()=>import("@/app/admin/current-affairs/page"))
+const CouponManagement = lazy(()=>import("@/app/admin/coupon-management/page"));
 
 // Add this import for Reports & Analytics
 const ReportsPage = lazy(() => import('@/app/admin/reports/page'))
@@ -609,6 +610,11 @@ export const adminRoutes = [
     path: '/admin/course-detail',
     name: 'Course Detail',
     element: <CourseDetail />,
+  },
+  {
+    path:'/admin/coupons',
+    name:'Coupon Management',
+    element:<CouponManagement />
   },
   {
     path: '/admin/students',
