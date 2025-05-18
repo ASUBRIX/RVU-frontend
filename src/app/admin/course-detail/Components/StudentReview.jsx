@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardBody, CardHeader, Col, Row } from 'react-bootstrap';
 import { FaStar } from 'react-icons/fa';
-import { getCourseById, getCourseReviews } from '@/helpers/course';
+import { getCourseById, getCourseReviews } from '@/helpers/courseApi';
 import { useParams } from 'react-router-dom';
 
 const StudentReview = () => {
