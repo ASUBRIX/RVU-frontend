@@ -14,6 +14,8 @@ export const createCourse = (data) => {
   return httpClient.post(COURSE_BASE_URL, data);
 };
 
+
+
 export const updateCourse = (id, data) => {
   return httpClient.put(`${COURSE_BASE_URL}/${id}`, data);
 };
@@ -46,3 +48,9 @@ export const createCategoryWithSubcategories = (data) => {
   
   return httpClient.post(`${COURSE_BASE_URL}/categories`, data);
 };
+
+export const getCourseEarnings = (data) => {
+  
+  return httpClient.post(`${COURSE_BASE_URL}/earnings`, data);
+};
+
