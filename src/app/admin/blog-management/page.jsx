@@ -4,7 +4,7 @@ import { Container, Button, Form, Modal } from 'react-bootstrap'
 import { FaPlus, FaEye  } from 'react-icons/fa'
 import { FiSearch } from 'react-icons/fi'
 import { BsFileEarmarkRichtext, BsFileEarmarkBreak } from "react-icons/bs";
-import { getBlogs, createBlog, updateBlog, deleteBlog } from '../../../helpers/blogApi';
+import { getBlogs, createBlog, updateBlog, deleteBlog } from '@/helpers/blogApi';
 
 const BlogManagement = () => {
   // State for blog posts

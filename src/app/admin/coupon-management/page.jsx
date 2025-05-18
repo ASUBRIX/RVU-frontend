@@ -1,7 +1,6 @@
-// === CouponManagement.jsx ===
 import { useEffect, useState } from 'react';
 import { Button, Modal, Form, Table, Badge } from 'react-bootstrap';
-import { getAllCoupons, createCoupon, updateCoupon, deleteCoupon } from '../../../helpers/couponApi';
+import { getAllCoupons, createCoupon, updateCoupon, deleteCoupon } from '@/helpers/couponApi';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
 const CouponManagement = () => {

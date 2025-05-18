@@ -16,6 +16,16 @@ export const createCoupon = (couponData) => {
   return httpClient.post(API_URL, couponData);
 };
 
+const formatDataForBackend = (data) => ({
+  code: data.code,
+  discount_type: data.discountType,
+  discount_value: Number(data.discountValue),
+  max_usage: data.usageLimit ? Number(data.usageLimit) : null,
+  expiry_date: data.expirationDate,
+  is_active: data.isActive,
+});
+
+
 export const updateCoupon = (id, couponData) => {
   return httpClient.put(`${API_URL}/${id}`, couponData);
 };
