@@ -12,7 +12,7 @@ function HttpClient() {
         config.headers['Content-Type'] = 'application/json';
       }
 
-      console.log('HttpClient Request:', {
+      console.log('HttpClient Requests:', {
         url: config.url,
         method: config.method,
         headers: config.headers,
