@@ -3,7 +3,7 @@ import ReactApexChart from 'react-apexcharts';
 import { Card, CardBody, CardHeader, Col, Row } from 'react-bootstrap';
 import { BsArrowUp } from 'react-icons/bs';
 import { useEffect, useState } from 'react';
-import { getCourseEarnings } from '@/api/course';
+import { getCourseEarnings } from '@/helpers/course';
 
 const CourseEarning = ({ courseId }) => {
   const [earnings, setEarnings] = useState([]);
