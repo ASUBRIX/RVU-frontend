@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Button, Card, CardBody, CardFooter, CardHeader, Col, Row } from 'react-bootstrap';
 import { FaAngleLeft, FaAngleRight, FaSearch, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { getCourses } from '@/helpers/courseApi';
+import { getAllCourses } from '@/helpers/courseApi';
 
 const CourseCategoryCard = ({ image, title, name, avatar, enrolled, rating }) => {
   return (
@@ -67,7 +67,7 @@ const CourseCategory = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await getCourses();
+        const res = await getAllCourses();
         setCourses(res.data);
       } catch (error) {
         console.error('Failed to fetch courses:', error);
