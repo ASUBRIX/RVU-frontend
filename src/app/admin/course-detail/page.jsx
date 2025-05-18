@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import CourseEarning from './Components/CourseEarning';
 import MarketingCourse from './Components/MarketingCourse';
 import StudentReview from './Components/StudentReview';
-import { getCourseById } from '@/helpers/course';
+import { getCourseById } from '../../../helpers/courseApi';
 
 const Page = () => {
   const { id } = useParams();
