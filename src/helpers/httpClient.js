@@ -1,9 +1,8 @@
-// === httpClient.js ===
 import axios from 'axios';
 
 function HttpClient() {
   const instance = axios.create({
-    baseURL: 'http://localhost:5000',
+    baseURL: 'https://server.pudhuyugamacademy.com',
     timeout: 15000,
   });
 
