@@ -4,7 +4,7 @@ import { FaPaperPlane, FaFile, FaImage, FaPaperclip, FaUserShield } from 'react-
 import { BsCheck2, BsCheck2All } from 'react-icons/bs';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:5000'); // Replace with your backend URL
+const socket = io('http://localhost:5000'); 
 
 const InstructorChatPage = () => {
   const [messages, setMessages] = useState([]);

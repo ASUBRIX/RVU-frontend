@@ -1,21 +1,15 @@
-import { supportRequestsData } from '@/assets/data/products';
 import { colorVariants } from '@/context/constants';
 import { timeSince } from '@/utils/date';
-import { Card, CardBody, CardHeader, Col } from 'react-bootstrap';
+import { Card, CardBody, CardHeader, Col, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useEffect, useState } from 'react';
+import httpClient from '@/helpers/httpClient';
 
-const EnquiryCard = ({
-  description,
-  name,
-  time,
-  image
-}) => {
-  // Keep the color consistent for each user by using name as seed
+const EnquiryCard = ({ description, name, time, image }) => {
   const nameHash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const colorIndex = nameHash % colorVariants.length;
   const avatarColor = colorVariants[colorIndex];
-  
+
   return (
     <div className="d-flex justify-content-between position-relative">
       <div className="d-sm-flex">
@@ -45,12 +39,28 @@ const EnquiryCard = ({
 };
 
 const LatestEnquiries = () => {
-  // Sort enquiries by time (newest first)
+  const [enquiries, setEnquiries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEnquiries = async () => {
+      try {
+        const res = await httpClient.get('/api/contact-enquiry');
+        setEnquiries(res.data);
+      } catch (error) {
+        console.error('Failed to fetch enquiries:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEnquiries();
+  }, []);
+
   const latestEnquiries = useMemo(() => {
-    return [...supportRequestsData]
-      .sort((a, b) => new Date(b.time) - new Date(a.time))
-      .slice(0, 5); // Show only the 5 most recent
-  }, [supportRequestsData]);
+    return [...enquiries]
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 5);
+  }, [enquiries]);
 
   return (
     <Col xxl={4}>
@@ -62,12 +72,21 @@ const LatestEnquiries = () => {
           </Link>
         </CardHeader>
         <CardBody className="p-4">
-          {latestEnquiries.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-5">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          ) : latestEnquiries.length === 0 ? (
             <p className="text-center text-muted my-3">No enquiries available</p>
           ) : (
             latestEnquiries.map((item, idx) => (
-              <Fragment key={idx}>
-                <EnquiryCard {...item} />
+              <Fragment key={item.id}>
+                <EnquiryCard
+                  name={item.name}
+                  description={item.message || item.subject || '—'}
+                  time={item.created_at}
+                  image={null}
+                />
                 {idx < latestEnquiries.length - 1 && <hr />}
               </Fragment>
             ))
