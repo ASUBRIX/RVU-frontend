@@ -50,6 +50,7 @@
     "simplebar-core": "^1.2.6",
     "simplebar-react": "^3.2.6",
     "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.8.1",
     "swiper": "^11.2.5",
     "tiny-slider": "^2.9.4",
     "xlsx": "^0.18.5",
