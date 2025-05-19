@@ -2,7 +2,8 @@ import axios from 'axios';
 
 function HttpClient() {
   const instance = axios.create({
-    baseURL: 'https://server.pudhuyugamacademy.com',
+    // baseURL: 'https://server.pudhuyugamacademy.com',
+    baseURL:'http://localhost:5000',
     timeout: 15000,
   });
 

@@ -1,34 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Form, FloatingLabel, Row, Col } from 'react-bootstrap';
 import { FiSend } from 'react-icons/fi';
+import httpClient from '@/helpers/httpClient';
 
 const ContactForm = ({ show, handleClose }) => {
-  // const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
+    subject: '',
     message: ''
   });
 
-  // useEffect(() => {
-  //   setShow(true);
-  // }, []);
-
-  // const handleClose = () => setShow(false);
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value
-    });
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    handleClose();
+    try {
+      const res = await httpClient.post('/api/contact-enquiry', formData);
+      console.log('Form submitted successfully', res.data);
+      handleClose();
+    } catch (error) {
+      console.error('Error submitting form', error);
+    }
   };
 
   const modalStyle = {
@@ -50,8 +50,8 @@ const ContactForm = ({ show, handleClose }) => {
   };
 
   return (
-    <Modal 
-      show={show} 
+    <Modal
+      show={show}
       onHide={handleClose}
       centered
       backdrop="static"
@@ -106,6 +106,19 @@ const ContactForm = ({ show, handleClose }) => {
                 placeholder="name@example.com"
                 name="email"
                 value={formData.email}
+                onChange={handleChange}
+                required
+                className="ps-3"
+                style={{ borderRadius: '8px', height: '58px' }}
+              />
+            </FloatingLabel>
+
+            <FloatingLabel controlId="floatingSubject" label="Subject" className="mb-4">
+              <Form.Control
+                type="text"
+                placeholder="Subject"
+                name="subject"
+                value={formData.subject}
                 onChange={handleChange}
                 required
                 className="ps-3"
