@@ -1,67 +1,35 @@
-/**
- * Component SCSS:
- * - Enquiry styles: src/assets/scss/components/_enquiries.scss
- * - Modal styles: src/assets/scss/components/_general.scss
- */
-
-import React from 'react'
-import { Modal, Button, Form } from 'react-bootstrap'
+import React from 'react';
+import { Modal, Button } from 'react-bootstrap';
 
 const EnquiryDetailModal = ({ show, onHide, enquiry }) => {
-  if (!enquiry) return null
+  if (!enquiry) return null;
 
   const handleSendResponse = () => {
-    // Construct the mailto link with pre-filled details
-    const mailtoLink = `mailto:${enquiry.email}?subject=Response to Your Enquiry&body=Dear ${enquiry.name},
-
-Regarding your enquiry (ID: ${enquiry.id}):
-
-${enquiry.message}
-
-Our Response:
-`
-
-    // Open the default email client
-    window.location.href = mailtoLink
-  }
+    const mailtoLink = `mailto:${enquiry.email}?subject=Response to Your Enquiry&body=Dear ${enquiry.name},%0D%0A%0D%0ARegarding your enquiry:%0D%0A${enquiry.message}%0D%0A%0D%0AOur Response:%0D%0A%0D%0ABest Regards,%0D%0APudhuyugam Team`;
+    window.location.href = mailtoLink;
+  };
 
   return (
-    <Modal show={show} onHide={onHide}>
+    <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
         <Modal.Title>Enquiry Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="mb-4">
-          <h6>Student Information</h6>
-          <p>
-            <strong>Name:</strong> {enquiry.name}
-          </p>
-          <p>
-            <strong>ID:</strong> {enquiry.id}
-          </p>
-          <p>
-            <strong>Email:</strong> {enquiry.email}
-          </p>
-          <p>
-            <strong>Phone:</strong> {enquiry.phone}
-          </p>
-        </div>
+        <h6 className="fw-semibold">Student Info</h6>
+        <p><strong>Name:</strong> {enquiry.name}</p>
+        <p><strong>Email:</strong> {enquiry.email}</p>
+        <p><strong>Phone:</strong> {enquiry.phone}</p>
+        <p><strong>Subject:</strong> {enquiry.subject || 'N/A'}</p>
 
-        <div className="mb-4">
-          <h6>Message</h6>
-          <p>{enquiry.message}</p>
-        </div>
+        <h6 className="mt-4 fw-semibold">Message</h6>
+        <p>{enquiry.message}</p>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="theme-secondary" onClick={onHide}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={handleSendResponse}>
-          Send Response
-        </Button>
+        <Button variant="secondary" onClick={onHide}>Close</Button>
+        <Button variant="primary" onClick={handleSendResponse}>Send Response</Button>
       </Modal.Footer>
     </Modal>
-  )
-}
+  );
+};
 
-export default EnquiryDetailModal
+export default EnquiryDetailModal;
