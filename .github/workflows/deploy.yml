@@ -26,7 +26,7 @@ jobs:
             rm -rf Learning-Application-Web
 
             echo "Cloning fresh code using frontend deploy key..."
-            git clone git@github-frontend:ASUBRIX/Pudhuyougam---LMS-frontend.git Learning-Application-Web
+            git clone --branch development git@github-frontend:ASUBRIX/Pudhuyougam---LMS-frontend.git Learning-Application-Web
 
             cd Learning-Application-Web
 

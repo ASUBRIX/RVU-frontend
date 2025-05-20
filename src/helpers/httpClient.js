@@ -2,8 +2,7 @@ import axios from 'axios';
 
 function HttpClient() {
   const instance = axios.create({
-    // baseURL: 'https://server.pudhuyugamacademy.com',
-    baseURL:'http://localhost:5000',
+    baseURL:'import.meta.env.VITE_API_BASE_URL',
     timeout: 15000,
   });
 
