@@ -1,60 +1,62 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Button, Row, Col, Form, InputGroup, Modal, Tabs, Tab } from 'react-bootstrap';
 import { FaSearch, FaPlus, FaDownload, FaUpload, FaFilter } from 'react-icons/fa';
 import StudentTable from './StudentTable';
 import StudentForm from './StudentForm';
-import { useAuthContext } from '@/context/useAuthContext';
-import { addStudent } from '@/helpers/studentService';
+import { getAllStudents, addStudent, updateStudent, deleteStudent } from '@/helpers/studentManagementApi.js';
 
 const StudentManagement = () => {
-  const { user } = useAuthContext();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentStudent, setCurrentStudent] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
   const [students, setStudents] = useState([]);
 
-  const handleAddStudent = async (studentData) => {
-
+  const fetchStudents = async () => {
     try {
-      const response = await addStudent(studentData, user.token);
-      setStudents(prev => [...prev, response.student]);
-      setShowAddModal(false);
+      const res = await getAllStudents();
+      setStudents(res.data);
     } catch (error) {
-      console.error('Error adding student:', error);
-      alert('Failed to add student.');
+      console.error('Failed to load students:', error);
     }
   };
 
-  const handleEditStudent = (updatedStudent) => {
-    setStudents(students.map(student =>
-      student.id === updatedStudent.id ? updatedStudent : student
-    ));
-    setShowEditModal(false);
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const handleAddStudent = async (studentData) => {
+    try {
+      if (currentStudent) {
+        await updateStudent(currentStudent.id, studentData);
+      } else {
+        await addStudent(studentData);
+      }
+      fetchStudents();
+      setShowAddModal(false);
+      setCurrentStudent(null);
+    } catch (error) {
+      console.error('Save failed:', error);
+    }
   };
 
-  const handleDeleteStudent = () => {
-    setStudents(students.filter(student => student.id !== currentStudent.id));
-    setShowDeleteModal(false);
+  const handleDeleteStudent = async (studentId) => {
+    await deleteStudent(studentId);
+    fetchStudents();
   };
 
   const filteredStudents = useMemo(() => {
-    return students.filter(student => {
-      const matchesSearch =
-        student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    return students.filter((student) => {
+      const match = student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.enrollmentId?.toLowerCase().includes(searchTerm.toLowerCase());
+        student.enrollment_id?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesFilter =
+      const statusFilter =
         filter === 'all' ||
         (filter === 'active' && student.status === 'active') ||
-        (filter === 'inactive' && student.status === 'inactive') ||
-        (filter === 'pending' && student.paymentStatus === 'pending');
+        (filter === 'inactive' && student.status === 'inactive');
 
-      return matchesSearch && matchesFilter;
+      return match && statusFilter;
     });
   }, [students, searchTerm, filter]);
 
@@ -97,17 +99,12 @@ const StudentManagement = () => {
                   <option value="all">All Students</option>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
-                  <option value="pending">Payment Pending</option>
                 </Form.Select>
               </InputGroup>
             </Col>
             <Col md={3} lg={2} className="d-flex gap-2">
-              <Button variant="outline-success" className="w-100">
-                <FaDownload className="me-2" /> Export
-              </Button>
-              <Button variant="outline-secondary" className="w-100">
-                <FaUpload className="me-2" /> Import
-              </Button>
+              <Button variant="outline-success" className="w-100"><FaDownload className="me-2" /> Export</Button>
+              <Button variant="outline-secondary" className="w-100"><FaUpload className="me-2" /> Import</Button>
             </Col>
           </Row>
         </Card.Body>
@@ -119,22 +116,29 @@ const StudentManagement = () => {
             students={filteredStudents}
             onEdit={(student) => {
               setCurrentStudent(student);
-              setShowEditModal(true);
+              setShowAddModal(true);
             }}
-            onDelete={(student) => {
-              setCurrentStudent(student);
-              setShowDeleteModal(true);
-            }}
+            onDelete={(student) => handleDeleteStudent(student.id)}
           />
         </Tab>
       </Tabs>
 
-      <Modal show={showAddModal} onHide={() => setShowAddModal(false)} size="lg" centered>
+      <Modal show={showAddModal} onHide={() => {
+        setShowAddModal(false);
+        setCurrentStudent(null);
+      }} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Add New Student</Modal.Title>
+          <Modal.Title>{currentStudent ? 'Edit Student' : 'Add New Student'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <StudentForm onSubmit={handleAddStudent} onCancel={() => setShowAddModal(false)} />
+          <StudentForm
+            onSubmit={handleAddStudent}
+            student={currentStudent}
+            onCancel={() => {
+              setShowAddModal(false);
+              setCurrentStudent(null);
+            }}
+          />
         </Modal.Body>
       </Modal>
     </div>
