@@ -25,9 +25,8 @@ jobs:
             echo "Removing old folder if exists..."
             rm -rf Learning-Application-Web
 
-            echo "Cloning fresh code..."
-            git clone git@github.com:ASUBRIX/Pudhuyougam---LMS-frontend.git Learning-Application-Web
-
+            echo "Cloning fresh code using frontend deploy key..."
+            git clone git@github-frontend:ASUBRIX/Pudhuyougam---LMS-frontend.git Learning-Application-Web
 
             cd Learning-Application-Web
 
