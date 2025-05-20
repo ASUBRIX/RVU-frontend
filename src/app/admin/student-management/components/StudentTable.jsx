@@ -1,9 +1,3 @@
-/**
- * Component SCSS:
- * - Table styles: src/assets/scss/components/_tables.scss
- * - Student specific styles: src/assets/scss/components/_student-management.scss
- */
-
 import React, { useState } from 'react'
 import { Card } from 'react-bootstrap'
 import { BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs'
