@@ -129,7 +129,7 @@ const CouponManagement = lazy(()=>import("@/app/admin/coupon-management/page"));
 // Add this import for Reports & Analytics
 const ReportsPage = lazy(() => import('@/app/admin/reports/page'))
 
-//other
+// other
 export const initialRoutes = [
   {
     path: '/',
