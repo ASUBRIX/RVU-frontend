@@ -1,10 +1,9 @@
-//src/helpers/realHttpClient.js
-
 import axios from 'axios';
 
-// Create a new axios instance that is not affected by the mock adapter
+
 const realAxios = axios.create({
-  baseURL: 'http://localhost:3000', // Your real backend URL
+  // baseURL: 'http://localhost:3000', 
+  baseURL:'https://server.pudhuyugamacademy.com/',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
