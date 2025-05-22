@@ -66,12 +66,6 @@ const AllSettings = () => {
                       Roles & Permission
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link eventKey="tab-6">
-                      <FaSearch className="me-2" />
-                      SEO
-                    </Nav.Link>
-                  </Nav.Item>
                 </Nav>
               </Col>
               <Col xl={9}>

@@ -1,10 +1,9 @@
-// ---------- FacultyManagement.jsx ----------
 import React, { useState, useEffect, useMemo } from 'react';
 import { Card, Button, Row, Col, Form, InputGroup, Modal, Tabs, Tab } from 'react-bootstrap';
 import { FaSearch, FaPlus, FaFilter, FaDownload, FaUpload } from 'react-icons/fa';
 import FacultyTable from './FacultyTable';
 import FacultyForm from './FacultyForm';
-import { getAllFaculties, createFaculty, updateFaculty, deleteFaculty } from '@/api/facultyApi';
+import { getAllFaculties, createFaculty, updateFaculty, deleteFaculty } from '../../../../helpers/facultyApi';
 
 const FacultyManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -57,6 +56,19 @@ const FacultyManagement = () => {
       setShowDeleteModal(false);
     } catch (err) {
       console.error('Error deleting faculty:', err);
+    }
+  };
+
+  // *** NEW: Dynamic status change ***
+  const handleStatusChange = async (facultyId, newStatus) => {
+    try {
+      const facultyToUpdate = faculties.find((f) => f.id === facultyId);
+      if (!facultyToUpdate) return;
+      const updated = { ...facultyToUpdate, status: newStatus };
+      const res = await updateFaculty(facultyId, updated);
+      setFaculties((prev) => prev.map((f) => (f.id === facultyId ? res.data : f)));
+    } catch (err) {
+      console.error('Error updating status:', err);
     }
   };
 
@@ -151,6 +163,7 @@ const FacultyManagement = () => {
               setCurrentFaculty(faculty);
               setShowDeleteModal(true);
             }}
+            onStatusChange={handleStatusChange}  // <<=== pass dynamic status handler
           />
         </Tab>
         <Tab eventKey="active" title="Active Faculty">
@@ -164,6 +177,7 @@ const FacultyManagement = () => {
               setCurrentFaculty(faculty);
               setShowDeleteModal(true);
             }}
+            onStatusChange={handleStatusChange}
           />
         </Tab>
         <Tab eventKey="inactive" title="Inactive Faculty">
@@ -177,6 +191,7 @@ const FacultyManagement = () => {
               setCurrentFaculty(faculty);
               setShowDeleteModal(true);
             }}
+            onStatusChange={handleStatusChange}
           />
         </Tab>
       </Tabs>
