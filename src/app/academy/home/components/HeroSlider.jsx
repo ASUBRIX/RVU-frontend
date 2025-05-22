@@ -1,100 +1,103 @@
-import { Card, Col, Row, Container } from 'react-bootstrap';
-import { renderToString } from 'react-dom/server';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import TinySlider from '@/components/TinySlider';
-import backgroundBannerImg from '@/assets/images/bg/banner1.png';
-import backgroundBannerImg2 from '@/assets/images/bg/banner2.png';
+import React, { useEffect, useState } from "react";
+import TinySlider from "@/components/TinySlider"; // Make sure TinySlider is correctly set up
+import {fetchHeroSlides} from "@/helpers/homeApi"; // Import your API handler
+
+// Optional: Simple loading spinner or skeleton
+const Loading = () => (
+  <div className="text-center py-5">
+    <span>Loading banners...</span>
+  </div>
+);
 
 const HeroSlider = () => {
-  const courseSliderSettings = {
-    arrowKeys: true,
-    gutter: 0,
-    mouseDrag: true,
-    autoplayButton: false,
-    autoplayButtonOutput: false,
-    controlsText: [renderToString(<FaChevronLeft size={16} />), renderToString(<FaChevronRight size={16} />)],
-    autoplay: false,
-    controls: true,
-    edgePadding: 0,
+  const [slides, setSlides] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch slides from backend on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        // Use your API utility
+        const data = await fetchHeroSlides();
+        
+        
+        setSlides(data);
+      } catch (err) {
+        console.error("Failed to fetch slides", err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  // Slider settings (customize as needed)
+  const sliderSettings = {
     items: 1,
     nav: false,
+    controls: true,
+    autoplay: true,
+    autoplayTimeout: 5000,
     loop: true,
-    speed: 1000,
+    mouseDrag: true,
+    gutter: 0,
+    controlsText: ['<', '>'],
     responsive: {
-      320: {
-        items: 1,
-        controls: true
-      },
-      768: {
-        items: 1,
-        controls: true
-      }
+      992: { items: 1 }
     }
   };
 
-  return (
-    <section className="pt-0">
-      <Row className="mx-0">
-        <Col xs={12} className="p-0">
-          <div className="tiny-slider hero-slider arrow-round arrow-blur arrow-hover rounded-0 overflow-hidden">
-            <TinySlider settings={courseSliderSettings} className="tiny-slider-inner">
-              {/* First Banner */}
-              <Card className="overflow-hidden h-500px h-md-600px text-start rounded-0" style={{
-                backgroundImage: `url(${backgroundBannerImg})`,
-                backgroundPosition: 'center left',
-                backgroundSize: 'cover'
-              }}>
-                <div className="card-img-overlay d-flex align-items-center p-2 p-sm-4">
-                  <Container> {/* Added Container only for text */}
-                    <Row className="justify-content-start">
-                      <Col xs={11} lg={7}>
-                        <h1 className="mb-0 text-black display-6">
-                          Get new skills <br /> for the&nbsp;
-                          <span className="position-relative">digital world</span>
-                        </h1>
-                        <p className="text-black w-75">
-                          Get the right professional certificate program for you. See what course other students and experts in your domain are
-                          learning on
-                        </p>
-                        <a href="#" className="btn mb-0 text-white bg-primary" >
-                          Get Started
-                        </a>
-                      </Col>
-                    </Row>
-                  </Container>
-                </div>
-              </Card>
+  if (loading) return <Loading />;
+  if (!slides.length)
+    return (
+      <div className="text-center py-5">
+        <span>No banners to display</span>
+      </div>
+    );
 
-              {/* Second Banner */}
-              <Card className="overflow-hidden h-500px h-md-600px text-start rounded-0" style={{
-                backgroundImage: `url(${backgroundBannerImg2})`,
-                backgroundPosition: 'center left',
-                backgroundSize: 'cover'
-              }}>
-                <div className="card-img-overlay d-flex align-items-center p-3 p-sm-4">
-                  <Container> {/* Added Container only for text */}
-                    <Row className="justify-content-start">
-                      <Col xs={11} lg={6}>
-                        <h1 className="mb-0 text-black display-6">
-                          Get new skills <br /> for the&nbsp;
-                          <span className="position-relative">digital world</span>
-                        </h1>
-                        <p className="text-black w-75">
-                          Get the right professional certificate program for you. See what course other students and experts in your domain are
-                          learning on
-                        </p>
-                        <a href="#" className="btn mb-0 text-white bg-primary" >
-                          Get Started
-                        </a>
-                      </Col>
-                    </Row>
-                  </Container>
-                </div>
-              </Card>
-            </TinySlider>
+  return (
+    <section className="hero-slider-section">
+      <TinySlider settings={sliderSettings} className="hero-slider">
+        {slides.map((slide, idx) => (
+          <div key={slide.id || idx} className="hero-slide position-relative">
+            <img
+              src={
+                slide.image_url.startsWith("http")
+                  ? slide.image_url
+                  : `http://localhost:5000${slide.image_url}`
+              }
+              alt={slide.title}
+              className="w-100"
+              style={{
+                maxHeight: 440,
+                objectFit: "cover",
+                borderRadius: "1rem"
+              }}
+            />
+            <div className="slide-caption position-absolute top-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center"
+                 style={{
+                   background: "rgba(0,0,0,0.35)",
+                   color: "#fff",
+                   left: 0
+                 }}
+            >
+              <h2 className="display-5 fw-bold">{slide.title}</h2>
+              {slide.description && (
+                <p className="fs-5 text-light">{slide.description}</p>
+              )}
+              {slide.link && (
+                <a
+                  href={slide.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-warning mt-3"
+                >
+                  Learn More
+                </a>
+              )}
+            </div>
           </div>
-        </Col>
-      </Row>
+        ))}
+      </TinySlider>
     </section>
   );
 };
