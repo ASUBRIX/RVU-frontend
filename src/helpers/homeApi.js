@@ -37,6 +37,11 @@ export const fetchHeroSlides = async () => {
   return res.data;
 };
 
+export const fetchNoticeBoard = async ()=>{
+  const res = await httpClient.get('/api/notice-board');
+  return res.data;
+}
+
 
 
 export default {
@@ -46,4 +51,5 @@ export default {
   fetchStudentsReviews,
   fetchUpcomingEvents,
   fetchPopularCourses,
+  fetchNoticeBoard,
 };

@@ -1,3 +1,4 @@
+import httpClient from "./httpClient"
 const ANNOUNCEMENT_BASE_URL = '/api/announcements';
 
 export const getAnnouncements = () => {

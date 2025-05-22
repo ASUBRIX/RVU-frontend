@@ -1,12 +1,11 @@
-//src/app/(other)/auth/sign-up/page.jsx
-
 import element3Img from '@/assets/images/element/03.svg';
 import PageMetaData from '@/components/PageMetaData';
 import { Col, Row } from 'react-bootstrap';
-
 import { Link } from 'react-router-dom';
 import AuthLayout from '../components/AuthLayout';
 import SignUpForm from './components/SingUpForm';
+
+
 const SignUpPage = () => {
   return <>
       <PageMetaData title="Sign-Up" />
