@@ -31,6 +31,7 @@ const InstructorSingle = lazy(() => import('@/app/pages/instructors/[instructorI
 const InstructorBecome = lazy(() => import('@/app/pages/become-instructor/page'))
 const PrivacyPolicy = lazy(() => import('@/app/pages/privacy-policy/page'))
 const BlogPage = lazy(() => import('@/app/pages/blog/page'))
+const UserBlogDetail = lazy(()=>import('@/app/pages/blog/components/BlogDetail'));
 const TermsAndConditions = lazy(() => import('@/app/pages/terms-conditions/page'))
 const Gallery = lazy(() => import('@/app/pages/gallery/page'))
 const FreeTest = lazy(() => import('@/app/pages/free-test/page'))
@@ -294,7 +295,13 @@ const pagesRoutes = [
     path: '/blogs',
     name: 'Blog Page',
     element: <BlogPage />,
+  },{
+    path: '/blogs/:id',
+    name: 'Blog Page',
+    element: <UserBlogDetail />,
   },
+
+
   {
     path: '/terms-conditions',
     name: 'Terms And Conditions',

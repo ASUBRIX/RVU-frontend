@@ -9,7 +9,7 @@ const realAxios = axios.create({
   }
 });
 
-// Add a request interceptor for debugging
+
 realAxios.interceptors.request.use(
   (config) => {
     console.log('🚀 Outgoing request:', {
@@ -26,7 +26,7 @@ realAxios.interceptors.request.use(
   }
 );
 
-// Add a response interceptor for debugging
+
 realAxios.interceptors.response.use(
   (response) => {
     console.log('✅ Response received:', {

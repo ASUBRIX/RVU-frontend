@@ -1,5 +1,6 @@
-import React from 'react'
-import './BlogPost.scss'
+import React from 'react';
+import './BlogPost.scss';
+import { Link } from 'react-router-dom';
 
 const BlogPost = ({ post, featured = false }) => {
   return (
@@ -7,7 +8,7 @@ const BlogPost = ({ post, featured = false }) => {
       <div className="blog-post-image">
         <img src={post.imageUrl} alt={post.title} className="img-fluid" />
         <div className="category-badge">
-          <span>{post.tags[0]}</span>
+          <span>{post.tags && post.tags[0]}</span>
         </div>
       </div>
       <div className="blog-post-content">
@@ -22,18 +23,18 @@ const BlogPost = ({ post, featured = false }) => {
         <h3 className="blog-post-title">{post.title}</h3>
         <p className="blog-post-excerpt">{post.excerpt}</p>
         <div className="blog-post-tags">
-          {post.tags.map((tag) => (
+          {post.tags && post.tags.map((tag) => (
             <span key={tag} className="tag">
               {tag}
             </span>
           ))}
         </div>
-        <button className="read-more">
+        <Link to={`/blogs/${post.id}`} className="read-more">
           Read More <i className="bi bi-arrow-right"></i>
-        </button>
+        </Link>
       </div>
     </article>
-  )
-}
+  );
+};
 
-export default BlogPost
+export default BlogPost;
