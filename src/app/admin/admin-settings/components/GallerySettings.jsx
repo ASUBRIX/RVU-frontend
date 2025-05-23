@@ -28,8 +28,9 @@ const GallerySettings = () => {
 
   const loadImages = async () => {
     try {
-      const { data } = await getGalleryImages();
-      setImages(data);
+     const imgs = await getGalleryImages();
+setImages(imgs);
+
     } catch (err) {
       console.error('Failed to fetch images', err);
     }
