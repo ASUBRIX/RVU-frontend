@@ -1,44 +1,75 @@
-import { getAllInstructors } from '@/helpers/data';
-import { useFetchData } from '@/hooks/useFetchData';
-import { Card, CardBody, Col, Container, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import Pagination from './Pagination';
-import './instructorStyles.css';
+import React, { useEffect, useState } from 'react';
+import { Card, Col, Container, Row } from 'react-bootstrap';
+import { fetchInstructors } from '@/helpers/instructorApi';
+import './InstructorLists.css';
 
 const InstructorCard = ({ instructor }) => {
-  const { image, name, college, department, rating } = instructor;
-  
+  const { avatar, name, bio } = instructor;
+
   return (
-    <Card className="shadow h-100">
-      <div className="instructor-image-wrapper">
-        <img src={image} className="card-img-top instructor-image" alt={name} />
+    <Card className="instructor-card shadow h-100 border-0 position-relative overflow-hidden">
+      <div className="instructor-img-wrapper">
+        <img
+          src={avatar || '/default-avatar.png'}
+          alt={name}
+          className="instructor-img"
+        />
+        <div className="instructor-hover-overlay d-flex flex-column align-items-center justify-content-start">
+          <div className="instructor-name text-center px-3 pt-3 w-100">{name}</div>
+          {bio && (
+            <div className="instructor-bio text-center px-3 pb-3">{bio}</div>
+          )}
+        </div>
       </div>
-      <CardBody className="text-center">
-        <h5 className="card-title mb-1">
-          <Link to="#" className="text-decoration-none">{name}</Link>
-        </h5>
-        {/* <p className="text-muted small mb-2">{department}</p> */}
-      </CardBody>
+      <Card.Body className="text-center">
+        <h5 className="card-title mb-1">{name}</h5>
+      </Card.Body>
     </Card>
   );
 };
 
+
 const InstructorLists = () => {
-  const allInstructors = useFetchData(getAllInstructors);
-  
+  const [instructors, setInstructors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchInstructors()
+      .then(data => {
+        setInstructors(data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <Container className="py-5 text-center">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </Container>
+    );
+  }
+
+  if (!instructors.length) {
+    return (
+      <Container className="py-5 text-center">
+        <p>No instructors found.</p>
+      </Container>
+    );
+  }
+
   return (
     <section className="py-5">
       <Container>
         <Row className="g-4">
-          {allInstructors?.map((instructor, idx) => (
-            <Col xs={12} sm={6} lg={4} xl={3} key={idx}>
+          {instructors.map(instructor => (
+            <Col xs={12} sm={6} md={4} lg={3} key={instructor.id}>
               <InstructorCard instructor={instructor} />
             </Col>
           ))}
         </Row>
-        <div className="mt-5">
-          {/* <Pagination /> */}
-        </div>
       </Container>
     </section>
   );

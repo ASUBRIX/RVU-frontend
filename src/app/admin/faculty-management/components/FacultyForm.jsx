@@ -1,7 +1,10 @@
 // ---------- FacultyForm.jsx ----------
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Row, Col, Button, InputGroup, Modal } from 'react-bootstrap';
-import { FaUser, FaEnvelope, FaPhone, FaGraduationCap, FaCalendar, FaBriefcase, FaUserCircle, FaUpload, FaPlus } from 'react-icons/fa';
+import {
+  FaUser, FaEnvelope, FaPhone, FaGraduationCap, FaCalendar, FaBriefcase,
+  FaUserCircle, FaUpload, FaPlus
+} from 'react-icons/fa';
 
 const FacultyForm = ({ faculty, onSubmit }) => {
   const fileInputRef = useRef(null);
@@ -15,7 +18,8 @@ const FacultyForm = ({ faculty, onSubmit }) => {
     status: 'active',
     qualification: '',
     experience: '',
-    avatar: 'default'
+    avatar: 'default',
+    bio: '',                // <-- Added bio field
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -97,7 +101,7 @@ const FacultyForm = ({ faculty, onSubmit }) => {
   };
 
   const getAvatarDisplay = () => {
-    if (formData.avatar.startsWith('data:')) {
+    if (formData.avatar && formData.avatar.startsWith('data:')) {
       return <img src={formData.avatar} alt="avatar" className="rounded-circle" width="120" height="120" />;
     }
     return <FaUserCircle size={80} className="text-primary" />;
@@ -193,6 +197,25 @@ const FacultyForm = ({ faculty, onSubmit }) => {
                 </Form.Group>
               </Col>
 
+              {/* Bio */}
+              <Col md={12}>
+                <Form.Group controlId="facultyBio">
+                  <Form.Label>Instructor Bio <span className="text-muted small">(will display on hover)</span></Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="Write a short bio or details about the instructor"
+                    maxLength={400}
+                  />
+                  <Form.Text muted>
+                    {formData.bio.length} / 400 characters
+                  </Form.Text>
+                </Form.Group>
+              </Col>
+
               {/* Status */}
               <Col md={12}>
                 <Form.Group controlId="facultyStatus">
@@ -245,3 +268,4 @@ const FacultyForm = ({ faculty, onSubmit }) => {
 };
 
 export default FacultyForm;
+

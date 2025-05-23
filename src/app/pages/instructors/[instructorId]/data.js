@@ -1,5 +1,3 @@
-// CounterType
-
 import { FaPlay, FaTrophy, FaUsers } from 'react-icons/fa';
 export const counterData = [{
   count: 10,

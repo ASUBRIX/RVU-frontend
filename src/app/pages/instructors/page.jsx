@@ -8,10 +8,9 @@ const Instructors = () => {
       <PageMetaData title="Instructor List" />
       <TopNavigationBar />
       <main>
-        {/* <Banner /> */}
+        
         <HeroImage/>
         <InstructorLists />
-        {/* <ActionBox /> */}
       </main>
       <Footer className="bg-light" />
     </>;

@@ -1,0 +1,67 @@
+.instructor-card {
+  transition: box-shadow 0.3s;
+}
+
+.instructor-img-wrapper {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: #f7f7f7;
+}
+
+.instructor-img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.3s;
+}
+
+.instructor-card:hover .instructor-img {
+  transform: scale(1.03);
+  filter: brightness(0.8);
+}
+
+.instructor-hover-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(34, 34, 34, 0.72);
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.instructor-card:hover .instructor-hover-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.instructor-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  margin-top: 24px;
+  width: 100%;
+  text-align: center;
+}
+
+.instructor-bio {
+  font-size: 0.98rem;
+  margin-top: 0.75rem;
+  max-height: 130px;
+  overflow-y: auto;
+  color: #f3f3f3;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.16);
+  padding-bottom: 16px;
+  width: 100%;
+  text-align: center;
+}
