@@ -1,6 +1,6 @@
 import httpClient from './httpClient';
 
-const COURSE_BASE_URL = '/api/courses';
+const COURSE_BASE_URL = '/api/admin/courses';
 
 export const getAllCourses = (params = {}) => {
   return httpClient.get(COURSE_BASE_URL, { params });

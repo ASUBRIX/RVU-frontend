@@ -129,6 +129,7 @@ const TopNavigationBar = () => {
                     { label: 'Free Test', path: '/free-test' },
                     { label: 'Gallery', path: '/gallery' },
                     { label: 'Blogs', path: '/blogs' },
+                    {label:'Current Affairs',path:'/current-affairs'},
                     { label: 'Contact', path: '/contact-us' },
                   ].map(({ label, path }, idx) => (
                     <NavItem key={idx}>

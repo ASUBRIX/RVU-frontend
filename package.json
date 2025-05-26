@@ -57,6 +57,7 @@
     "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
+  
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^9.19.0",

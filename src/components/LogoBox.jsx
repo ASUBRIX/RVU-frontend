@@ -30,7 +30,7 @@ const LogoBox = ({ height, width }) => {
         setIsLoading(true);
         hasFetchedRef.current = true;
         
-        const response = await httpClient.get('/api/settings');
+        const response = await httpClient.get('/api/admin/settings');
         
         if (response.data) {
           // Update logo from API data

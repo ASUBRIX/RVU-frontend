@@ -1,6 +1,6 @@
 import httpClient from './httpClient';
 
-const API_URL = '/api/coupons';
+const API_URL = '/api/admin/coupons';
 
 export const getAllCoupons = () => {
   return httpClient.get(API_URL);

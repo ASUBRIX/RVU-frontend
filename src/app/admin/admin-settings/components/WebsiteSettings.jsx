@@ -30,7 +30,7 @@ const WebsiteSettings = () => {
     const fetchSettings = async () => {
       try {
         setFetchLoading(true);
-        const response = await httpClient.get('/api/settings', {
+        const response = await httpClient.get('/api/admin/settings', {
           headers: {
             'auth_key': user?.token
           }

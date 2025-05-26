@@ -56,7 +56,7 @@ const EnquiriesPage = () => {
   useEffect(() => {
     const fetchEnquiries = async () => {
       try {
-        const res = await httpClient.get('/api/contact-enquiry');
+        const res = await httpClient.get('/api/admin/enquiries');
         setEnquiries(res.data);
       } catch (error) {
         console.error('Failed to fetch enquiries:', error);

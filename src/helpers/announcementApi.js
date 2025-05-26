@@ -1,5 +1,5 @@
 import httpClient from "./httpClient"
-const ANNOUNCEMENT_BASE_URL = '/api/announcements';
+const ANNOUNCEMENT_BASE_URL = '/api/admin/announcements';
 
 export const getAnnouncements = () => {
   return httpClient.get(ANNOUNCEMENT_BASE_URL);

@@ -18,7 +18,7 @@ const TermsConditions = () => {
     const fetchTerms = async () => {
       try {
         setFetchLoading(true);
-        const response = await httpClient.get('/api/legal/terms', {
+        const response = await httpClient.get('/api/admin/legal', {
           headers: {
             'auth_key': user?.token
           }
@@ -73,7 +73,7 @@ const TermsConditions = () => {
       setLoading(true);
       setFeedback({ type: '', message: '' });
       
-      const response = await httpClient.put('/api/legal/terms', 
+      const response = await httpClient.put('/api/admin/legal', 
         { content },
         {
           headers: {

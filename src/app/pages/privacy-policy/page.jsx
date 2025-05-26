@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
     const fetchPrivacyPolicy = async () => {
       try {
         setLoading(true)
-        const response = await httpClient.get('/api/legal/privacy')
+        const response = await httpClient.get('/api/admin/legal')
         if (response.data && response.data.content) {
           setPolicyContent(response.data.content)
         } else {

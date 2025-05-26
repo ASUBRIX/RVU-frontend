@@ -34,6 +34,7 @@ const BlogPage = lazy(() => import('@/app/pages/blog/page'))
 const UserBlogDetail = lazy(()=>import('@/app/pages/blog/components/BlogDetail'));
 const TermsAndConditions = lazy(() => import('@/app/pages/terms-conditions/page'))
 const Gallery = lazy(() => import('@/app/pages/gallery/page'))
+const CurrentAffairs = lazy(()=>import('@/app/pages/current-affairs/page'));
 const FreeTest = lazy(() => import('@/app/pages/free-test/page'))
 const TestDetails = lazy(() => import('@/app/pages/free-test/free-test-details/page'))
 const TestQuestion = lazy(() => import('@/app/pages/test-questions/page'))
@@ -311,6 +312,12 @@ const pagesRoutes = [
     path: '/gallery',
     name: 'Gallery',
     element: <Gallery />,
+  },
+  {
+    path:'/current-affairs',
+    name:"Current Affairs",
+    element:<CurrentAffairs />
+
   },
   {
     path: '/free-test',

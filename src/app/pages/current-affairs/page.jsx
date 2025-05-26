@@ -1,36 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import BlogPost from './components/BlogPost';
-import './components/blog.scss';
+import CurrentAffairPost from './components/CurrentAffairsPost';
+import './components/currentAffairs.scss';
 import Footer from '@/components/Footer';
 import TopNavigationBar from '@/components/TopNavigationBar';
-import HeroImage from './components/HeroImage';
-import { fetchAllBlogs } from '@/helpers/userBlogApi';
+import CurrentAffairsHeroImage from './components/HeroImage';
+import { fetchAllCurrentAffairs } from '@/helpers/userCurrentAffairsApi';
 
-const Blog = () => {
-  const [blogPosts, setBlogPosts] = useState([]);
+const CurrentAffairs = () => {
+  const [affairs, setAffairs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAllBlogs()
+    fetchAllCurrentAffairs()
       .then((data) => {
-        const adaptedBlogs = data.map(blog => ({
-          ...blog,
-          imageUrl: blog.image_url,
-        }));
-        setBlogPosts(adaptedBlogs);
+        setAffairs(data);
         setLoading(false);
       })
-      .catch(() => {
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, []);
 
   if (loading) {
     return (
       <>
         <TopNavigationBar />
-        <HeroImage />
-        <div className="blog-page container py-5 text-center">
+        <CurrentAffairsHeroImage />
+        <div className="current-affairs-page container py-5 text-center">
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
@@ -40,13 +34,13 @@ const Blog = () => {
     );
   }
 
-  if (blogPosts.length === 0) {
+  if (affairs.length === 0) {
     return (
       <>
         <TopNavigationBar />
-        <HeroImage />
-        <div className="blog-page container py-5 text-center">
-          <p>No blog articles found.</p>
+        <CurrentAffairsHeroImage />
+        <div className="current-affairs-page container py-5 text-center">
+          <p>No current affairs found.</p>
         </div>
         <Footer className="custom-footer" />
       </>
@@ -56,25 +50,25 @@ const Blog = () => {
   return (
     <>
       <TopNavigationBar />
-      <HeroImage />
-      <div className="blog-page container py-5">
+      <CurrentAffairsHeroImage />
+      <div className="current-affairs-page container py-5">
         <div className="row">
           <div className="col-lg-8 mx-auto text-center mb-5">
-            <h2 className="display-4 fw-bold mb-3">Latest Articles</h2>
+            <h2 className="display-4 fw-bold mb-3">Latest Current Affairs</h2>
             <p className="lead text-secondary">
-              Stay up to date with the latest web development trends and tutorials
+              Stay updated with the latest current affairs, news, and happenings
             </p>
           </div>
         </div>
 
         <div className="featured-post mb-5">
-          <BlogPost post={blogPosts[0]} featured={true} />
+          <CurrentAffairPost affair={affairs[0]} featured={true} />
         </div>
 
         <div className="row g-4 mb-5">
-          {blogPosts.slice(1).map((post) => (
-            <div key={post.id} className="col-lg-4 col-md-6">
-              <BlogPost post={post} />
+          {affairs.slice(1).map((affair) => (
+            <div key={affair.id} className="col-lg-4 col-md-6">
+              <CurrentAffairPost affair={affair} />
             </div>
           ))}
         </div>
@@ -85,4 +79,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default CurrentAffairs;

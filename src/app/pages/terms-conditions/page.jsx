@@ -14,7 +14,7 @@ const TermsAndConditions = () => {
     const fetchTermsAndConditions = async () => {
       try {
         setLoading(true);
-        const response = await httpClient.get('/api/legal/terms');
+        const response = await httpClient.get('/api/admin/legal');
         if (response.data && response.data.content) {
           setTermsContent(response.data.content);
         } else {
