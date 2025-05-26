@@ -73,8 +73,8 @@ const Error404 = lazy(() => import('@/app/(other)/(error-pages)/error-404/page')
 const ComingSoon = lazy(() => import('@/app/coming-soon/page'))
 
 //Auth
-const SignIn = lazy(() => import('@/app/(other)/auth/sign-in/page'))
 const SignUp = lazy(() => import('@/app/(other)/auth/sign-up/page'))
+const SignIn = lazy(() => import('@/app/(other)/auth/sign-in/page'))
 const ForgotPassword = lazy(() => import('@/app/(other)/auth/forgot-password/page'))
 
 //Instructor
