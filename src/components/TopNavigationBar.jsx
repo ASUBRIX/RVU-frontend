@@ -61,7 +61,7 @@ const TopNavigationBar = () => {
                   style={{ maxWidth: '100vw' }}>
                   {menus.map(({ label, path }, idx) => (
                     <NavItem key={idx} className="flex-shrink-0">
-                      <Link className="nav-link px-3" to={path}>
+                      <Link className="nav-link px-2" to={path}>
                         {label}
                       </Link>
                     </NavItem>
