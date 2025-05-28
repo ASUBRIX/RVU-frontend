@@ -54,10 +54,10 @@
     "socket.io-client": "^4.8.1",
     "swiper": "^11.2.7",
     "tiny-slider": "^2.9.4",
+    "twilio": "^5.6.1",
     "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
-  
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^9.19.0",

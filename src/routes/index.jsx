@@ -73,8 +73,13 @@ const Error404 = lazy(() => import('@/app/(other)/(error-pages)/error-404/page')
 const ComingSoon = lazy(() => import('@/app/coming-soon/page'))
 
 //Auth
-const SignUp = lazy(() => import('@/app/(other)/auth/sign-up/page'))
-const SignIn = lazy(() => import('@/app/(other)/auth/sign-in/page'))
+// const SignUp = lazy(() => import('@/app/(other)/auth/sign-up/page'))
+// const SignIn = lazy(() => import('@/app/(other)/auth/sign-in/page'))
+// const ForgotPassword = lazy(() => import('@/app/(other)/auth/forgot-password/page'))
+const AuthEntryPage = lazy(() => import('@/app/(other)/auth/AuthEntryPage'))
+const OtpVerifyPage = lazy(() => import('@/app/(other)/auth/OtpVerifyPage'))
+const RegisterDetailsPage = lazy(() => import('@/app/(other)/auth/RegisterDetailsPage'))
+const EmailLoginPage = lazy(() => import('@/app/(other)/auth/EmailLoginPage'))
 const ForgotPassword = lazy(() => import('@/app/(other)/auth/forgot-password/page'))
 
 //Instructor
@@ -452,16 +457,45 @@ const otherRoutes = [
     element: <InstructorCreateCourse />,
   },
 ]
+
+// export const authRoutes = [
+//   {
+//     path: '/auth/sign-in',
+//     name: 'Sign In',
+//     element: <SignIn />,
+//   },
+//   {
+//     path: '/auth/sign-up',
+//     name: 'Sign Up',
+//     element: <SignUp />,
+//   },
+//   {
+//     path: '/auth/forgot-password',
+//     name: 'Forgot Password',
+//     element: <ForgotPassword />,
+//   },
+// ]
+
 export const authRoutes = [
   {
-    path: '/auth/sign-in',
-    name: 'Sign In',
-    element: <SignIn />,
+    path: '/auth',
+    name: 'Auth Entry',
+    element: <AuthEntryPage />,
   },
   {
-    path: '/auth/sign-up',
-    name: 'Sign Up',
-    element: <SignUp />,
+    path: '/auth/verify-otp',
+    name: 'Verify OTP',
+    element: <OtpVerifyPage />,
+  },
+  {
+    path: '/auth/complete-registration',
+    name: 'Complete Registration',
+    element: <RegisterDetailsPage />,
+  },
+  {
+    path: '/auth/email-login',
+    name: 'Sign In with Email',
+    element: <EmailLoginPage />,
   },
   {
     path: '/auth/forgot-password',
@@ -469,6 +503,11 @@ export const authRoutes = [
     element: <ForgotPassword />,
   },
 ]
+
+
+
+
+
 export const InstructorRoutes = [
   {
     path: '/instructor/dashboard',

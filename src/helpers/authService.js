@@ -1,20 +1,8 @@
 import httpClient from './httpClient';
 
-/**
- * Authentication service for handling login, registration, and other auth-related API calls
- */
+
 const authService = {
-  /**
-   * Register a new user
-   * @param {Object} userData - User registration data
-   * @param {string} userData.first_name - First name
-   * @param {string} userData.email - Email address
-   * @param {string} userData.password_hash - Password
-   * @param {string} userData.phone_number - Phone number
-   * @param {string} userData.last_name - Last name
-   * @param {string} userData.role - User role (student, admin, instructor)
-   * @returns {Promise<Object>} Registration response
-   */
+
   register: async (userData) => {
     try {
       const response = await httpClient.post('/api/users/register', userData);
@@ -25,13 +13,7 @@ const authService = {
     }
   },
 
-  /**
-   * Login with email and password
-   * @param {Object} credentials - Login credentials
-   * @param {string} credentials.email - Email address
-   * @param {string} credentials.password_hash - Password
-   * @returns {Promise<Object>} Login response with auth_key and user info
-   */
+
   loginWithEmail: async (credentials) => {
     try {
       const response = await httpClient.post('/api/users/login/email', credentials);
@@ -42,11 +24,7 @@ const authService = {
     }
   },
 
-  /**
-   * Request OTP for phone login
-   * @param {string} phone_number - Phone number
-   * @returns {Promise<Object>} OTP request response
-   */
+
   requestOTP: async (phone_number) => {
     try {
       const response = await httpClient.post('/api/users/login/otp/request', { phone_number });
@@ -57,13 +35,7 @@ const authService = {
     }
   },
 
-  /**
-   * Verify OTP for phone login
-   * @param {Object} verificationData - OTP verification data
-   * @param {string} verificationData.phone_number - Phone number
-   * @param {string} verificationData.otp - One-time password
-   * @returns {Promise<Object>} OTP verification response with auth_key and user info
-   */
+ 
   verifyOTP: async (verificationData) => {
     try {
       const response = await httpClient.post('/api/users/login/otp/verify', verificationData);
@@ -74,12 +46,7 @@ const authService = {
     }
   },
 
-  /**
-   * Get folder contents including subfolders and tests
-   * @param {string} folderId - Folder ID
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Folder contents response
-   */
+
   getFolderContentsPublic: async (folderId, authKey) => {
     try {
       console.log(`Making request to: /api/tests/folders/${folderId}/contents/public`);
@@ -116,12 +83,7 @@ const authService = {
     }
   },
 
-  /**
-   * Get test for taking a test using the new endpoint
-   * @param {string} testId - Test ID
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Test response for taking
-   */
+
   getTestToTake: async (testId, authKey) => {
     try {
       console.log(`Making request to: /api/tests/test/${testId}/take`);
@@ -151,12 +113,8 @@ const authService = {
     }
   },
 
-  /**
-   * Get test questions details
-   * @param {string} testId - Test ID
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Test questions details response
-   */
+ 
+
   getTestQuestionsDetails: async (testId, authKey) => {
     try {
       const response = await httpClient.get(`/api/tests/test/${testId}/questions/details`, {
@@ -171,11 +129,8 @@ const authService = {
     }
   },
 
-  /**
-   * Get free tests available to the user
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Free tests response
-   */
+
+
   getFreeTests: async (authKey) => {
     try {
       const response = await httpClient.get('/api/tests/free', {
@@ -190,12 +145,8 @@ const authService = {
     }
   },
 
-  /**
-   * Get folder details
-   * @param {string} folderId - Folder ID
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Folder details response
-   */
+  
+
   getFolder: async (folderId, authKey) => {
     try {
       const response = await httpClient.get(`/api/tests/folders/${folderId}`, {
@@ -210,12 +161,8 @@ const authService = {
     }
   },
 
-  /**
-   * Get tests in a folder
-   * @param {string} folderId - Folder ID
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Folder tests response
-   */
+ 
+
   getFolderTests: async (folderId, authKey) => {
     try {
       const response = await httpClient.get(`/api/tests/folders/${folderId}/tests`, {
@@ -230,12 +177,8 @@ const authService = {
     }
   },
 
-  /**
-   * Get test details for taking a test
-   * @param {string} testId - Test ID
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Test details response
-   */
+  
+
   getTest: async (testId, authKey) => {
     try {
       const response = await httpClient.get(`/api/tests/tests/${testId}/take`, {
@@ -250,16 +193,10 @@ const authService = {
     }
   },
 
-  /**
-   * Submit test answers
-   * @param {string} testId - Test ID
-   * @param {Object} data - Submission data with answers array
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Test submission response
-   */
+
+
   submitTest: async (testId, data, authKey) => {
     try {
-      // Make sure we're sending the exact format required by the API
       const submissionData = {
         answers: Array.isArray(data.answers) ? data.answers : [],
         time_taken_seconds: data.time_taken_seconds || 0
@@ -294,14 +231,8 @@ const authService = {
     }
   },
 
-  /**
-   * Create a new folder
-   * @param {Object} folderData - Folder data
-   * @param {string} folderData.name - Folder name
-   * @param {number|null} folderData.parent_id - Parent folder ID (null for root)
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} New folder response
-   */
+ 
+
   createFolder: async (folderData, authKey) => {
     try {
       console.log(`Creating folder with data:`, folderData);
@@ -333,12 +264,8 @@ const authService = {
     }
   },
 
-  /**
-   * Delete a folder
-   * @param {string} folderId - Folder ID
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Delete response
-   */
+
+
   deleteFolder: async (folderId, authKey) => {
     try {
       console.log(`Deleting folder ${folderId}`);
@@ -366,12 +293,8 @@ const authService = {
     }
   },
 
-  /**
-   * Delete a test
-   * @param {string} testId - Test ID
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Delete response
-   */
+
+
   deleteTest: async (testId, authKey) => {
     try {
       console.log(`Deleting test ${testId}`);
@@ -399,12 +322,7 @@ const authService = {
     }
   },
 
-  /**
-   * Get all folders available to the user with pagination
-   * @param {string} authKey - Authentication key
-   * @param {number} page - Page number (defaults to 1)
-   * @returns {Promise<Object>} All folders response with pagination data
-   */
+
   getAllFolders: async (authKey, page = 1) => {
     try {
       const response = await httpClient.get(`/api/tests/free/all?page=${page}`, {
@@ -427,20 +345,7 @@ const authService = {
     }
   },
 
-  /**
-   * Create a new test with basic information
-   * @param {Object} testData - Basic test information
-   * @param {number|null} testData.folder_id - Folder ID where test will be created
-   * @param {string} testData.title - Test title
-   * @param {string} testData.description - Test description
-   * @param {string} testData.category - Test category
-   * @param {number} testData.passing_score - Passing score percentage
-   * @param {number} testData.duration_hours - Test duration hours
-   * @param {number} testData.duration_minutes - Test duration minutes
-   * @param {string} testData.instructions - Test instructions
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Created test response
-   */
+
   createTest: async (testData, authKey) => {
     try {
       console.log('Creating test with data:', testData);
@@ -472,16 +377,8 @@ const authService = {
     }
   },
 
-  /**
-   * Add a question to a test
-   * @param {string} testId - Test ID
-   * @param {Object} questionData - Question data
-   * @param {string} questionData.question_english - Question text in English
-   * @param {string} questionData.question_tamil - Question text in Tamil
-   * @param {Array} questionData.options - Array of option objects
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Question creation response
-   */
+
+
   addQuestion: async (testId, questionData, authKey) => {
     try {
       console.log(`Adding question to test ${testId}:`, questionData);
@@ -513,19 +410,8 @@ const authService = {
     }
   },
 
-  /**
-   * Update test settings
-   * @param {string} testId - Test ID
-   * @param {Object} settings - Test settings
-   * @param {boolean} settings.shuffle_questions - Whether to shuffle questions
-   * @param {boolean} settings.show_results_immediately - Whether to show results immediately
-   * @param {boolean} settings.allow_answer_review - Whether to allow answer review
-   * @param {boolean} settings.enable_time_limit - Whether to enable time limit
-   * @param {string} settings.status - Test status (draft/published)
-   * @param {boolean} settings.is_free - Whether test is free
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Settings update response
-   */
+
+
   updateTestSettings: async (testId, settings, authKey) => {
     try {
       console.log(`Updating settings for test ${testId}:`, settings);
@@ -557,13 +443,8 @@ const authService = {
     }
   },
 
-  /**
-   * Search for tests with query and sort options
-   * @param {string} query - Search query string
-   * @param {string} sort - Sort parameter (e.g., 'name', 'date')
-   * @param {string} authKey - Authentication key
-   * @returns {Promise<Object>} Search results
-   */
+
+
   searchTests: async (query, sort, authKey) => {
     try {
       const queryParams = [];
