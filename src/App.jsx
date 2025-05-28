@@ -1,5 +1,3 @@
-//src/App.jsx
-
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import AppProvidersWrapper from "./components/wrappers/AppProvidersWrapper";
@@ -7,6 +5,7 @@ import AppRouter from "./routes/router";
 import ContactForm from "@/components/PopUpForm"; 
 import "@/assets/scss/style.scss";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import {AuthProvider} from "./context/useAuthContext";
 
 
 function App() {
@@ -30,13 +29,16 @@ function App() {
 
   return (
     <AppProvidersWrapper>
-      {!isAdminPath && (
+      <AuthProvider>    
+          {!isAdminPath && (
         <>
           <ContactForm show={showContactForm} handleClose={() => setShowContactForm(false)} />
           <WhatsAppButton />
         </>
       )}
       <AppRouter />
+      </AuthProvider>
+
     </AppProvidersWrapper>
   );
 }

@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import authService from '@/helpers/authService';
-import AuthLayout from './components/AuthLayout'; // Adjust path as per your project
+import AuthLayout from './components/AuthLayout'; 
 
 export default function OtpVerifyPage() {
   const location = useLocation();
@@ -10,21 +10,21 @@ export default function OtpVerifyPage() {
   const [otp, setOtp] = useState('');
   const [err, setErr] = useState('');
 
-  const handleOtpSubmit = async () => {
-    try {
-      const res = await authService.verifyOTP({ phone_number: mobile, otp });
-      if (res.user && res.auth_key) {
-        // Existing user: log in, redirect home
-        // save auth_key to session/local storage as needed
-        navigate('/dashboard');
-      } else {
-        // New user: go to registration details page
-        navigate('/auth/complete-registration', { state: { mobile } });
-      }
-    } catch (e) {
-      setErr('Invalid or expired OTP.');
+const handleOtpSubmit = async () => {
+  try {
+    const res = await authService.verifyOTP({ phone_number: mobile, otp });
+    if (res.user && res.token) {
+      localStorage.setItem('token', res.token);
+      navigate('/home');
+    } else {
+      navigate('/auth/complete-registration', { state: { mobile } });
     }
-  };
+  } catch (e) {
+    setErr('Invalid or expired OTP.');
+  }
+};
+
+
 
   return (
     <AuthLayout>
@@ -39,10 +39,13 @@ export default function OtpVerifyPage() {
             placeholder="Enter OTP"
             maxLength={6}
           />
-          <button className="btn btn-primary w-100" onClick={handleOtpSubmit}>Verify</button>
+          <button className="btn btn-primary w-100" onClick={handleOtpSubmit}>
+            Verify
+          </button>
           {err && <div style={{ color: 'red', marginTop: 12 }}>{err}</div>}
         </div>
       </div>
     </AuthLayout>
   );
 }
+

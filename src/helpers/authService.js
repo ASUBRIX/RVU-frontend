@@ -4,8 +4,12 @@ import httpClient from './httpClient';
 const authService = {
 
   register: async (userData) => {
+    console.log("register is calling");
+    
     try {
       const response = await httpClient.post('/api/users/register', userData);
+      console.log(response);
+      
       return response.data;
     } catch (error) {
       console.error('Registration error:', error);

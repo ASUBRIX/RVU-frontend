@@ -1,84 +1,45 @@
-import { deleteCookie, getCookie, hasCookie, setCookie } from 'cookies-next';
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext, useState, useEffect } from 'react'
 
-const AuthContext = createContext(undefined);
-
-export function useAuthContext() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
-  }
-  return context;
-}
-
-const authSessionKey = '_EDUPORT_AUTH_KEY_';
+const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
-  const navigate = useNavigate();
-  
-  const getSession = () => {
-    console.log('Getting session from cookie');
-    const fetchedCookie = getCookie(authSessionKey)?.toString();
-    
-    if (!fetchedCookie) {
-      console.log('No session cookie found');
-      return;
-    } else {
-      try {
-        const parsedSession = JSON.parse(fetchedCookie);
-        console.log('Session cookie found:', { 
-          hasToken: !!parsedSession?.token,
-          tokenPreview: parsedSession?.token ? (parsedSession.token.substring(0, 20) + '...') : 'no token'
-        });
-        return parsedSession;
-      } catch (error) {
-        console.error('Error parsing session cookie:', error);
-        return;
-      }
-    }
-  };
-  
-  const [user, setUser] = useState(getSession());
-  
-  // Debug logging for user state changes
+  const [user, setUser] = useState(null)
+  const [token, setToken] = useState(null)
+
   useEffect(() => {
-    console.log('Auth state changed:', { 
-      isAuthenticated: hasCookie(authSessionKey),
-      hasUser: !!user,
-      hasToken: !!user?.token
-    });
-  }, [user]);
-  
-  const saveSession = (userData) => {
-    console.log('Saving session:', { 
-      hasToken: !!userData?.token,
-      tokenPreview: userData?.token ? (userData.token.substring(0, 20) + '...') : 'no token' 
-    });
-    
-    setCookie(authSessionKey, JSON.stringify(userData));
-    setUser(userData);
-  };
-  
-  const removeSession = () => {
-    console.log('Removing session');
-    deleteCookie(authSessionKey);
-    setUser(undefined);
-    navigate('/auth/sign-in');
-  };
-  
-  const isAuthenticated = hasCookie(authSessionKey);
-  
+    // On mount, load user/token from storage
+    const t = localStorage.getItem('token')
+    const u = localStorage.getItem('user')
+    if (t && u) {
+      setToken(t)
+      setUser(JSON.parse(u))
+    }
+  }, [])
+
+  // Login: save to localStorage and state
+  const login = (userObj, jwtToken) => {
+    localStorage.setItem('token', jwtToken)
+    localStorage.setItem('user', JSON.stringify(userObj))
+    setUser(userObj)
+    setToken(jwtToken)
+  }
+
+  // Logout: clear everything
+  const logout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+    setToken(null)
+  }
+
   return (
-    <AuthContext.Provider 
-      value={{
-        user,
-        isAuthenticated,
-        saveSession,
-        removeSession
-      }}
-    >
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
-  );
+  )
+}
+
+// Custom hook for using auth context
+export function useAuthContext() {
+  return useContext(AuthContext)
 }
