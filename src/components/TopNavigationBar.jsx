@@ -1,15 +1,16 @@
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
-import { Container, Collapse, NavItem, Button } from 'react-bootstrap'
+import { Container, Collapse, NavItem, Button, Dropdown } from 'react-bootstrap'
 import LogoBox from '@/components/LogoBox'
 import useScrollEvent from '@/hooks/useScrollEvent'
 import useToggle from '@/hooks/useToggle'
 import { useAuthContext } from '../context/useAuthContext'
+import { ChevronDown } from 'react-bootstrap-icons' // Add this for arrow icon
 
 const TopNavigationBar = () => {
   const { scrollY } = useScrollEvent()
   const { isTrue: isOpen, toggle } = useToggle()
-  const { user } = useAuthContext()
+  const { user, logout } = useAuthContext()
 
   const menus = [
     { label: 'Home', path: '/' },
@@ -66,7 +67,7 @@ const TopNavigationBar = () => {
                   ))}
                 </ul>
                 {/* Right actions */}
-                <div className="d-flex align-items-center ms-2">
+                <div className="d-flex align-items-center ms-auto">
                   {!user ? (
                     <>
                       <Button as={Link} to="/auth" variant="outline-primary" className="ms-1" style={{ minWidth: 120 }}>
@@ -77,9 +78,18 @@ const TopNavigationBar = () => {
                       </Button>
                     </>
                   ) : (
-                    <span className="ms-3 fw-semibold" style={{ fontSize: 17 }}>
-                      Hi, {user.first_name}
-                    </span>
+                    <Dropdown align="end">
+                      <Dropdown.Toggle variant="outline-primary" id="dropdown-profile" className="fw-semibold d-flex align-items-center" style={{ fontSize: 17, border: 0 }}>
+                        Hi, {user.first_name}
+                        <ChevronDown size={18} className="ms-1" />
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/settings">Settings</Dropdown.Item>
+                        <Dropdown.Divider />
+                        <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
                   )}
                 </div>
               </div>
