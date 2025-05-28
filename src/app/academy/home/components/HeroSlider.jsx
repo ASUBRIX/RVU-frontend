@@ -63,7 +63,7 @@ const HeroSlider = () => {
               src={
                 slide.image_url.startsWith("http")
                   ? slide.image_url
-                  : `http://localhost:5000${slide.image_url}`
+                  : `https://server.pudhuyugamacademy.com${slide.image_url}`
               }
               alt={slide.title}
               className="w-100"

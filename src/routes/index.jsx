@@ -73,9 +73,6 @@ const Error404 = lazy(() => import('@/app/(other)/(error-pages)/error-404/page')
 const ComingSoon = lazy(() => import('@/app/coming-soon/page'))
 
 //Auth
-// const SignUp = lazy(() => import('@/app/(other)/auth/sign-up/page'))
-// const SignIn = lazy(() => import('@/app/(other)/auth/sign-in/page'))
-// const ForgotPassword = lazy(() => import('@/app/(other)/auth/forgot-password/page'))
 const AuthEntryPage = lazy(() => import('@/app/(other)/auth/AuthEntryPage'))
 const OtpVerifyPage = lazy(() => import('@/app/(other)/auth/OtpVerifyPage'))
 const RegisterDetailsPage = lazy(() => import('@/app/(other)/auth/RegisterDetailsPage'))
@@ -98,7 +95,7 @@ const Settings = lazy(() => import('@/app/instructor/setting/page'))
 const DeleteAccount = lazy(() => import('@/app/instructor/delete-account/page'))
 const InstructorChatPage = lazy(() => import('@/app/instructor/chat/page'))
 
-//Old-Student
+// Student
 const StudentDashboard = lazy(() => import('@/app/student/dashboard/page'))
 const Subscription = lazy(() => import('@/app/student/subscription/page'))
 const StudentCourseList = lazy(() => import('@/app/student/course-list/page'))
@@ -286,7 +283,9 @@ const pagesRoutes = [
     name: 'Pricing',
     element: <Pricing />,
   },
-  // our-team listing, privacy-policy, terms-conditions, gallery, free-test, details, questions route
+
+
+  
   {
     path: '/our-team',
     name: 'Instructor List',
@@ -458,23 +457,6 @@ const otherRoutes = [
   },
 ]
 
-// export const authRoutes = [
-//   {
-//     path: '/auth/sign-in',
-//     name: 'Sign In',
-//     element: <SignIn />,
-//   },
-//   {
-//     path: '/auth/sign-up',
-//     name: 'Sign Up',
-//     element: <SignUp />,
-//   },
-//   {
-//     path: '/auth/forgot-password',
-//     name: 'Forgot Password',
-//     element: <ForgotPassword />,
-//   },
-// ]
 
 export const authRoutes = [
   {
@@ -576,58 +558,62 @@ export const InstructorRoutes = [
     element: <DeleteAccount />,
   },
 ]
+
+
 export const studentRoutes = [
-  // {
-  //   path: '/student/dashboard',
-  //   name: 'Dashboard',
-  //   element: <StudentDashboard />,
-  // },
-  // {
-  //   path: '/student/subscription',
-  //   name: 'Subscription',
-  //   element: <Subscription />,
-  // },
-  // {
-  //   path: '/student/course-list',
-  //   name: 'Courses',
-  //   element: <StudentCourseList />,
-  // },
-  // {
-  //   path: '/student/course-resume',
-  //   name: 'Course Resume',
-  //   element: <CourseResume />,
-  // },
-  // {
-  //   path: '/student/quiz',
-  //   name: 'Quiz',
-  //   element: <StudentQuiz />,
-  // },
-  // {
-  //   path: '/student/payment-info',
-  //   name: 'Payment Info',
-  //   element: <PaymentInfo />,
-  // },
-  // {
-  //   path: '/student/bookmark',
-  //   name: 'Wishlist',
-  //   element: <StudentWishlist />,
-  // },
-  // {
-  //   path: '/student/edit-profile',
-  //   name: 'Edit Profile',
-  //   element: <StudentEditProfile />,
-  // },
-  // {
-  //   path: '/student/setting',
-  //   name: 'Setting',
-  //   element: <StudentSetting />,
-  // },
-  // {
-  //   path: '/student/delete-account',
-  //   name: 'Delete Account',
-  //   element: <StudentDeleteAccount />,
-  // },
+  {
+    path: '/student/dashboard',
+    name: 'Dashboard',
+    element: <StudentDashboard />,
+  },
+  {
+    path: '/student/subscription',
+    name: 'Subscription',
+    element: <Subscription />,
+  },
+  {
+    path: '/student/course-list',
+    name: 'Courses',
+    element: <StudentCourseList />,
+  },
+  {
+    path: '/student/course-resume',
+    name: 'Course Resume',
+    element: <CourseResume />,
+  },
+  {
+    path: '/student/quiz',
+    name: 'Quiz',
+    element: <StudentQuiz />,
+  },
+  {
+    path: '/student/payment-info',
+    name: 'Payment Info',
+    element: <PaymentInfo />,
+  },
+  {
+    path: '/student/bookmark',
+    name: 'Wishlist',
+    element: <StudentWishlist />,
+  },
+  {
+    path: '/student/edit-profile',
+    name: 'Edit Profile',
+    element: <StudentEditProfile />,
+  },
+  {
+    path: '/student/setting',
+    name: 'Setting',
+    element: <StudentSetting />,
+  },
+  {
+    path: '/student/delete-account',
+    name: 'Delete Account',
+    element: <StudentDeleteAccount />,
+  },
 ]
+
+
 export const adminRoutes = [
   {
     path: '/admin/dashboard',

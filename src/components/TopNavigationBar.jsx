@@ -5,7 +5,7 @@ import LogoBox from '@/components/LogoBox'
 import useScrollEvent from '@/hooks/useScrollEvent'
 import useToggle from '@/hooks/useToggle'
 import { useAuthContext } from '../context/useAuthContext'
-import { ChevronDown } from 'react-bootstrap-icons' // Add this for arrow icon
+import { ChevronDown } from 'react-bootstrap-icons' 
 
 const TopNavigationBar = () => {
   const { scrollY } = useScrollEvent()
@@ -84,10 +84,9 @@ const TopNavigationBar = () => {
                         <ChevronDown size={18} className="ms-1" />
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
-                        <Dropdown.Item as={Link} to="/settings">Settings</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/dashboard">Dashboard</Dropdown.Item>
                         <Dropdown.Divider />
-                        <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
+                        <Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   )}
