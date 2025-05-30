@@ -175,13 +175,20 @@ export const INSTRUCTOR_MENU_ITEMS = [
 
 
 export const STUDENT_MENU_ITEMS = [
-  {
-  key: 'dashboard',
-  label: 'Dashboard',
-  icon: BsUiChecksGrid,
-  url: '/student/dashboard',
+     {
+  key: 'profile',
+  label: 'Student Profile',
+  icon: BsPencilSquare,
+  url: '/student/edit-profile',
   parentKey: 'student'
-}, 
+},
+//   {
+//   key: 'dashboard',
+//   label: 'Dashboard',
+//   icon: BsUiChecksGrid,
+//   url: '/student/dashboard',
+//   parentKey: 'student'
+// }, 
 {
   key: 'courses',
   label: 'My Courses',
@@ -203,13 +210,7 @@ export const STUDENT_MENU_ITEMS = [
   url: '/student/payment-info',
   parentKey: 'student'}
   ,
-   {
-  key: 'profile',
-  label: 'Edit Profile',
-  icon: BsPencilSquare,
-  url: '/student/edit-profile',
-  parentKey: 'student'
-},
+
 
 
 
