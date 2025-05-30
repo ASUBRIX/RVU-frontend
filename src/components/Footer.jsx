@@ -12,7 +12,7 @@ import { useState, useEffect, useRef } from 'react'
 import httpClient from '../helpers/httpClient'
 
 // Backend base URL - adjust this to match your backend server
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = 'https://server.pudhuyugamacademy.com/';
 
 // Create a cache for settings
 let settingsCache = null;

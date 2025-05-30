@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import httpClient from '../helpers/httpClient';
 
 // Backend base URL - adjust this to match your backend server
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'https://server.pudhuyugamacademy.com';
 
 // Create a cache to store the logo URL between re-renders
 let logoCache = {

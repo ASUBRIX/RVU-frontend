@@ -18,7 +18,7 @@ const AppProvidersWrapper = ({
         document.querySelector('#splash-screen')?.classList.add('remove');
       });
     }
-  }, []);
+  }, []);       
   return <LayoutProvider>
     <AuthProvider>
       <NotificationProvider>

@@ -36,7 +36,7 @@ const VerticalMenu = () => {
       })}
         <Link className="list-group-item text-danger bg-danger-soft-hover" onClick={removeSession} to="/auth/sign-in">
           <FaSignOutAlt className="fa-fw me-2" />
-          Sign Out
+          Sign Out Instructor
         </Link>
       </div>
     </div>;

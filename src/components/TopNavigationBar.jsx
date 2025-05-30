@@ -84,7 +84,7 @@ const TopNavigationBar = () => {
                         <ChevronDown size={18} className="ms-1" />
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        <Dropdown.Item as={Link} to="/dashboard">Dashboard</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/student/dashboard">Dashboard</Dropdown.Item>
                         <Dropdown.Divider />
                         <Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
                       </Dropdown.Menu>

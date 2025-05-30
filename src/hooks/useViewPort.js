@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 const useViewPort = () => {
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
+
+  
   useEffect(() => {
     const handleWindowResize = () => {
       setWidth(window.innerWidth);

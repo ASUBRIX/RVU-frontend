@@ -123,12 +123,22 @@ export const CATEGORY_MENU_ITEMS = [{
     parentKey: 'category'
   }]
 }];
+
+
+
 export const INSTRUCTOR_MENU_ITEMS = [
   {
-    key: 'profile',
+    key: 'Dashboard',
     label: 'Dashboard',
     icon: BsPencilSquare,
     url: '/student/dashboard',
+    parentKey: 'instructor'
+  },
+    {
+    key: 'profile',
+    label: 'Edit Profile',
+    icon: BsPencilSquare,
+    url: '/student/edit-profile',
     parentKey: 'instructor'
   },
   {
@@ -161,67 +171,101 @@ export const INSTRUCTOR_MENU_ITEMS = [
     parentKey: 'instructor'
   },
 ];
-export const STUDENT_MENU_ITEMS = [{
+
+
+
+export const STUDENT_MENU_ITEMS = [
+  {
   key: 'dashboard',
   label: 'Dashboard',
   icon: BsUiChecksGrid,
   url: '/student/dashboard',
   parentKey: 'student'
-}, {
-  key: 'subscriptions',
-  label: 'My Subscriptions',
-  icon: BsCardChecklist,
-  url: '/student/subscription',
-  parentKey: 'student'
-}, {
+}, 
+{
   key: 'courses',
   label: 'My Courses',
   icon: BsBasket,
   url: '/student/course-list',
   parentKey: 'student'
-}, {
-  key: 'resume',
-  label: 'Course Resume',
-  icon: FaRegFileAlt,
-  url: '/student/course-resume',
-  parentKey: 'student'
-}, {
-  key: 'quiz',
-  label: 'Quiz',
-  icon: BsQuestionDiamond,
-  url: '/student/quiz',
-  parentKey: 'student'
-}, {
+},
+  {
+    key: 'chat',
+    label: 'Chat with Admin',
+    icon: FaRegCommentDots,
+    url: '/student/chat',
+    parentKey: 'instructor'
+  },
+{
   key: 'paymentInfo',
   label: 'Payment Info',
   icon: BsCreditCard2Front,
   url: '/student/payment-info',
-  parentKey: 'student'
-}, {
-  key: 'wishlist',
-  label: 'Wishlist',
-  icon: BsCartCheck,
-  url: '/student/bookmark',
-  parentKey: 'student'
-}, {
+  parentKey: 'student'}
+  ,
+   {
   key: 'profile',
   label: 'Edit Profile',
   icon: BsPencilSquare,
   url: '/student/edit-profile',
   parentKey: 'student'
-}, {
-  key: 'setting',
-  label: 'Setting',
-  icon: BsGear,
-  url: '/student/setting',
-  parentKey: 'student'
-}, {
-  key: 'delete',
-  label: 'Delete Profile',
-  icon: BsTrash,
-  url: '/student/delete-account',
-  parentKey: 'student'
-}
+},
+
+
+
+
+
+
+
+
+
+
+//   key: 'subscriptions',
+//   label: 'My Subscriptions',
+//   icon: BsCardChecklist,
+//   url: '/student/subscription',
+//   parentKey: 'student'
+// }
+ ,
+//  {
+//   key: 'resume',
+//   label: 'Course Resume',
+//   icon: FaRegFileAlt,
+//   url: '/student/course-resume',
+//   parentKey: 'student'
+// },
+
+// {
+//   key: 'quiz',
+//   label: 'Quiz',
+//   icon: BsQuestionDiamond,
+//   url: '/student/quiz',
+//   parentKey: 'student'
+// }, 
+
+
+// }, {
+//   key: 'wishlist',
+//   label: 'Wishlist',
+//   icon: BsCartCheck,
+//   url: '/student/bookmark',
+//   parentKey: 'student'
+// },
+,
+
+//  {
+//   key: 'setting',
+//   label: 'Setting',
+//   icon: BsGear,
+//   url: '/student/setting',
+//   parentKey: 'student'},
+// }, {
+//   key: 'delete',
+//   label: 'Delete Profile',
+//   icon: BsTrash,
+//   url: '/student/delete-account',
+//   parentKey: 'student'
+// }
   // {
   //   key: 'level',
   //   label: 'Dropdown level',
@@ -230,6 +274,8 @@ export const STUDENT_MENU_ITEMS = [{
   //   parentKey: 'student',
   // },
 ];
+
+
 export const APP_MENU_ITEMS = [{
   key: 'demos',
   label: 'Demos',

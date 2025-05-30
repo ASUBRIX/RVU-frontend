@@ -1,90 +1,160 @@
-import avatar7 from '@/assets/images/avatar/07.jpg';
-import TextFormInput from '@/components/form/TextFormInput';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Card, CardBody, CardHeader, Col } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { BsPlus, BsX } from 'react-icons/bs';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Card, Spinner } from 'react-bootstrap';
 import * as yup from 'yup';
+import { getProfile, updateProfile } from '@/helpers/userApi';
+import TextFormInput from '@/components/form/TextFormInput';
+
+
+
+const schema = yup.object({
+  first_name: yup.string().required('Enter first name'),
+  last_name: yup.string().required('Enter last name'),
+  email: yup.string().email('Enter valid email').required('Email required'),
+  phone_number: yup.string().required('Enter phone'),
+  student_first_name: yup.string().required('Enter first name'),
+  student_last_name: yup.string().required('Enter last name'),
+  student_email: yup.string().email('Enter valid email').required('Email required'),
+  student_phone: yup.string().required('Enter phone'),
+  enrollment_date: yup.string(),
+  program: yup.string(),
+  semester: yup.string(),
+  year: yup.string(),
+  status: yup.string(),
+  courses: yup.mixed(),
+});
+
 const EditProfile = () => {
-  const contactFormSchema = yup.object({
-    name: yup.string().required('Please enter your first name'),
-    from: yup.string().required('Please enter your first name'),
-    location: yup.string().required('Please enter your first name'),
-    email: yup.string().email('Please enter valid email').required('Please enter your email'),
-    phoneNo: yup.number().required('Please enter your phone number')
-  });
-  const {
-    control,
-    handleSubmit
-  } = useForm({
-    resolver: yupResolver(contactFormSchema),
+  const [loading, setLoading] = useState(false);
+
+  const { control, handleSubmit, reset, formState: { isSubmitting } } = useForm({
+    resolver: yupResolver(schema),
     defaultValues: {
-      email: 'example@gmail.com',
-      phoneNo: 1234567890,
-      location: 'California'
-    }
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone_number: '',
+      student_first_name: '',
+      student_last_name: '',
+      student_email: '',
+      student_phone: '',
+      enrollment_date: '',
+      program: '',
+      semester: '',
+      year: '',
+      status: '',
+      courses: '',
+    },
   });
-  return <Card className="bg-transparent border rounded-3">
-      <CardHeader className="bg-transparent border-bottom">
-        <h3 className="card-header-title mb-0">Edit Profile</h3>
-      </CardHeader>
-      <CardBody>
-        <form className="row g-4" onSubmit={handleSubmit(() => {})}>
-          <Col xs={12} className="justify-content-center align-items-center">
-            <label className="form-label">Profile picture</label>
-            <div className="d-flex align-items-center">
-              <label className="position-relative me-4" htmlFor="uploadfile-1" title="Replace this pic">
-                <span className="avatar avatar-xl">
-                  <img id="uploadfile-1-preview" className="avatar-img rounded-circle border border-white border-3 shadow" src={avatar7} alt="" />
-                </span>
-                <button type="button" className="uploadremove">
-                  <BsX className="bi bi-x text-white" />
-                </button>
-              </label>
-              <label className="btn btn-primary-soft mb-0" htmlFor="uploadfile-1">
-                Change
-              </label>
-              <input id="uploadfile-1" className="form-control d-none" type="file" />
-            </div>
-          </Col>
-          <Col xs={12}>
-            <label className="form-label">Full name</label>
-            <div className="input-group">
-              <input type="text" className="form-control" defaultValue="Lori" placeholder="First name" />
-              <input type="text" className="form-control" defaultValue="Stevens" placeholder="Last name" />
-            </div>
-          </Col>
-          <Col md={6}>
-            <label className="form-label">Username</label>
-            <div className="input-group">
-              <span className="input-group-text">Eduport.com</span>
-              <input type="text" className="form-control" defaultValue="loristev" />
-            </div>
-          </Col>
-          <TextFormInput name="email" label="Email *" control={control} containerClassName="col-md-6" />
-          <TextFormInput name="phoneNo" label="Phone number *" control={control} containerClassName="col-md-6" />
-          <TextFormInput name="location" label="Location" control={control} containerClassName="col-md-6" />
-          <Col xs={12}>
-            <label className="form-label">About me</label>
-            <textarea className="form-control" rows={3} defaultValue={'I’ve found a way to get paid for my favorite hobby, and do so while following my dream of traveling the world.'} />
-            <div className="form-text">Brief description for your profile.</div>
-          </Col>
-          <Col xs={12}>
-            <label className="form-label">Education</label>
-            <input className="form-control mb-2" type="text" defaultValue="Bachelor in Computer Graphics" />
-            <input className="form-control mb-2" type="text" defaultValue="Masters in Computer Graphics" />
-            <button className="btn btn-sm btn-light mb-0">
-              <BsPlus className="me-1" />
-              Add more
-            </button>
-          </Col>
-          <div className="d-sm-flex justify-content-end">
-            <button type="submit" className="btn btn-primary mb-0">
-              Save changes
-            </button>
+
+  useEffect(() => {
+    getProfile().then((data) => {
+      reset({
+        first_name: data.user_first_name || '',
+        last_name: data.user_last_name || '',
+        email: data.user_email || '',
+        phone_number: data.user_phone_number || '',
+        student_first_name: data.first_name || '',
+        student_last_name: data.last_name || '',
+        student_email: data.email || '',
+        student_phone: data.phone || '',
+        enrollment_date: data.enrollment_date || '',
+        program: data.program || '',
+        semester: data.semester || '',
+        year: data.year || '',
+        status: data.status || '',
+        courses: data.courses || '',
+      });
+      setLoading(false);
+    });
+  }, [reset]);
+
+  const onSubmit = async (formData) => {
+    await updateProfile(formData);
+  };
+
+  return (
+    <Card className="edit-profile-card px-3 py-2">
+      {loading ? (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
+          <Spinner animation="border" variant="primary" />
+        </div>
+      ) : (
+        <>
+          {/* Optional: Profile Image */}
+          <div className="edit-profile-avatar">
+            <img
+              src="/images/default-avatar.png"
+              alt="Profile"
+              className="edit-profile-avatar-img"
+            />
+            {/* You can add a button here for uploading */}
           </div>
-        </form>
-      </CardBody>
-    </Card>;
+          <h5 className="text-center mb-1">Edit Profile</h5>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* User Info */}
+            <div className="section-title">User Info</div>
+            <div className="row gx-2">
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="first_name" label="User First Name" control={control} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="last_name" label="User Last Name" control={control} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="email" label="User Email" control={control} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="phone_number" label="User Phone" control={control} />
+              </div>
+            </div>
+            {/* Student Info */}
+            <div className="section-title">Student Info</div>
+            <div className="row gx-2">
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="student_first_name" label="Student First Name" control={control} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="student_last_name" label="Student Last Name" control={control} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="student_email" label="Student Email" control={control} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="student_phone" label="Student Phone" control={control} />
+              </div>
+            </div>
+            {/* Academic Details */}
+            <div className="section-title">Academic Details</div>
+            <div className="row gx-2">
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="enrollment_date" label="Enrollment Date" control={control} />
+              </div>
+              <div className="col-md-6 mb-3">
+                <TextFormInput name="program" label="Program" control={control} />
+              </div>
+              <div className="col-md-4 mb-3">
+                <TextFormInput name="semester" label="Semester" control={control} />
+              </div>
+              <div className="col-md-4 mb-3">
+                <TextFormInput name="year" label="Year" control={control} />
+              </div>
+              <div className="col-md-4 mb-3">
+                <TextFormInput name="status" label="Status" control={control} />
+              </div>
+              <div className="col-12 mb-3">
+                <TextFormInput name="courses" label="Courses (comma separated)" control={control} />
+              </div>
+            </div>
+            <button type="submit" className="btn btn-primary w-100 mt-3" disabled={isSubmitting}>
+              {isSubmitting ? <Spinner size="sm" /> : 'Save changes'}
+            </button>
+          </form>
+        </>
+      )}
+    </Card>
+  );
 };
+
 export default EditProfile;

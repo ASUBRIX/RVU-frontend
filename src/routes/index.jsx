@@ -2,6 +2,7 @@ import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import ContentManagement from '@/app/admin/content-management/page'
 
+
 // Demos Pages
 const DemosDefault = lazy(() => import('@/app/demos/default/home/page'))
 const Eduction = lazy(() => import('@/app/demos/education/home/page'))
@@ -97,6 +98,7 @@ const InstructorChatPage = lazy(() => import('@/app/instructor/chat/page'))
 
 // Student
 const StudentDashboard = lazy(() => import('@/app/student/dashboard/page'))
+const StudentChatPage = lazy(()=>import('@/app/student/chat/page'));
 const Subscription = lazy(() => import('@/app/student/subscription/page'))
 const StudentCourseList = lazy(() => import('@/app/student/course-list/page'))
 const CourseResume = lazy(() => import('@/app/student/course-resume/page'))
@@ -199,6 +201,315 @@ export const demosRoutes = [
     element: <Workshop />,
   },
 ]
+
+
+export const shopRoutes = [
+  {
+    path: '/shop',
+    name: 'Shop grid',
+    element: <Shop />,
+  },
+  {
+    path: '/shop/product-detail/:eventId',
+    name: 'Product detail',
+    element: <ProductDetail />,
+  },
+  {
+    path: '/shop/cart',
+    name: 'Product detail',
+    element: <Cart />,
+  },
+  {
+    path: '/shop/checkout',
+    name: 'Checkout',
+    element: <Checkout />,
+  },
+  {
+    path: '/shop/empty-cart',
+    name: 'Empty Cart',
+    element: <EmptyCart />,
+  },
+  {
+    path: '/shop/wishlist',
+    name: 'Wishlist',
+    element: <Wishlist />,
+  },
+]
+
+
+
+export const authRoutes = [
+  {
+    path: '/auth',
+    name: 'Auth Entry',
+    element: <AuthEntryPage />,
+  },
+  {
+    path: '/auth/verify-otp',
+    name: 'Verify OTP',
+    element: <OtpVerifyPage />,
+  },
+  {
+    path: '/auth/complete-registration',
+    name: 'Complete Registration',
+    element: <RegisterDetailsPage />,
+  },
+  {
+    path: '/auth/email-login',
+    name: 'Sign In with Email',
+    element: <EmailLoginPage />,
+  },
+  {
+    path: '/auth/forgot-password',
+    name: 'Forgot Password',
+    element: <ForgotPassword />,
+  },
+]
+
+
+export const studentRoutes = [
+  {
+    path: '/student/dashboard',
+    name: 'Dashboard',
+    element: <StudentDashboard />,
+  },
+  {
+    path:'/student/edit-profile',
+    name:'Edit Profile',
+    element:<StudentEditProfile />
+
+  },
+  {
+    
+  path: '/student/chat',
+  name: 'Chat with Admin',
+  element: <StudentChatPage />,
+},
+
+  {
+    path: '/student/subscription',
+    name: 'Subscription',
+    element: <Subscription />,
+  },
+  {
+    path: '/student/course-list',
+    name: 'Courses',
+    element: <StudentCourseList />,
+  },
+  {
+    path: '/student/course-resume',
+    name: 'Course Resume',
+    element: <CourseResume />,
+  },
+  {
+    path: '/student/quiz',
+    name: 'Quiz',
+    element: <StudentQuiz />,
+  },
+  {
+    path: '/student/payment-info',
+    name: 'Payment Info',
+    element: <PaymentInfo />,
+  },
+  {
+    path: '/student/bookmark',
+    name: 'Wishlist',
+    element: <StudentWishlist />,
+  },
+  {
+    path: '/student/edit-profile',
+    name: 'Edit Profile',
+    element: <StudentEditProfile />,
+  },
+  {
+    path: '/student/setting',
+    name: 'Setting',
+    element: <StudentSetting />,
+  },
+  {
+    path: '/student/delete-account',
+    name: 'Delete Account',
+    element: <StudentDeleteAccount />,
+  },
+]
+
+
+
+// export const InstructorRoutes = [
+//   {
+//     path: '/instructor/dashboard',
+//     name: 'Dashboard',
+//     element: <InstructorDashboard />,
+//   },
+//   {
+//     path: '/student/my-courses',
+//     name: 'Courses',
+//     element: <InstructorCourses />,
+//   },
+//   {
+//     path: '/student/chat',
+//     name: 'Chat with Admin',
+//     element: <InstructorChatPage />,
+//   },
+//   {
+//     path: '/student/course-add',
+//     name: 'Course Added',
+//     element: <InstructorCourseAdd />,
+//   },
+//   {
+//     path: '/instructor/quiz',
+//     name: 'Quiz',
+//     element: <Quiz />,
+//   },
+//   {
+//     path: '/instructor/earning',
+//     name: 'Earnings',
+//     element: <Earnings />,
+//   },
+//   {
+//     path: '/instructor/student-list',
+//     name: 'Students',
+//     element: <StudentsList />,
+//   },
+//   {
+//     path: '/student/test-details',
+//     name: 'Tests',
+//     element: <Tests />,
+//   },
+//   {
+//     path: '/instructor/review',
+//     name: 'Reviews',
+//     element: <InstructorReviews />,
+//   },
+//   {
+//     path: '/student/payment-history',
+//     name: 'Payout',
+//     element: <Payout />,
+//   },
+
+
+
+
+export const adminRoutes = [
+  {
+    path: '/admin/dashboard',
+    name: 'Admin',
+    element: <AdminDashboard />,
+  },
+  {
+    path: '/admin/all-courses',
+    name: 'All Courses',
+    element: <AllCourses />,
+  },
+  {
+    path: '/admin/test-management',
+    name: 'Content Management',
+    element: <ContentManagement />,
+  },
+  {
+    path: '/admin/blog-management',
+    name: 'Blog Management',
+    element: <BlogManagement />,
+  },
+  {
+    path: '/admin/edit-course/:id',
+    name: 'Create Course',
+    element: <EditCourse />,
+  },
+  {
+    path: '/admin/course-category',
+    name: 'Course Category',
+    element: <CourseCategory />,
+  },
+  {
+    path: '/admin/course-detail',
+    name: 'Course Detail',
+    element: <CourseDetail />,
+  },
+  {
+    path:'/admin/coupons',
+    name:'Coupon Management',
+    element:<CouponManagement />
+  },
+  {
+    path: '/admin/students',
+    name: 'Students',
+    element: <AdminStudents />,
+  },
+  {
+    path: '/admin/instructors',
+    name: 'Instructors',
+    element: <AdminInstructors />,
+  },
+  {
+    path: '/admin/instructor-detail',
+    name: 'Instructor Detail',
+    element: <AdminInstructorsDetails />,
+  },
+  {
+    path: '/admin/instructor-requests',
+    name: 'Instructor Requests',
+    element: <AdminInstructorRequests />,
+  },
+  {
+    path: '/admin/reviews',
+    name: 'Reviews',
+    element: <AdminReviews />,
+  },
+  {
+    path: '/admin/earnings',
+    name: 'Earnings',
+    element: <AdminEarnings />,
+  },
+  {
+    path: '/admin/admin-settings',
+    name: 'Admin Settings',
+    element: <AdminSettings />,
+  },
+  {
+    path: '/admin/not-found',
+    name: 'Not Found',
+    element: <NotFound />,
+  },
+  {
+    path: '/admin/student-management',
+    name: 'Student Management',
+    element: <StudentManagement />,
+  },
+  {
+    path: '/admin/faculty-management',
+    name: 'Faculty Management',
+    element: <FacultyManagement />,
+  },
+  {
+    path:'/admin/current-affairs',
+    name:'Current Affairs',
+    element:<CurrentAffairsPage />
+
+  },
+  {
+    path: '/admin/chat',
+    name: 'Chat Section',
+    element: <AdminChat />,
+  },
+  {
+    path: '/admin/enquiries',
+    name: 'Enquiries',
+    element: <EnquiriesPage />,
+  },
+  {
+    path: '/admin/reports/*',
+    name: 'Reports & Analytics',
+    element: <ReportsPage />,
+  },
+
+  {
+    path:'/admin/announcements',
+    name:"Announcements",
+    element: <AnnouncementPage />
+  }
+]
+
 const pagesRoutes = [
   {
     path: '/pages/course/categories',
@@ -251,13 +562,11 @@ const pagesRoutes = [
     name: 'Course Full Screen Video',
     element: <VideoPlayer />,
   },
-  // about-us page route
   {
     path: '/about-us',
     name: 'About Us',
     element: <AboutUs />,
   },
-  // contact-us page route
   {
     path: '/contact-us',
     name: 'Contact Us',
@@ -390,38 +699,7 @@ const pagesRoutes = [
     element: <AdmissionForm />,
   },
 ]
-export const shopRoutes = [
-  {
-    path: '/shop',
-    name: 'Shop grid',
-    element: <Shop />,
-  },
-  {
-    path: '/shop/product-detail/:eventId',
-    name: 'Product detail',
-    element: <ProductDetail />,
-  },
-  {
-    path: '/shop/cart',
-    name: 'Product detail',
-    element: <Cart />,
-  },
-  {
-    path: '/shop/checkout',
-    name: 'Checkout',
-    element: <Checkout />,
-  },
-  {
-    path: '/shop/empty-cart',
-    name: 'Empty Cart',
-    element: <EmptyCart />,
-  },
-  {
-    path: '/shop/wishlist',
-    name: 'Wishlist',
-    element: <Wishlist />,
-  },
-]
+
 const helpRoutes = [
   {
     path: '/help/center',
@@ -434,6 +712,8 @@ const helpRoutes = [
     element: <HelpCenterDetails />,
   },
 ]
+
+
 const otherRoutes = [
   {
     path: '/faq',
@@ -458,279 +738,5 @@ const otherRoutes = [
 ]
 
 
-export const authRoutes = [
-  {
-    path: '/auth',
-    name: 'Auth Entry',
-    element: <AuthEntryPage />,
-  },
-  {
-    path: '/auth/verify-otp',
-    name: 'Verify OTP',
-    element: <OtpVerifyPage />,
-  },
-  {
-    path: '/auth/complete-registration',
-    name: 'Complete Registration',
-    element: <RegisterDetailsPage />,
-  },
-  {
-    path: '/auth/email-login',
-    name: 'Sign In with Email',
-    element: <EmailLoginPage />,
-  },
-  {
-    path: '/auth/forgot-password',
-    name: 'Forgot Password',
-    element: <ForgotPassword />,
-  },
-]
 
-
-
-
-
-export const InstructorRoutes = [
-  {
-    path: '/instructor/dashboard',
-    name: 'Dashboard',
-    element: <InstructorDashboard />,
-  },
-  {
-    path: '/student/my-courses',
-    name: 'Courses',
-    element: <InstructorCourses />,
-  },
-  {
-    path: '/student/chat',
-    name: 'Chat with Admin',
-    element: <InstructorChatPage />,
-  },
-  {
-    path: '/student/course-add',
-    name: 'Course Added',
-    element: <InstructorCourseAdd />,
-  },
-  {
-    path: '/instructor/quiz',
-    name: 'Quiz',
-    element: <Quiz />,
-  },
-  {
-    path: '/instructor/earning',
-    name: 'Earnings',
-    element: <Earnings />,
-  },
-  {
-    path: '/instructor/student-list',
-    name: 'Students',
-    element: <StudentsList />,
-  },
-  {
-    path: '/student/test-details',
-    name: 'Tests',
-    element: <Tests />,
-  },
-  {
-    path: '/instructor/review',
-    name: 'Reviews',
-    element: <InstructorReviews />,
-  },
-  {
-    path: '/student/payment-history',
-    name: 'Payout',
-    element: <Payout />,
-  },
-  // student dashboard (edit-profile) route
-  {
-    path: '/student/dashboard',
-    name: 'Edit Profile',
-    element: <EditProfile />,
-  },
-  {
-    path: '/instructor/setting',
-    name: 'Settings',
-    element: <Settings />,
-  },
-  {
-    path: '/instructor/delete-account',
-    name: 'Admin',
-    element: <DeleteAccount />,
-  },
-]
-
-
-export const studentRoutes = [
-  {
-    path: '/student/dashboard',
-    name: 'Dashboard',
-    element: <StudentDashboard />,
-  },
-  {
-    path: '/student/subscription',
-    name: 'Subscription',
-    element: <Subscription />,
-  },
-  {
-    path: '/student/course-list',
-    name: 'Courses',
-    element: <StudentCourseList />,
-  },
-  {
-    path: '/student/course-resume',
-    name: 'Course Resume',
-    element: <CourseResume />,
-  },
-  {
-    path: '/student/quiz',
-    name: 'Quiz',
-    element: <StudentQuiz />,
-  },
-  {
-    path: '/student/payment-info',
-    name: 'Payment Info',
-    element: <PaymentInfo />,
-  },
-  {
-    path: '/student/bookmark',
-    name: 'Wishlist',
-    element: <StudentWishlist />,
-  },
-  {
-    path: '/student/edit-profile',
-    name: 'Edit Profile',
-    element: <StudentEditProfile />,
-  },
-  {
-    path: '/student/setting',
-    name: 'Setting',
-    element: <StudentSetting />,
-  },
-  {
-    path: '/student/delete-account',
-    name: 'Delete Account',
-    element: <StudentDeleteAccount />,
-  },
-]
-
-
-export const adminRoutes = [
-  {
-    path: '/admin/dashboard',
-    name: 'Admin',
-    element: <AdminDashboard />,
-  },
-  {
-    path: '/admin/all-courses',
-    name: 'All Courses',
-    element: <AllCourses />,
-  },
-  {
-    path: '/admin/test-management',
-    name: 'Content Management',
-    element: <ContentManagement />,
-  },
-  {
-    path: '/admin/blog-management',
-    name: 'Blog Management',
-    element: <BlogManagement />,
-  },
-  {
-    path: '/admin/edit-course/:id',
-    name: 'Create Course',
-    element: <EditCourse />,
-  },
-  {
-    path: '/admin/course-category',
-    name: 'Course Category',
-    element: <CourseCategory />,
-  },
-  {
-    path: '/admin/course-detail',
-    name: 'Course Detail',
-    element: <CourseDetail />,
-  },
-  {
-    path:'/admin/coupons',
-    name:'Coupon Management',
-    element:<CouponManagement />
-  },
-  {
-    path: '/admin/students',
-    name: 'Students',
-    element: <AdminStudents />,
-  },
-  {
-    path: '/admin/instructors',
-    name: 'Instructors',
-    element: <AdminInstructors />,
-  },
-  {
-    path: '/admin/instructor-detail',
-    name: 'Instructor Detail',
-    element: <AdminInstructorsDetails />,
-  },
-  {
-    path: '/admin/instructor-requests',
-    name: 'Instructor Requests',
-    element: <AdminInstructorRequests />,
-  },
-  {
-    path: '/admin/reviews',
-    name: 'Reviews',
-    element: <AdminReviews />,
-  },
-  {
-    path: '/admin/earnings',
-    name: 'Earnings',
-    element: <AdminEarnings />,
-  },
-  {
-    path: '/admin/admin-settings',
-    name: 'Admin Settings',
-    element: <AdminSettings />,
-  },
-  {
-    path: '/admin/not-found',
-    name: 'Not Found',
-    element: <NotFound />,
-  },
-  {
-    path: '/admin/student-management',
-    name: 'Student Management',
-    element: <StudentManagement />,
-  },
-  {
-    path: '/admin/faculty-management',
-    name: 'Faculty Management',
-    element: <FacultyManagement />,
-  },
-  {
-    path:'/admin/current-affairs',
-    name:'Current Affairs',
-    element:<CurrentAffairsPage />
-
-  },
-  {
-    path: '/admin/chat',
-    name: 'Chat Section',
-    element: <AdminChat />,
-  },
-  {
-    path: '/admin/enquiries',
-    name: 'Enquiries',
-    element: <EnquiriesPage />,
-  },
-  {
-    path: '/admin/reports/*',
-    name: 'Reports & Analytics',
-    element: <ReportsPage />,
-  },
-
-  {
-    path:'/admin/announcements',
-    name:"Announcements",
-    element: <AnnouncementPage />
-  }
-]
 export const appRoutes = [...initialRoutes, ...demosRoutes, ...otherRoutes, ...pagesRoutes, ...helpRoutes]
