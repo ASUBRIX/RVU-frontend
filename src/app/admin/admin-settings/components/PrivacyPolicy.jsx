@@ -18,12 +18,12 @@ const PrivacyPolicy = () => {
     const fetchPolicy = async () => {
       try {
         setFetchLoading(true);
-        const response = await httpClient.get('/api/legal/privacy', {
+        const response = await httpClient.get('/api/admin/legal/privacy', {
           headers: {
             'auth_key': user?.token
           }
         });
-        
+        // 
         if (response.data && response.data.content) {
           setContent(response.data.content);
         }

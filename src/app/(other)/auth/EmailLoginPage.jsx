@@ -15,7 +15,7 @@ export default function EmailLoginPage() {
   const handleLogin = async () => {
     try {
       await authService.loginWithEmail(fields)
-      navigate('/dashboard')
+      navigate('/')
     } catch (e) {
       setErr('Invalid email or password.')
     }
@@ -23,8 +23,8 @@ export default function EmailLoginPage() {
 
   return (
     <AuthLayout>
-      <Col xs={12} lg={6} className="m-auto">
-        <div className="p-5">
+      {/* <Col xs={12} lg={6} className="m-auto"> */}
+        <div className="p-4">
           <h2>Sign in with Email</h2>
           <label>Email</label>
           <input
@@ -49,7 +49,7 @@ export default function EmailLoginPage() {
           <button className="btn btn-primary w-100" onClick={handleLogin}>Sign In</button>
           {err && <div style={{ color: 'red', marginTop: 8 }}>{err}</div>}
         </div>
-      </Col>
+      {/* </Col> */}
     </AuthLayout>
   )
 }
