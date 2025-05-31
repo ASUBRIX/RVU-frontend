@@ -13,8 +13,8 @@ export default function OtpVerifyPage() {
 const handleOtpSubmit = async () => {
   try {
     const res = await authService.verifyOTP({ phone_number: mobile, otp });
-    if (res.user && res.token) {
-      localStorage.setItem('token', res.token);
+    if (res.user && res.accessToken) {
+      localStorage.setItem('token', res.accessToken);
       navigate('/home');
     } else {
       navigate('/auth/complete-registration', { state: { mobile } });
