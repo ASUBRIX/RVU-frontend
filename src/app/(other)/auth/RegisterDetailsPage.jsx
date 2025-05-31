@@ -28,8 +28,8 @@ export default function RegisterDetailsPage() {
     try {
       const res = await authService.register(fields);
       if (res.user && res.accessToken) {
-        login(res.user, res.accessToken);    // <-- Save to context/localStorage
-        navigate('/home');                   // or dashboard as per your route config
+        login(res.user, res.accessToken);    
+        navigate('/home');                   
       } else {
         setErr('Registration failed.');
       }
@@ -40,7 +40,7 @@ export default function RegisterDetailsPage() {
 
   return (
     <AuthLayout>
-      <Col xs={12} lg={6} className="m-auto">
+      {/* <Col xs={12} lg={6} className="m-auto"> */}
         <div className="p-5">
           <h2 className="mb-4">Complete Registration</h2>
           <form onSubmit={handleSubmit}>
@@ -84,7 +84,7 @@ export default function RegisterDetailsPage() {
             {err && <div className="text-danger mt-3">{err}</div>}
           </form>
         </div>
-      </Col>
+      {/* </Col> */}
     </AuthLayout>
   );
 }
