@@ -9,18 +9,26 @@ function HttpClient() {
     timeout: 15000,
   });
 
-  instance.interceptors.request.use(
-    (config) => {
-      if (!(config.data instanceof FormData)) {
-        config.headers['Content-Type'] = 'application/json';
-      }
-      return config;
-    },
-    (error) => {
-      console.error('HttpClient Request Error:', error);
-      return Promise.reject(error);
+instance.interceptors.request.use(
+  (config) => {
+    
+    const token = localStorage.getItem('accessToken');
+    console.log(token);
+    
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
-  );
+    if (!(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json';
+    }
+    return config;
+  },
+  (error) => {
+    console.error('HttpClient Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
 
   instance.interceptors.response.use(
     (response) => {

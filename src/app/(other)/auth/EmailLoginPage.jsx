@@ -17,10 +17,14 @@ export default function EmailLoginPage() {
     const response = await authService.loginWithEmail(fields);
     const user = response.user;
 
+    console.log(response.accessToken);
+    
+
     // Save token
     if (response.accessToken) {
       localStorage.setItem('accessToken', response.accessToken);
     }
+    
 
     // Redirect based on role
     if (user.role === 'admin') {
