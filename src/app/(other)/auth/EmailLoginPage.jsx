@@ -12,14 +12,31 @@ export default function EmailLoginPage() {
   const handleChange = (e) =>
     setFields({ ...fields, [e.target.name]: e.target.value })
 
-  const handleLogin = async () => {
-    try {
-      await authService.loginWithEmail(fields)
-      navigate('/')
-    } catch (e) {
-      setErr('Invalid email or password.')
+ const handleLogin = async () => {
+  try {
+    const response = await authService.loginWithEmail(fields);
+    const user = response.user;
+
+    // Save token
+    if (response.accessToken) {
+      localStorage.setItem('accessToken', response.accessToken);
     }
+
+    // Redirect based on role
+    if (user.role === 'admin') {
+      navigate('/admin/dashboard');
+    } else if (user.role === 'student') {
+      navigate('/');
+    } else if (user.role === 'instructor') {
+      navigate('/instructor/dashboard');
+    } else {
+      navigate('/');
+    }
+  } catch (e) {
+    setErr('Invalid email or password.');
   }
+};
+
 
   return (
     <AuthLayout>
