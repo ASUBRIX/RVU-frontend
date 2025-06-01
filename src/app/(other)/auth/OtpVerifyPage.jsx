@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import AuthLayout from './components/AuthLayout';
 import { useState } from 'react';
-import authService from '@/helpers/authService';
-import AuthLayout from './components/AuthLayout'; 
+import { getConfirmationResult } from './confirmationResultHolder';
 
 export default function OtpVerifyPage() {
   const location = useLocation();
@@ -9,22 +9,37 @@ export default function OtpVerifyPage() {
   const mobile = location.state?.mobile || '';
   const [otp, setOtp] = useState('');
   const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(false);
 
-const handleOtpSubmit = async () => {
-  try {
-    const res = await authService.verifyOTP({ phone_number: mobile, otp });
-    if (res.user && res.accessToken) {
-      localStorage.setItem('token', res.accessToken);
+  // Always get confirmationResult from the holder module
+  const confirmationResult = getConfirmationResult();
+
+  const handleOtpSubmit = async () => {
+    setErr('');
+    setLoading(true);
+    try {
+      if (!confirmationResult) {
+        setErr("Session expired. Please re-enter your mobile number.");
+        setLoading(false);
+        return;
+      }
+
+      // Confirm the code
+      const result = await confirmationResult.confirm(otp);
+      const firebaseUser = result.user;
+
+      // You can get the phone number from firebaseUser.phoneNumber
+      // OPTIONAL: Call your backend to check if user exists in your DB
+      // If not, show registration form; if exists, set token and redirect home
+
+      // For demo, just go to home
       navigate('/home');
-    } else {
-      navigate('/auth/complete-registration', { state: { mobile } });
+    } catch (e) {
+      setErr('Invalid or expired OTP.');
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    setErr('Invalid or expired OTP.');
-  }
-};
-
-
+  };
 
   return (
     <AuthLayout>
@@ -35,12 +50,16 @@ const handleOtpSubmit = async () => {
           <input
             className="form-control mb-3"
             value={otp}
-            onChange={e => setOtp(e.target.value)}
+            onChange={e => setOtp(e.target.value.replace(/\D/, '').slice(0, 6))}
             placeholder="Enter OTP"
             maxLength={6}
           />
-          <button className="btn btn-primary w-100" onClick={handleOtpSubmit}>
-            Verify
+          <button
+            className="btn btn-primary w-100"
+            onClick={handleOtpSubmit}
+            disabled={loading}
+          >
+            {loading ? 'Verifying...' : 'Verify'}
           </button>
           {err && <div style={{ color: 'red', marginTop: 12 }}>{err}</div>}
         </div>
@@ -48,4 +67,3 @@ const handleOtpSubmit = async () => {
     </AuthLayout>
   );
 }
-
