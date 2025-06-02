@@ -12,8 +12,8 @@ export default function OtpVerifyPage() {
   const [otp, setOtp] = useState('');
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuthContext();
 
+  const { login } = useAuthContext();
   const confirmationResult = getConfirmationResult();
 
   const handleOtpSubmit = async () => {
@@ -26,23 +26,21 @@ export default function OtpVerifyPage() {
         return;
       }
 
-      // 1. Confirm Firebase OTP
+      
       const result = await confirmationResult.confirm(otp);
       const firebaseUser = result.user;
 
-      // 2. Get Firebase ID token (for backend verification)
+      
       const idToken = await firebaseUser.getIdToken();
 
-      // 3. Call backend to check user
       const response = await httpClient.post('/api/users/check-user', {
         phone_number: firebaseUser.phoneNumber,
         idToken,
       });
 
-      // 4. Redirect accordingly
       if (response.data.user && response.data.accessToken) {
         localStorage.setItem('token', response.data.accessToken);
-        login(response.data.user, response.data.accessToken); // <-- fixed here
+        login(response.data.user, response.data.accessToken); 
         navigate('/home');
       } else {
         navigate('/auth/complete-registration', { state: { mobile: firebaseUser.phoneNumber } });
