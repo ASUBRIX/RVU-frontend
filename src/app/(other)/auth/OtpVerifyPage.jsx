@@ -2,7 +2,8 @@ import { getConfirmationResult } from './confirmationResultHolder';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import AuthLayout from './components/AuthLayout';
-import httpClient from "../../../helpers/httpClient"; // update this path as per your structure
+import httpClient from "../../../helpers/httpClient";
+import { useAuthContext } from '../../../context/useAuthContext';
 
 export default function OtpVerifyPage() {
   const location = useLocation();
@@ -11,6 +12,7 @@ export default function OtpVerifyPage() {
   const [otp, setOtp] = useState('');
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuthContext();
 
   const confirmationResult = getConfirmationResult();
 
@@ -40,6 +42,7 @@ export default function OtpVerifyPage() {
       // 4. Redirect accordingly
       if (response.data.user && response.data.accessToken) {
         localStorage.setItem('token', response.data.accessToken);
+        login(response.data.user, response.data.accessToken); // <-- fixed here
         navigate('/home');
       } else {
         navigate('/auth/complete-registration', { state: { mobile: firebaseUser.phoneNumber } });

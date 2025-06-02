@@ -5,6 +5,7 @@ import authService from '@/helpers/authService';
 import AuthLayout from './components/AuthLayout';
 import { useAuthContext } from '../../../context/useAuthContext';
 
+
 export default function RegisterDetailsPage() {
   const location = useLocation();
   const mobile = location.state?.mobile || '';
