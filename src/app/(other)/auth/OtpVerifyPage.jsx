@@ -1,7 +1,8 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import AuthLayout from './components/AuthLayout';
-import { useState } from 'react';
 import { getConfirmationResult } from './confirmationResultHolder';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import AuthLayout from './components/AuthLayout';
+import httpClient from "../../../helpers/httpClient"; // update this path as per your structure
 
 export default function OtpVerifyPage() {
   const location = useLocation();
@@ -11,7 +12,6 @@ export default function OtpVerifyPage() {
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Always get confirmationResult from the holder module
   const confirmationResult = getConfirmationResult();
 
   const handleOtpSubmit = async () => {
@@ -24,16 +24,27 @@ export default function OtpVerifyPage() {
         return;
       }
 
-      // Confirm the code
+      // 1. Confirm Firebase OTP
       const result = await confirmationResult.confirm(otp);
       const firebaseUser = result.user;
 
-      // You can get the phone number from firebaseUser.phoneNumber
-      // OPTIONAL: Call your backend to check if user exists in your DB
-      // If not, show registration form; if exists, set token and redirect home
+      // 2. Get Firebase ID token (for backend verification)
+      const idToken = await firebaseUser.getIdToken();
 
-      // For demo, just go to home
-      navigate('/home');
+      // 3. Call backend to check user
+      const response = await httpClient.post('/api/users/check-user', {
+        phone_number: firebaseUser.phoneNumber,
+        idToken,
+      });
+
+      // 4. Redirect accordingly
+      if (response.data.user && response.data.accessToken) {
+        localStorage.setItem('token', response.data.accessToken);
+        navigate('/home');
+      } else {
+        navigate('/auth/complete-registration', { state: { mobile: firebaseUser.phoneNumber } });
+      }
+
     } catch (e) {
       setErr('Invalid or expired OTP.');
     } finally {
