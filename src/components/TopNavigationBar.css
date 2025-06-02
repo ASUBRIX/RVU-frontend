@@ -14,15 +14,16 @@
 .custom-nav-link {
   position: relative;
   font-weight: 500;
-  font-size: 1.09rem;
-  padding: 1.1rem 1.1rem;
-  margin-right: 0.5rem;
+  font-size: 0.97rem;    /* smaller text */
+  padding: 0.7rem 0.8rem; /* smaller vertical & horizontal space */
+  margin-right: 0.3rem;   /* smaller gap between items */
   color: #232323 !important;
   text-decoration: none;
-  border-bottom: none !important; /* No static border */
+  border-bottom: none !important;
   transition: color 0.15s;
   overflow: visible;
 }
+
 
 .custom-nav-link:hover,
 .custom-nav-link.active {
