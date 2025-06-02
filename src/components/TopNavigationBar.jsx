@@ -21,7 +21,7 @@ const TopNavigationBar = () => {
     { label: 'Free Test', path: '/free-test' },
     { label: 'Gallery', path: '/gallery' },
     { label: 'Blogs', path: '/blogs' },
-    { label: 'Current Affairs', path: '/current-affairs' },
+    { label: 'Trending Topics', path: '/current-affairs' }, // alternative wording
     { label: 'Contact', path: '/contact-us' },
   ]
 
@@ -55,7 +55,7 @@ const TopNavigationBar = () => {
           </button>
           {/* Menus and right actions */}
           <Collapse in={isOpen || window.innerWidth >= 1200} className="navbar-collapse">
-            <div className="d-flex flex-grow-1 justify-content-between align-items-center">
+            <div className="d-flex align-items-center">
               {/* Menus */}
               <ul className="navbar-nav mb-2 mb-lg-0 d-flex flex-row flex-nowrap">
                 {menus.map(({ label, path }, idx) => (
@@ -67,17 +67,17 @@ const TopNavigationBar = () => {
                 ))}
               </ul>
               {/* Right actions */}
-              <div className="d-flex align-items-center ms-auto">
+              <div className="d-flex align-items-center ms-2">
                 {!user ? (
                   <>
                     <Button
                       as={Link}
                       to="/auth"
-                      variant="primary"
+                      variant="outline-primary"
                       className="ms-1 rounded-pill shadow-sm custom-btn custom-register-btn"
                       style={{ minWidth: 120 }}
                     >
-                      Register
+                      Register Now
                     </Button>
                     <Button
                       as={Link}
