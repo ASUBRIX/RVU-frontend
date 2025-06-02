@@ -1,6 +1,3 @@
-/**
- * SCSS file: src/assets/scss/components/_banner-management.scss
- */
 
 'use client'
 
