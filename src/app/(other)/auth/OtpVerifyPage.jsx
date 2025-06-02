@@ -28,15 +28,21 @@ export default function OtpVerifyPage() {
 
       
       const result = await confirmationResult.confirm(otp);
+     
+      
       const firebaseUser = result.user;
 
       
+
+      
       const idToken = await firebaseUser.getIdToken();
+      
 
       const response = await httpClient.post('/api/users/check-user', {
         phone_number: firebaseUser.phoneNumber,
         idToken,
       });
+      
 
       if (response.data.user && response.data.accessToken) {
         localStorage.setItem('token', response.data.accessToken);

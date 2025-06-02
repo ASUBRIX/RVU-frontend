@@ -17,6 +17,8 @@ export default function EmailLoginPage() {
     try {
       const response = await authService.loginWithEmail(fields)
       const user = response.user
+      console.log(user);
+      
 
       // Set user & token in AuthContext
       if (response.user && response.accessToken) {

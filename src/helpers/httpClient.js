@@ -12,7 +12,7 @@ function HttpClient() {
 instance.interceptors.request.use(
   (config) => {
     
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('token');
     console.log(token);
     
     if (token) {
