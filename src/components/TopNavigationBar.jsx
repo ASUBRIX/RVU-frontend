@@ -21,7 +21,7 @@ const TopNavigationBar = () => {
     { label: 'Free Test', path: '/free-test' },
     { label: 'Gallery', path: '/gallery' },
     { label: 'Blogs', path: '/blogs' },
-    { label: 'Trending Topics', path: '/current-affairs' }, // alternative wording
+    { label: 'Current Affairs', path: '/current-affairs' },
     { label: 'Contact', path: '/contact-us' },
   ]
 
@@ -77,7 +77,7 @@ const TopNavigationBar = () => {
                       className="ms-1 rounded-pill shadow-sm custom-btn custom-register-btn"
                       style={{ minWidth: 120 }}
                     >
-                      Register Now
+                      Register
                     </Button>
                     <Button
                       as={Link}
