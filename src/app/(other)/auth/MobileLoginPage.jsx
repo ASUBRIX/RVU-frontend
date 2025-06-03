@@ -94,7 +94,7 @@ export default function MobileLoginPage() {
     <AuthLayout>
       <div className="mobile-login-wrapper d-flex align-items-center justify-content-center">
         <div className="mobile-login-box p-4 rounded shadow">
-          <h2 className="mb-4 text-center title-gradient">Sign in or Register</h2>
+          <h2 className="mb-4 text-center title-gradient">Sign In with Mobile</h2>
           <label className="form-label">Enter your mobile number</label>
           <input
             className="form-control mb-3"

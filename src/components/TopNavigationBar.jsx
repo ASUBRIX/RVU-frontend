@@ -81,7 +81,7 @@ const TopNavigationBar = () => {
                     </Button>
                     <Button
                       as={Link}
-                      to="/auth/email-login"
+                      to="/auth/mobile-login"
                       variant="outline-primary"
                       className="ms-2 rounded-pill shadow-sm custom-btn custom-signin-btn"
                       style={{ minWidth: 100 }}

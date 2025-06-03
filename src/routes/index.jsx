@@ -77,7 +77,7 @@ const ComingSoon = lazy(() => import('@/app/coming-soon/page'))
 const AuthEntryPage = lazy(() => import('@/app/(other)/auth/AuthEntryPage'))
 const OtpVerifyPage = lazy(() => import('@/app/(other)/auth/OtpVerifyPage'))
 const RegisterDetailsPage = lazy(() => import('@/app/(other)/auth/RegisterDetailsPage'))
-const EmailLoginPage = lazy(() => import('@/app/(other)/auth/EmailLoginPage'))
+const MobileLoginPage = lazy(() => import('@/app/(other)/auth/MobileLoginPage'))
 const ForgotPassword = lazy(() => import('@/app/(other)/auth/forgot-password/page'))
 
 //Instructor
@@ -256,9 +256,9 @@ export const authRoutes = [
     element: <RegisterDetailsPage />,
   },
   {
-    path: '/auth/email-login',
+    path: '/auth/mobile-login',
     name: 'Sign In with Email',
-    element: <EmailLoginPage />,
+    element: <MobileLoginPage />,
   },
   {
     path: '/auth/forgot-password',
