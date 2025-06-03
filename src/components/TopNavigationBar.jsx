@@ -34,9 +34,10 @@ const TopNavigationBar = () => {
       <nav className="navbar navbar-expand-xl z-index-2 py-0">
         <Container fluid className="px-2 px-xl-4">
           {/* Logo left */}
-          <div className="d-flex align-items-center" style={{ marginLeft: 32 }} >
+          <div className="d-flex align-items-center" style={{ marginLeft: 40 }} >
             <LogoBox height={90} width={240} />
           </div>
+
           {/* Toggler for mobile */}
           <button
             onClick={toggle}
@@ -53,6 +54,7 @@ const TopNavigationBar = () => {
               <span />
             </span>
           </button>
+          
           {/* Menus and right actions */}
           <Collapse in={isOpen || window.innerWidth >= 1200} className="navbar-collapse">
             <div className="d-flex align-items-center">
