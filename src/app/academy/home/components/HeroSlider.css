@@ -1,9 +1,15 @@
+.hero-slider-section {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
 .hero-slide-overlay {
   position: relative;
   width: 100%;
   height: 440px;
   border-radius: 1rem;
   overflow: hidden;
+  margin-top: 0 !important;
 }
 
 .hero-image-overlay {
@@ -27,7 +33,7 @@
   align-items: flex-start;
   padding: 2.5rem 2.5rem 2.5rem 3.5rem;
   background: transparent;
-  color: #222;  /* Black text */
+  color: #222;
   z-index: 2;
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
@@ -38,15 +44,15 @@
   font-size: 2.3rem;
   font-weight: 800;
   letter-spacing: 0.5px;
-  color: #222;          /* Black text */
-  text-shadow: none;    /* Remove shadow */
+  color: #222;
+  text-shadow: none;
 }
 
 .hero-description {
   font-size: 1.1rem;
   font-weight: 400;
-  color: #333;          /* Slightly lighter black */
-  text-shadow: none;    /* Remove shadow */
+  color: #333;
+  text-shadow: none;
   max-width: 90%;
   margin: 0 0 1.5rem 0;
 }
@@ -55,7 +61,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   background: linear-gradient(90deg, #8f00ff 0%, #da22ff 100%);
-  color: #242424;
+  color: #fff;
   border: none;
   border-radius: 2rem;
   box-shadow: 0 2px 12px rgba(0,0,0,0.13);
@@ -80,7 +86,7 @@
     border-radius: .8rem 0 0 .8rem;
     background: transparent;
     align-items: flex-start;
-    color: #222;      /* Black text for mobile */
+    color: #222;
   }
   .hero-title {
     font-size: 1.2rem;
@@ -89,13 +95,4 @@
   .hero-description {
     color: #333;
   }
-}
-
-.hero-slider-section {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-.hero-slide-overlay {
-  margin-top: 0 !important;
 }
