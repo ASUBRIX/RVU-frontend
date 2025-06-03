@@ -1,9 +1,3 @@
-/**
- * Admin Layout SCSS:
- * src/assets/scss/components/admin/layout.scss
- * - Includes styles for sidebar, navbar, and overall admin layout structure
- */
-
 import logoImg from '@/assets/images/logo-light.svg';
 import logoImg2 from '@/assets/images/py_circle_logo.png';
 import AppMenu from '@/components/admin/AppMenu';
@@ -36,7 +30,7 @@ const AdminLayout = ({ children }) => {
           </Link>
         </OverlayTrigger>
         <OverlayTrigger overlay={<Tooltip id="tooltip-signout">Sign out</Tooltip>}>
-          <Link className="h5 mb-0 text-white" onClick={removeSession} to="/auth/sign-in">
+          <Link className="h5 mb-0 text-white" onClick={removeSession} to="/auth/admin-login">
             <BsPower />
           </Link>
         </OverlayTrigger>

@@ -1,34 +1,73 @@
-.instructor-card {
-  transition: box-shadow 0.3s;
+.board-section {
+  background: #f8fafb;
 }
-
+.board-title-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 2.5rem;
+}
+.board-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #252f3e;
+  text-transform: uppercase;
+  position: relative;
+  display: block;
+  text-align: center;
+  margin-bottom: 0;
+}
+.board-title::after {
+  content: '';
+  display: block;
+  margin: 0.5rem auto 0;
+  width: 60px;
+  height: 4px;
+  border-radius: 2px;
+  background: #2b7a4b;
+  opacity: 0.3;
+}
+.instructor-card {
+  border-radius: 1.2rem;
+  overflow: hidden;
+  background: #fff;
+  transition: box-shadow 0.25s, transform 0.2s;
+  box-shadow: 0 2px 14px rgba(80,100,140,0.08);
+}
+.instructor-card:hover {
+  box-shadow: 0 6px 30px rgba(60,72,88,0.14);
+  transform: translateY(-3px) scale(1.03);
+}
 .instructor-img-wrapper {
   position: relative;
-  height: 320px;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  width: 100%;
+  height: 280px;
   background: #f7f7f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #f0f0f0;
+  overflow: hidden;
 }
-
 .instructor-img {
   width: 100%;
-  height: 320px;
+  height: 100%;
   object-fit: cover;
   object-position: center top;
-  transition: transform 0.3s;
+  border-radius: 0;
 }
-
-.instructor-card:hover .instructor-img {
-  transform: scale(1.03);
-  filter: brightness(0.8);
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #293545;
+  margin-bottom: 0.3rem;
 }
-
 .instructor-hover-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(34, 34, 34, 0.72);
+  background: rgba(34, 34, 34, 0.78);
   color: #fff;
   opacity: 0;
   pointer-events: none;
@@ -37,31 +76,28 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 8px;
 }
-
 .instructor-card:hover .instructor-hover-overlay {
   opacity: 1;
   pointer-events: auto;
 }
-
 .instructor-name {
   font-size: 1.2rem;
   font-weight: 600;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  margin-top: 24px;
+  margin-bottom: 0.7rem;
   width: 100%;
   text-align: center;
 }
-
 .instructor-bio {
-  font-size: 0.98rem;
-  margin-top: 0.75rem;
-  max-height: 130px;
+  font-size: 0.97rem;
+  max-height: 120px;
   overflow-y: auto;
   color: #f3f3f3;
   text-shadow: 0 2px 8px rgba(0,0,0,0.16);
-  padding-bottom: 16px;
   width: 100%;
   text-align: center;
 }

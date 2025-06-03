@@ -110,6 +110,7 @@ const StudentSetting = lazy(() => import('@/app/student/setting/page'))
 const StudentDeleteAccount = lazy(() => import('@/app/student/delete-account/page'))
 
 //Admin
+const AdminLoginPage = lazy(() => import('@/app/admin/auth/AdminLoginPage'));
 const AdminDashboard = lazy(() => import('@/app/admin/dashboard/page'))
 const AllCourses = lazy(() => import('@/app/admin/all-courses/page'))
 const CourseCategory = lazy(() => import('@/app/admin/course-category/page'))
@@ -391,6 +392,11 @@ export const studentRoutes = [
 
 
 export const adminRoutes = [
+   {
+    path: '/auth/admin-login',
+    name: 'Sign In with Email',
+    element: <AdminLoginPage />,
+  },
   {
     path: '/admin/dashboard',
     name: 'Admin',
