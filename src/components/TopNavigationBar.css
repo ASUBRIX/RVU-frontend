@@ -140,3 +140,34 @@
 .navbar-nav::-webkit-scrollbar {
   display: none;
 }
+
+#dropdown-avatar {
+  transition: box-shadow 0.2s;
+}
+#dropdown-avatar:hover, #dropdown-avatar:focus {
+  box-shadow: 0 2px 8px rgba(31,120,255,0.13);
+  background: #f8fbff !important;
+}
+
+/* --- Existing styles (unchanged, include your prior code above this) --- */
+
+/* Center the dropdown menu under the avatar */
+.centered-avatar-dropdown .dropdown-menu {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  min-width: 140px;
+  text-align: center;
+  margin-top: 0.5rem; /* Optional: adjust dropdown vertical gap */
+  box-shadow: 0 6px 24px rgba(31,120,255,0.08);
+}
+
+/* Soft avatar hover effect */
+#dropdown-avatar {
+  transition: box-shadow 0.2s;
+}
+#dropdown-avatar:hover,
+#dropdown-avatar:focus {
+  box-shadow: 0 2px 8px rgba(31,120,255,0.13);
+  background: #f8fbff !important;
+}

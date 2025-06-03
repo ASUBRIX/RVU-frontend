@@ -1,11 +1,11 @@
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
-import { Container, Collapse, NavItem, Button, Dropdown } from 'react-bootstrap'
+import { Container, Collapse, NavItem, Dropdown } from 'react-bootstrap'
 import LogoBox from '@/components/LogoBox'
 import useScrollEvent from '@/hooks/useScrollEvent'
 import useToggle from '@/hooks/useToggle'
 import { useAuthContext } from '../context/useAuthContext'
-import { ChevronDown } from 'react-bootstrap-icons'
+import { ChevronDown, PersonCircle } from 'react-bootstrap-icons'
 import './TopNavigationBar.css'
 
 const TopNavigationBar = () => {
@@ -69,26 +69,27 @@ const TopNavigationBar = () => {
               {/* Right actions */}
               <div className="d-flex align-items-center ms-2">
                 {!user ? (
-                  <>
-                    <Button
-                      as={Link}
-                      to="/auth"
-                      variant="outline-primary"
-                      className="ms-1 rounded-pill shadow-sm custom-btn custom-register-btn"
-                      style={{ minWidth: 120 }}
+                  <Dropdown className="centered-avatar-dropdown">
+                    <Dropdown.Toggle
+                      variant="light"
+                      id="dropdown-avatar"
+                      className="border-0 bg-transparent d-flex align-items-center p-0"
+                      style={{
+                        borderRadius: '50%',
+                        minWidth: 48,
+                        minHeight: 48,
+                        width: 48,
+                        height: 48,
+                        justifyContent: 'center',
+                      }}
                     >
-                      Register
-                    </Button>
-                    <Button
-                      as={Link}
-                      to="/auth/mobile-login"
-                      variant="outline-primary"
-                      className="ms-2 rounded-pill shadow-sm custom-btn custom-signin-btn"
-                      style={{ minWidth: 100 }}
-                    >
-                      Sign In
-                    </Button>
-                  </>
+                      <PersonCircle size={38} color="#1f78ff" />
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item as={Link} to="/auth">Register</Dropdown.Item>
+                      <Dropdown.Item as={Link} to="/auth/mobile-login">Sign In</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                 ) : (
                   <Dropdown align="end">
                     <Dropdown.Toggle
