@@ -14,12 +14,12 @@ const InstructorCard = ({ instructor }) => {
           alt={name}
           className="instructor-img"
         />
-        <div className="instructor-hover-overlay d-flex flex-column align-items-center justify-content-center">
-          <div className="instructor-name text-center px-3 pt-3 w-100">{name}</div>
-          {bio && (
-            <div className="instructor-bio text-center px-3 pb-3">{Bio}</div>
-          )}
-        </div>
+       <div className="instructor-hover-overlay">
+  <div className="instructor-name" style={{position: 'absolute', top: '16px', left: '16px', right: '16px'}}>{name}</div>
+  {bio && (
+    <div className="instructor-bio" style={{marginTop: '60px'}}>{bio}</div>
+  )}
+</div>
       </div>
       <Card.Body className="text-center">
         <h5 className="card-title mb-1">{name}</h5>
