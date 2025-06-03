@@ -3,12 +3,7 @@ import { Button, Card, Form, Modal, Spinner } from 'react-bootstrap';
 import { BsPencilSquare, BsTrash } from 'react-icons/bs';
 import { FiSearch } from 'react-icons/fi';
 import { FaPlus } from 'react-icons/fa';
-import {
-  fetchBanners,
-  createBanner,
-  updateBanner,
-  deleteBanner,
-} from '@/helpers/bannerApi';
+import {fetchBanners,createBanner,updateBanner,deleteBanner} from '@/helpers/bannerApi';
 
 const BannerSettings = () => {
   const [banners, setBanners] = useState([]);
@@ -68,7 +63,14 @@ const BannerSettings = () => {
       if (selectedBanner) {
         await updateBanner(selectedBanner.id, formData);
       } else {
+        console.log('formData values:');
+for (let pair of formData.entries()) {
+  console.log(pair[0]+ ':', pair[1]);
+}
+
+        
         await createBanner(formData);
+        
       }
       setShowModal(false);
       loadBanners();

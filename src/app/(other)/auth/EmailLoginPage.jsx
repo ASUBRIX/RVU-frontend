@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import authService from '@/helpers/authService'
 import { useAuthContext } from '../../../context/useAuthContext' 
+import './EmailLoginPage.css'
 
 export default function EmailLoginPage() {
   const [fields, setFields] = useState({ email: '', password_hash: '' })
@@ -17,15 +18,9 @@ export default function EmailLoginPage() {
     try {
       const response = await authService.loginWithEmail(fields)
       const user = response.user
-      console.log(user);
-      
-
-      // Set user & token in AuthContext
       if (response.user && response.accessToken) {
         login(response.user, response.accessToken)
       }
-
-      // Redirect based on role
       if (user.role === 'admin') {
         navigate('/admin/dashboard')
       } else if (user.role === 'student') {
@@ -42,31 +37,36 @@ export default function EmailLoginPage() {
 
   return (
     <AuthLayout>
-      <div className="p-4">
-        <h2>Sign in with Email</h2>
-        <label>Email</label>
-        <input
-          name="email"
-          type="email"
-          className="form-control mb-3"
-          value={fields.email}
-          onChange={handleChange}
-          placeholder="Email"
-          autoComplete="username"
-        />
-        <label>Password</label>
-        <input
-          name="password_hash"
-          type="password"
-          className="form-control mb-3"
-          value={fields.password_hash}
-          onChange={handleChange}
-          placeholder="Password"
-          autoComplete="current-password"
-        />
-        <button className="btn btn-primary w-100" onClick={handleLogin}>Sign In</button>
-        {err && <div style={{ color: 'red', marginTop: 8 }}>{err}</div>}
+      <div className="email-login-wrapper">
+        <div className="email-login-box">
+          <h2 className="mb-4 text-center">Sign In</h2>
+          <label className="form-label">Email</label>
+          <input
+            name="email"
+            type="email"
+            className="form-control mb-3"
+            value={fields.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            autoComplete="username"
+          />
+          <label className="form-label">Password</label>
+          <input
+            name="password_hash"
+            type="password"
+            className="form-control mb-3"
+            value={fields.password_hash}
+            onChange={handleChange}
+            placeholder="Enter your password"
+            autoComplete="current-password"
+          />
+          <button className="btn btn-primary w-100 custom-signin-btn" onClick={handleLogin}>
+            Sign In
+          </button>
+          {err && <div className="error-msg">{err}</div>}
+        </div>
       </div>
     </AuthLayout>
   )
 }
+

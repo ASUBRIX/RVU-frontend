@@ -3,34 +3,35 @@ import httpClient from './httpClient';
 
 
 export const fetchTrendingCourses = async () => {
-  const res = await httpClient.get('/api/home/trending-courses');
+  const res = await httpClient.get('/api/trending-courses');
   return res.data;
 };
 
 export const fetchOfferCourses = async () => {
-  const res = await httpClient.get('/api/home/offer-courses');
+  const res = await httpClient.get('/api/offer-courses');
   return res.data;
 };
 
 export const fetchAllInstructors = async () => {
-  const res = await httpClient.get('/api/home/instructors');
+  const res = await httpClient.get('/api/instructors');
   return res.data;
 };
 
 export const fetchStudentsReviews = async () => {
-  const res = await httpClient.get('/api/home/student-reviews');
+  const res = await httpClient.get('/api/student-reviews');
   return res.data;
 };
 
 export const fetchUpcomingEvents = async () => {
-  const res = await httpClient.get('/api/home/events');
+  const res = await httpClient.get('/api/events');
   return res.data;
 };
 
 export const fetchPopularCourses = async () => {
-  const res = await httpClient.get('/api/home/popular-courses');
+  const res = await httpClient.get('/api/popular-courses');
   return res.data;
 };
+
 
 export const fetchHeroSlides = async () => {
   const res = await httpClient.get('/api/slides');

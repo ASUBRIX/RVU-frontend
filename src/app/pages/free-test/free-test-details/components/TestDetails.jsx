@@ -108,7 +108,7 @@ const TestDetails = () => {
     return (
       <Container className="text-center py-5">
         <p className="text-danger">Please sign in to view tests</p>
-        <Link to="/auth/sign-in" className="btn btn-primary">
+        <Link to="/auth" className="btn btn-primary">
           Sign In
         </Link>
       </Container>
