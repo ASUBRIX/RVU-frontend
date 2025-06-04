@@ -1,153 +1,169 @@
 import { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import { FaPaperPlane, FaFile, FaImage, FaPaperclip, FaUserGraduate } from 'react-icons/fa';
-import { BsCheck2, BsCheck2All } from 'react-icons/bs';
 import io from 'socket.io-client';
+import axios from 'axios';
+import { Container, Row, Col, Form, Button, ListGroup, Spinner } from 'react-bootstrap';
+import { FaPaperPlane, FaUserGraduate, FaSearch } from 'react-icons/fa';
+import { useAuthContext } from '@/context/useAuthContext';
 
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+const socket = io(baseURL);
 
-const socket = io('https://server.pudhuyugamacademy.com');
-
-
-const InstructorChatPage = () => {
+const AdminChatPage = () => {
+  const [students, setStudents] = useState([]);
+  const [search, setSearch] = useState('');
+  const [selectedStudent, setSelectedStudent] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [shouldScroll, setShouldScroll] = useState(false);
+  const [loadingMsgs, setLoadingMsgs] = useState(false);
   const messagesEndRef = useRef(null);
-  const fileInputRef = useRef(null);
+  const { user: adminUser } = useAuthContext();
 
+  
   useEffect(() => {
-    socket.on('chat_message', (msg) => {
-      setShouldScroll(true);
-      setMessages((prev) => [...prev, msg]);
-    });
-    return () => {
-      socket.off('chat_message');
-    };
+    axios.get(`${baseURL}/api/chat/students`)
+      .then(res => setStudents(res.data))
+      .catch(() => setStudents([]));
   }, []);
 
+  
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, shouldScroll]);
+    if (!selectedStudent) return;
+    setLoadingMsgs(true);
+    socket.emit('join_room', selectedStudent.id);
+    axios.get(`${baseURL}/api/chat/history/${selectedStudent.id}`)
+      .then(res => setMessages(res.data))
+      .finally(() => setLoadingMsgs(false));
+    socket.on('chat_message', (msg) => {
+      if (msg.userId === selectedStudent.id) {
+        setMessages(prev => [...prev, msg]);
+      }
+    });
+    return () => socket.off('chat_message');
+  }, [selectedStudent]);
 
-  const scrollToBottom = () => {
-    if (shouldScroll && messagesEndRef.current) {
+  useEffect(() => {
+    if (messagesEndRef.current)
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-      setShouldScroll(false);
-    }
-  };
+  }, [messages]);
 
-  const handleSubmit = (e) => {
+  // Sending a new message as admin
+  const handleSend = async (e) => {
     e.preventDefault();
-    if (newMessage.trim()) {
-      const newMsg = {
-        id: Date.now(),
-        text: newMessage,
-        sender: 'admin',
-        timestamp: new Date().toISOString(),
-        status: 'sent',
-        type: 'text'
-      };
-      setMessages([...messages, newMsg]);
-      socket.emit('chat_message', newMsg);
-      setNewMessage('');
-      setShouldScroll(true);
-    }
+    if (!newMessage.trim() || !selectedStudent) return;
+    const msg = {
+      userId: selectedStudent.id,
+      sender: 'admin',
+      text: newMessage,
+      type: 'text',
+      timestamp: new Date().toISOString()
+    };
+    const { data: savedMsg } = await axios.post(`${baseURL}/api/chat/send`, msg);
+    setMessages([...messages, savedMsg]);
+    socket.emit('chat_message', savedMsg);
+    setNewMessage('');
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const newMsg = {
-        id: Date.now(),
-        text: file.name,
-        sender: 'admin',
-        timestamp: new Date().toISOString(),
-        status: 'sent',
-        type: 'file',
-        fileType: file.type.split('/')[1],
-        fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
-      };
-      setMessages([...messages, newMsg]);
-      socket.emit('chat_message', newMsg);
-      setShouldScroll(true);
-    }
-  };
+  // Filter students by search
+  const filteredStudents = students.filter(stu =>
+    stu.name?.toLowerCase().includes(search.toLowerCase()) ||
+    stu.email?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const renderMessageStatus = (status) => {
-    switch (status) {
-      case 'sent': return <BsCheck2 />;
-      case 'delivered': return <BsCheck2All />;
-      case 'read': return <BsCheck2All className="text-primary" />;
-      default: return null;
-    }
-  };
-
-  const renderFileMessage = (msg) => {
-    const icon = msg.fileType === 'pdf' ? <FaFile /> : <FaImage />;
-    return (
-      <div className="file-message">
-        {icon}
-        <div>
-          <div>{msg.text}</div>
-          <div className="small text-muted">{msg.fileSize}</div>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <div className="chat-page">
-      <Container fluid>
-        <Row className="justify-content-center">
-          <Col md={8} lg={10} className="p-0">
-            <div className="chat-container">
-              <div className="chat-header p-3 d-flex justify-content-between align-items-center bg-light">
-                <div className="d-flex align-items-center">
-                  <FaUserGraduate className="me-2" size={20} />
-                  <h5 className="mb-0">Chat with Student</h5>
+    <Container fluid>
+      <Row>
+        {/* Student List Sidebar */}
+        <Col md={4} className="border-end" style={{ height: '85vh', overflowY: 'auto' }}>
+          <div className="p-3 border-bottom">
+            <h5>Student Chats</h5>
+            <Form.Control
+              type="text"
+              placeholder="Search by name or email"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="my-2"
+            />
+          </div>
+          <ListGroup variant="flush">
+            {filteredStudents.length > 0 ? filteredStudents.map(stu => (
+              <ListGroup.Item
+                key={stu.id}
+                action
+                onClick={() => setSelectedStudent(stu)}
+                active={selectedStudent && selectedStudent.id === stu.id}
+                className="d-flex align-items-center"
+                style={{ cursor: 'pointer' }}
+              >
+                <FaUserGraduate className="me-2 text-primary" size={20} />
+                <div>
+                  <div><strong>{stu.name}</strong></div>
+                  <div className="small text-muted">{stu.email}</div>
+                </div>
+              </ListGroup.Item>
+            )) : (
+              <ListGroup.Item>
+                <span className="text-muted">No students found.</span>
+              </ListGroup.Item>
+            )}
+          </ListGroup>
+        </Col>
+        {/* Chat Window */}
+        <Col md={8} style={{ height: '85vh', display: 'flex', flexDirection: 'column' }}>
+          <div className="p-3 border-bottom" style={{ minHeight: 70 }}>
+            {selectedStudent ? (
+              <div className="d-flex align-items-center">
+                <FaUserGraduate className="me-2" size={24} />
+                <h5 className="mb-0">{selectedStudent.name}</h5>
+                <span className="ms-2 small text-muted">{selectedStudent.email}</span>
+              </div>
+            ) : (
+              <span className="text-muted">Select a student to view chat</span>
+            )}
+          </div>
+          <div className="flex-grow-1 p-3" style={{ overflowY: 'auto', background: '#f9f9fb' }}>
+            {loadingMsgs && <Spinner animation="border" size="sm" />}
+            {selectedStudent && messages.length === 0 && !loadingMsgs && (
+              <div className="text-center text-muted">No messages yet</div>
+            )}
+            {selectedStudent && messages.map((msg, idx) => (
+              <div
+                key={msg.id || idx}
+                className={`d-flex ${msg.sender === 'admin' ? 'justify-content-end' : 'justify-content-start'} mb-2`}
+              >
+                <div className={`p-2 rounded ${msg.sender === 'admin' ? 'bg-primary text-white' : 'bg-light'}`} style={{ maxWidth: '75%' }}>
+                  {msg.text}
+                  <div className="d-flex justify-content-end align-items-center gap-1 mt-1 small text-muted">
+                    <span>{formatTime(msg.timestamp)}</span>
+                  </div>
                 </div>
               </div>
-              <div className="chat-messages p-3" style={{ height: '70vh', overflowY: 'auto' }}>
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`d-flex ${msg.sender === 'admin' ? 'justify-content-end' : 'justify-content-start'} mb-2`}
-                  >
-                    <div className={`p-2 rounded ${msg.sender === 'admin' ? 'bg-primary text-white' : 'bg-light'}`} style={{ maxWidth: '75%' }}>
-                      {msg.type === 'file' ? renderFileMessage(msg) : <div>{msg.text}</div>}
-                      <div className="d-flex justify-content-end align-items-center gap-1 mt-1 small text-muted">
-                        <span>{formatTime(msg.timestamp)}</span>
-                        {msg.sender === 'admin' && renderMessageStatus(msg.status)}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <div ref={messagesEndRef}></div>
-              </div>
-              <div className="chat-input p-3 border-top bg-white">
-                <Form onSubmit={handleSubmit} className="d-flex align-items-center gap-2">
-                  <Button variant="light" onClick={() => fileInputRef.current.click()}><FaPaperclip /></Button>
-                  <Form.Control
-                    type="text"
-                    placeholder="Type a message..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                  />
-                  <Button variant="primary" type="submit"><FaPaperPlane /></Button>
-                </Form>
-                <input type="file" ref={fileInputRef} className="d-none" onChange={handleFileUpload} accept="image/*,.pdf,.doc,.docx" />
-              </div>
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+            ))}
+            <div ref={messagesEndRef}></div>
+          </div>
+          {/* Chat input */}
+          <div className="p-3 border-top bg-white">
+            <Form onSubmit={handleSend} className="d-flex align-items-center gap-2">
+              <Form.Control
+                type="text"
+                placeholder="Type a message..."
+                value={newMessage}
+                onChange={e => setNewMessage(e.target.value)}
+                disabled={!selectedStudent}
+              />
+              <Button type="submit" variant="primary" disabled={!selectedStudent || !newMessage.trim()}>
+                <FaPaperPlane />
+              </Button>
+            </Form>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
-export default InstructorChatPage;
+export default AdminChatPage;

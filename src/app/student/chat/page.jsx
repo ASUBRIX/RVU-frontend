@@ -1,104 +1,89 @@
 import { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import { FaPaperPlane, FaFile, FaImage, FaPaperclip, FaUserShield } from 'react-icons/fa';
-import { BsCheck2, BsCheck2All } from 'react-icons/bs';
 import io from 'socket.io-client';
+import axios from 'axios';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { FaPaperPlane, FaPaperclip, FaUserShield, FaFile, FaImage } from 'react-icons/fa';
+import { useAuthContext } from '@/context/useAuthContext';
 
-const socket = io('https://server.pudhuyugamacademy.com'); 
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+const socket = io(baseURL);
 
 const StudentChatPage = () => {
+  const { user } = useAuthContext();
+  const userId = user?.id;
+
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [shouldScroll, setShouldScroll] = useState(false);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
+  // Join student room and fetch history on mount
   useEffect(() => {
+    if (!userId) return;
+    socket.emit('join_room', userId);
+    axios.get(`${baseURL}/api/chat/history/${userId}`)
+      .then(res => setMessages(res.data))
+      .catch(() => setMessages([]));
     socket.on('chat_message', (msg) => {
-      setShouldScroll(true);
-      setMessages((prev) => [...prev, msg]);
+      if (msg.userId === userId) {
+        setMessages(prev => [...prev, msg]);
+      }
     });
+    return () => socket.off('chat_message');
+  }, [userId]);
 
-    return () => {
-      socket.off('chat_message');
-    };
-  }, []);
-
+  // Auto-scroll to latest message
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, shouldScroll]);
-
-  const scrollToBottom = () => {
-    if (shouldScroll && messagesEndRef.current) {
+    if (messagesEndRef.current)
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-      setShouldScroll(false);
-    }
-  };
+  }, [messages]);
 
-  const handleSubmit = (e) => {
+  // Send new text message
+  const handleSend = async (e) => {
     e.preventDefault();
-    if (newMessage.trim()) {
-      const newMsg = {
-        id: Date.now(),
-        text: newMessage,
-        sender: 'instructor',
-        timestamp: new Date().toISOString(),
-        status: 'sent',
-        type: 'text'
-      };
-      setMessages([...messages, newMsg]);
-      socket.emit('chat_message', newMsg);
-      setNewMessage('');
-      setShouldScroll(true);
-    }
+    if (!newMessage.trim() || !userId) return;
+    const msg = {
+      userId,
+      sender: 'student',
+      text: newMessage,
+      type: 'text',
+      timestamp: new Date().toISOString()
+    };
+    const { data: savedMsg } = await axios.post(`${baseURL}/api/chat/send`, msg);
+    setMessages(prev => [...prev, savedMsg]);
+    socket.emit('chat_message', savedMsg);
+    setNewMessage('');
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const newMsg = {
-        id: Date.now(),
-        text: file.name,
-        sender: 'instructor',
-        timestamp: new Date().toISOString(),
-        status: 'sent',
-        type: 'file',
-        fileType: file.type.split('/')[1],
-        fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
-      };
-      setMessages([...messages, newMsg]);
-      socket.emit('chat_message', newMsg);
-      setShouldScroll(true);
-    }
-  };
+  // (Optional) Add file upload logic here for future support
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const renderMessageStatus = (status) => {
-    switch (status) {
-      case 'sent': return <BsCheck2 />;
-      case 'delivered': return <BsCheck2All />;
-      case 'read': return <BsCheck2All className="text-primary" />;
-      default: return null;
-    }
-  };
-
-  const renderFileMessage = (msg) => {
-    const icon = msg.fileType === 'pdf' ? <FaFile /> : <FaImage />;
-    return (
-      <div className="file-message">
-        {icon}
-        <div>
-          <div>{msg.text}</div>
-          <div className="small text-muted">{msg.fileSize}</div>
+  const renderMessage = (msg, idx) => (
+    <div
+      key={msg.id || idx}
+      className={`d-flex ${msg.sender === 'student' ? 'justify-content-end' : 'justify-content-start'} mb-2`}
+    >
+      <div className={`p-2 rounded ${msg.sender === 'student' ? 'bg-primary text-white' : 'bg-light'}`} style={{ maxWidth: '75%' }}>
+        {msg.type === 'file'
+          ? (
+            <div>
+              {msg.file_type === 'pdf' ? <FaFile /> : <FaImage />}
+              <div>{msg.text}</div>
+              <div className="small text-muted">{msg.file_size}</div>
+            </div>
+          )
+          : <div>{msg.text}</div>
+        }
+        <div className="d-flex justify-content-end align-items-center gap-1 mt-1 small text-muted">
+          <span>{formatTime(msg.timestamp)}</span>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <div className="chat-page">
@@ -112,35 +97,33 @@ const StudentChatPage = () => {
                   <h5 className="mb-0">Admin Support</h5>
                 </div>
               </div>
-              <div className="chat-messages p-3" style={{ height: '70vh', overflowY: 'auto' }}>
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`d-flex ${msg.sender === 'instructor' ? 'justify-content-end' : 'justify-content-start'} mb-2`}
-                  >
-                    <div className={`p-2 rounded ${msg.sender === 'instructor' ? 'bg-primary text-white' : 'bg-light'}`} style={{ maxWidth: '75%' }}>
-                      {msg.type === 'file' ? renderFileMessage(msg) : <div>{msg.text}</div>}
-                      <div className="d-flex justify-content-end align-items-center gap-1 mt-1 small text-muted">
-                        <span>{formatTime(msg.timestamp)}</span>
-                        {msg.sender === 'instructor' && renderMessageStatus(msg.status)}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="chat-messages p-3" style={{ height: '70vh', overflowY: 'auto', background: '#f9f9fb' }}>
+                {messages.map(renderMessage)}
                 <div ref={messagesEndRef}></div>
               </div>
               <div className="chat-input p-3 border-top bg-white">
-                <Form onSubmit={handleSubmit} className="d-flex align-items-center gap-2">
-                  <Button variant="light" onClick={() => fileInputRef.current.click()}><FaPaperclip /></Button>
+                <Form onSubmit={handleSend} className="d-flex align-items-center gap-2">
+                  <Button variant="light" onClick={() => fileInputRef.current && fileInputRef.current.click()} disabled>
+                    <FaPaperclip />
+                  </Button>
                   <Form.Control
                     type="text"
                     placeholder="Type a message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    autoFocus
                   />
-                  <Button variant="primary" type="submit"><FaPaperPlane /></Button>
+                  <Button variant="primary" type="submit" disabled={!newMessage.trim()}>
+                    <FaPaperPlane />
+                  </Button>
                 </Form>
-                <input type="file" ref={fileInputRef} className="d-none" onChange={handleFileUpload} accept="image/*,.pdf,.doc,.docx" />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="d-none"
+                  accept="image/*,.pdf,.doc,.docx"
+                  disabled
+                />
               </div>
             </div>
           </Col>
@@ -151,4 +134,3 @@ const StudentChatPage = () => {
 };
 
 export default StudentChatPage;
-

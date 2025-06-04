@@ -67,6 +67,8 @@ const VerticalMenu = () => {
   const { removeSession } = useAuthContext()
 
   return (
+
+    
     <div className="bg-dark border rounded-3 pb-0 p-3 w-100">
       <div className="list-group list-group-dark list-group-borderless collapse-list">
         {STUDENT_MENU_ITEMS.map(({ label, url, icon }, idx) => {
@@ -78,6 +80,8 @@ const VerticalMenu = () => {
             </Link>
           )
         })}
+
+
         <button
           className="list-group-item text-danger bg-danger-soft-hover"
           onClick={removeSession}
