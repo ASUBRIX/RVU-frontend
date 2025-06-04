@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import ContentManagement from '@/app/admin/content-management/page'
-
+import ProtectedRoute from '../components/ProtectedRoute'
 
 // Demos Pages
 const DemosDefault = lazy(() => import('@/app/demos/default/home/page'))
@@ -32,10 +32,10 @@ const InstructorSingle = lazy(() => import('@/app/pages/instructors/[instructorI
 const InstructorBecome = lazy(() => import('@/app/pages/become-instructor/page'))
 const PrivacyPolicy = lazy(() => import('@/app/pages/privacy-policy/page'))
 const BlogPage = lazy(() => import('@/app/pages/blog/page'))
-const UserBlogDetail = lazy(()=>import('@/app/pages/blog/components/BlogDetail'));
+const UserBlogDetail = lazy(() => import('@/app/pages/blog/components/BlogDetail'))
 const TermsAndConditions = lazy(() => import('@/app/pages/terms-conditions/page'))
 const Gallery = lazy(() => import('@/app/pages/gallery/page'))
-const CurrentAffairs = lazy(()=>import('@/app/pages/current-affairs/page'));
+const CurrentAffairs = lazy(() => import('@/app/pages/current-affairs/page'))
 const FreeTest = lazy(() => import('@/app/pages/free-test/page'))
 const TestDetails = lazy(() => import('@/app/pages/free-test/free-test-details/page'))
 const TestQuestion = lazy(() => import('@/app/pages/test-questions/page'))
@@ -98,7 +98,7 @@ const InstructorChatPage = lazy(() => import('@/app/instructor/chat/page'))
 
 // Student
 const StudentDashboard = lazy(() => import('@/app/student/dashboard/page'))
-const StudentChatPage = lazy(()=>import('@/app/student/chat/page'));
+const StudentChatPage = lazy(() => import('@/app/student/chat/page'))
 const Subscription = lazy(() => import('@/app/student/subscription/page'))
 const StudentCourseList = lazy(() => import('@/app/student/course-list/page'))
 const CourseResume = lazy(() => import('@/app/student/course-resume/page'))
@@ -110,7 +110,7 @@ const StudentSetting = lazy(() => import('@/app/student/setting/page'))
 const StudentDeleteAccount = lazy(() => import('@/app/student/delete-account/page'))
 
 //Admin
-const AdminLoginPage = lazy(() => import('@/app/admin/auth/AdminLoginPage'));
+const AdminLoginPage = lazy(() => import('@/app/admin/auth/AdminLoginPage'))
 const AdminDashboard = lazy(() => import('@/app/admin/dashboard/page'))
 const AllCourses = lazy(() => import('@/app/admin/all-courses/page'))
 const CourseCategory = lazy(() => import('@/app/admin/course-category/page'))
@@ -129,9 +129,9 @@ const StudentManagement = lazy(() => import('@/app/admin/student-management/page
 const FacultyManagement = lazy(() => import('@/app/admin/faculty-management/page'))
 const BlogManagement = lazy(() => import('@/app/admin/blog-management/page'))
 const EnquiriesPage = lazy(() => import('@/app/admin/enquiries/page'))
-const AnnouncementPage = lazy(()=>import("@/app/admin/announcement-management/page"))
-const CurrentAffairsPage = lazy(()=>import("@/app/admin/current-affairs/page"))
-const CouponManagement = lazy(()=>import("@/app/admin/coupon-management/page"));
+const AnnouncementPage = lazy(() => import('@/app/admin/announcement-management/page'))
+const CurrentAffairsPage = lazy(() => import('@/app/admin/current-affairs/page'))
+const CouponManagement = lazy(() => import('@/app/admin/coupon-management/page'))
 
 // Add this import for Reports & Analytics
 const ReportsPage = lazy(() => import('@/app/admin/reports/page'))
@@ -203,7 +203,6 @@ export const demosRoutes = [
   },
 ]
 
-
 export const shopRoutes = [
   {
     path: '/shop',
@@ -237,8 +236,6 @@ export const shopRoutes = [
   },
 ]
 
-
-
 export const authRoutes = [
   {
     path: '/auth',
@@ -267,25 +264,26 @@ export const authRoutes = [
   },
 ]
 
-
 export const studentRoutes = [
   {
     path: '/student/dashboard',
     name: 'Dashboard',
-    element: <StudentDashboard />,
+    element: (
+      <ProtectedRoute allowedRoles={['student']}>
+        <StudentDashboard />
+      </ProtectedRoute>
+    ),
   },
   {
-    path:'/student/edit-profile',
-    name:'Edit Profile',
-    element:<StudentEditProfile />
-
+    path: '/student/edit-profile',
+    name: 'Edit Profile',
+    element: <StudentEditProfile />,
   },
   {
-    
-  path: '/student/chat',
-  name: 'Chat with Admin',
-  element: <StudentChatPage />,
-},
+    path: '/student/chat',
+    name: 'Chat with Admin',
+    element: <StudentChatPage />,
+  },
 
   {
     path: '/student/subscription',
@@ -333,8 +331,6 @@ export const studentRoutes = [
     element: <StudentDeleteAccount />,
   },
 ]
-
-
 
 // export const InstructorRoutes = [
 //   {
@@ -388,11 +384,8 @@ export const studentRoutes = [
 //     element: <Payout />,
 //   },
 
-
-
-
-export const adminRoutes = [
-   {
+const rawAdminRoutes = [
+  {
     path: '/auth/admin-login',
     name: 'Sign In with Email',
     element: <AdminLoginPage />,
@@ -400,7 +393,11 @@ export const adminRoutes = [
   {
     path: '/admin/dashboard',
     name: 'Admin',
-    element: <AdminDashboard />,
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/admin/all-courses',
@@ -433,9 +430,9 @@ export const adminRoutes = [
     element: <CourseDetail />,
   },
   {
-    path:'/admin/coupons',
-    name:'Coupon Management',
-    element:<CouponManagement />
+    path: '/admin/coupons',
+    name: 'Coupon Management',
+    element: <CouponManagement />,
   },
   {
     path: '/admin/students',
@@ -488,10 +485,9 @@ export const adminRoutes = [
     element: <FacultyManagement />,
   },
   {
-    path:'/admin/current-affairs',
-    name:'Current Affairs',
-    element:<CurrentAffairsPage />
-
+    path: '/admin/current-affairs',
+    name: 'Current Affairs',
+    element: <CurrentAffairsPage />,
   },
   {
     path: '/admin/chat',
@@ -510,11 +506,13 @@ export const adminRoutes = [
   },
 
   {
-    path:'/admin/announcements',
-    name:"Announcements",
-    element: <AnnouncementPage />
-  }
+    path: '/admin/announcements',
+    name: 'Announcements',
+    element: <AnnouncementPage />,
+  },
 ]
+
+
 
 const pagesRoutes = [
   {
@@ -599,8 +597,6 @@ const pagesRoutes = [
     element: <Pricing />,
   },
 
-
-  
   {
     path: '/our-team',
     name: 'Instructor List',
@@ -615,12 +611,12 @@ const pagesRoutes = [
     path: '/blogs',
     name: 'Blog Page',
     element: <BlogPage />,
-  },{
+  },
+  {
     path: '/blogs/:id',
     name: 'Blog Page',
     element: <UserBlogDetail />,
   },
-
 
   {
     path: '/terms-conditions',
@@ -633,10 +629,9 @@ const pagesRoutes = [
     element: <Gallery />,
   },
   {
-    path:'/current-affairs',
-    name:"Current Affairs",
-    element:<CurrentAffairs />
-
+    path: '/current-affairs',
+    name: 'Current Affairs',
+    element: <CurrentAffairs />,
   },
   {
     path: '/free-test',
@@ -719,7 +714,6 @@ const helpRoutes = [
   },
 ]
 
-
 const otherRoutes = [
   {
     path: '/faq',
@@ -743,6 +737,10 @@ const otherRoutes = [
   },
 ]
 
-
+export const adminRoutes = rawAdminRoutes.map(route =>
+  route.path.startsWith('/admin/')
+    ? { ...route, element: <ProtectedRoute allowedRoles={['admin']}>{route.element}</ProtectedRoute> }
+    : route
+)
 
 export const appRoutes = [...initialRoutes, ...demosRoutes, ...otherRoutes, ...pagesRoutes, ...helpRoutes]
