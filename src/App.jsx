@@ -11,20 +11,25 @@ function App() {
   const [showContactForm, setShowContactForm] = useState(false)
   const location = useLocation()
 
-  const isAdminPath = location.pathname.startsWith('/admin')
+  // Exclude admin dashboard and admin login page
+  const isAdminRoute = (
+    location.pathname.startsWith('/admin') ||
+    location.pathname === '/auth/admin-login'
+  )
 
   useEffect(() => {
     document.documentElement.setAttribute('data-bs-theme', 'light')
     const hasFormBeenShown = sessionStorage.getItem('contactFormShown')
-    if (!hasFormBeenShown && !isAdminPath) {
+    if (!hasFormBeenShown && !isAdminRoute) {
       setShowContactForm(true)
       sessionStorage.setItem('contactFormShown', 'true')
     }
-  }, [isAdminPath])
+  }, [isAdminRoute])
 
   return (
     <AppProvidersWrapper>
-      {!isAdminPath && (
+      {/* Show contact/WhatsApp only if NOT admin route/login */}
+      {!isAdminRoute && (
         <>
           <ContactForm show={showContactForm} handleClose={() => setShowContactForm(false)} />
           <WhatsAppButton />
