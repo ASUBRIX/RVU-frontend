@@ -6,8 +6,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
 
+  // Get token and user from local storage
   useEffect(() => {
-    // On mount, load user/token from storage
     const t = localStorage.getItem('token')
     const u = localStorage.getItem('user')
     if (t && u) {

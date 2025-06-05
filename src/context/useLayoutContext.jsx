@@ -3,8 +3,6 @@ import { toggleDocumentAttribute } from '@/utils/layout';
 import { createContext, useContext, useMemo, useState, useEffect } from 'react';
 
 
-
-
 const ThemeContext = createContext(undefined);
 
 const useLayoutContext = () => {

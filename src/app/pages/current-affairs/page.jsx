@@ -52,17 +52,21 @@ const CurrentAffairs = () => {
       <TopNavigationBar />
       <CurrentAffairsHeroImage />
       <div className="current-affairs-page container py-5">
-        <div className="row">
-          <div className="col-lg-8 mx-auto text-center mb-5">
-            <h2 className="display-4 fw-bold mb-3">Latest Current Affairs</h2>
-            <p className="lead text-secondary">
-              Stay updated with the latest current affairs, news, and happenings
+        <div className="row mb-4">
+          <div className="col-12 col-lg-8">
+            <h2 className="display-4 fw-bold mb-3 text-start">Latest Current Affairs</h2>
+            <p className="lead text-secondary text-start">
+              Stay updated with the latest current affairs, news, and happenings.
             </p>
           </div>
         </div>
 
-        <div className="featured-post mb-5">
-          <CurrentAffairPost affair={affairs[0]} featured={true} />
+        <div className="row mb-5">
+          <div className="col-12 col-lg-10">
+            <div className="featured-post">
+              <CurrentAffairPost affair={affairs[0]} featured={true} />
+            </div>
+          </div>
         </div>
 
         <div className="row g-4 mb-5">

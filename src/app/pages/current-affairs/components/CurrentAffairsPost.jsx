@@ -1,9 +1,13 @@
 import React from 'react';
-import './CurrentAffairPost.scss';
+import './currentAffairs.scss';
 import { Link } from 'react-router-dom';
 
 const CurrentAffairPost = ({ affair, featured = false }) => (
-  <article className={`current-affair-post ${featured ? 'featured' : ''}`}>
+  <article className={`current-affair-post${featured ? ' featured' : ''}`}>
+    {/* Optionally, add an image section here if you want to show an image */}
+    {/* <div className="blog-post-image">
+      <img src={affair.imageUrl} alt={affair.title} />
+    </div> */}
     <div className="current-affair-post-content">
       <div className="current-affair-post-meta">
         <span className="date">

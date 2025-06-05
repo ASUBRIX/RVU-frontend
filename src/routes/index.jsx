@@ -264,7 +264,7 @@ export const authRoutes = [
   },
 ]
 
-export const studentRoutes = [
+export const rawStudentRoutes = [
   {
     path: '/student/dashboard',
     name: 'Dashboard',
@@ -736,6 +736,12 @@ const otherRoutes = [
     element: <InstructorCreateCourse />,
   },
 ]
+
+export const studentRoutes = rawStudentRoutes.map(route =>
+  route.path.startsWith('/student/')
+    ? { ...route, element: <ProtectedRoute allowedRoles={['student']}>{route.element}</ProtectedRoute> }
+    : route
+)
 
 export const adminRoutes = rawAdminRoutes.map(route =>
   route.path.startsWith('/admin/')
