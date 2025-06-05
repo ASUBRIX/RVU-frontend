@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { changeEmail, getProfile } from '@/helpers/userApi';
+import { changeEmail, getProfile } from '@/helpers/studentApi';
 import { useEffect } from 'react';
 import TextFormInput from '@/components/form/TextFormInput';
 import { Card, Spinner } from 'react-bootstrap';
@@ -23,7 +23,7 @@ const EmailChange = () => {
   }, [reset]);
 
   const onSubmit = async ({ email }) => {
-    await changeEmail(email);
+    // await changeEmail(email);
     // Optionally show success message
   };
 

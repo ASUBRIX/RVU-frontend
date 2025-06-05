@@ -11,15 +11,19 @@ function HttpClient() {
 
 instance.interceptors.request.use(
   (config) => {
-    
     const token = localStorage.getItem('token');
-    
+
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
+      console.log(`[🔐 TOKEN INCLUDED] ${config.method?.toUpperCase()} ${config.url}`);
+    } else {
+      console.warn(`[⚠️ NO TOKEN] ${config.method?.toUpperCase()} ${config.url}`);
     }
+
     if (!(config.data instanceof FormData)) {
       config.headers['Content-Type'] = 'application/json';
     }
+
     return config;
   },
   (error) => {
@@ -27,6 +31,7 @@ instance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
 
 
   instance.interceptors.response.use(

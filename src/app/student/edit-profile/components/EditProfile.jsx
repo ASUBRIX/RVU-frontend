@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Card, Spinner } from 'react-bootstrap'
 import * as yup from 'yup'
-import { getProfile, updateProfile } from '@/helpers/userApi'
+import { getProfile, updateProfile } from '@/helpers/studentApi'
 import TextFormInput from '@/components/form/TextFormInput'
 
 // Validation schema for student fields
@@ -75,6 +75,7 @@ const EditProfile = () => {
   // Fetch and set profile data
   useEffect(() => {
     getProfile().then((data) => {
+      
       reset({
         first_name: data.first_name || '',
         last_name: data.last_name || '',
@@ -101,29 +102,37 @@ const EditProfile = () => {
     }
   }
 
-  const onSubmit = async (formData) => {
-    const form = new FormData()
-    Object.entries(formData).forEach(([key, value]) => {
-      // Handle courses as array if needed
-      if (key === 'courses' && typeof value === 'string') {
-        form.append(
-          key,
-          value
-            .split(',')
-            .map((str) => str.trim())
-            .filter(Boolean),
-        )
-      } else {
-        form.append(key, value)
-      }
-    })
-    // Profile picture
-    if (fileRef.current && fileRef.current.files[0]) {
-      form.append('profile_picture', fileRef.current.files[0])
+const onSubmit = async (formData) => {
+  const form = new FormData();
+
+  // Convert plain values to FormData fields
+  Object.entries(formData).forEach(([key, value]) => {
+    if (key === 'courses') {
+      form.append(key, value); // send CSV string like "Math, Science"
+    } else {
+      form.append(key, value ?? '');
     }
-    await updateProfile(form)
-    // Optionally, show a success message
+  });
+
+  // Append profile picture if selected
+  if (fileRef.current?.files[0]) {
+    form.append('profile_picture', fileRef.current.files[0]);
   }
+
+  // Debug log
+  console.log('🔥 Submitting FormData:');
+  for (let [key, value] of form.entries()) {
+    console.log(`${key}:`, value);
+  }
+
+  try {
+    await updateProfile(form);
+    // Optional: show success toast
+  } catch (err) {
+    console.error('❌ Update failed:', err);
+  }
+};
+
 
   return (
     <Card className="edit-profile-card px-3 py-2">
