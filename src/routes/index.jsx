@@ -268,11 +268,7 @@ export const rawStudentRoutes = [
   {
     path: '/student/dashboard',
     name: 'Dashboard',
-    element: (
-      <ProtectedRoute allowedRoles={['student']}>
-        <StudentDashboard />
-      </ProtectedRoute>
-    ),
+    element: <StudentDashboard />,
   },
   {
     path: '/student/edit-profile',
@@ -512,8 +508,6 @@ const rawAdminRoutes = [
   },
 ]
 
-
-
 const pagesRoutes = [
   {
     path: '/pages/course/categories',
@@ -737,16 +731,12 @@ const otherRoutes = [
   },
 ]
 
-export const studentRoutes = rawStudentRoutes.map(route =>
-  route.path.startsWith('/student/')
-    ? { ...route, element: <ProtectedRoute allowedRoles={['student']}>{route.element}</ProtectedRoute> }
-    : route
+export const studentRoutes = rawStudentRoutes.map((route) =>
+  route.path.startsWith('/student/') ? { ...route, element: <ProtectedRoute allowedRoles={['student']}>{route.element}</ProtectedRoute> } : route,
 )
 
-export const adminRoutes = rawAdminRoutes.map(route =>
-  route.path.startsWith('/admin/')
-    ? { ...route, element: <ProtectedRoute allowedRoles={['admin']}>{route.element}</ProtectedRoute> }
-    : route
+export const adminRoutes = rawAdminRoutes.map((route) =>
+  route.path.startsWith('/admin/') ? { ...route, element: <ProtectedRoute allowedRoles={['admin']}>{route.element}</ProtectedRoute> } : route,
 )
 
 export const appRoutes = [...initialRoutes, ...demosRoutes, ...otherRoutes, ...pagesRoutes, ...helpRoutes]

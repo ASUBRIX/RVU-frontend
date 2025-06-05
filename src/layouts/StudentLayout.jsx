@@ -29,7 +29,7 @@ const StudentLayout = ({ children }) => {
         <section className="pt-0">
           <Container>
             <Row>
-              <Col xl={3} className="mb-3 mb-xl-0">
+              <Col xl={3} className="mb-3 mb-xl-0 mt-4">
                 {width >= 1200 ? (
                   <VerticalMenu />
                 ) : (

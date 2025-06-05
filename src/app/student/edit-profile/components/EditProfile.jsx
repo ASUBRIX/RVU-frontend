@@ -1,78 +1,129 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Card, Spinner } from 'react-bootstrap';
-import * as yup from 'yup';
-import { getProfile, updateProfile } from '@/helpers/userApi';
-import TextFormInput from '@/components/form/TextFormInput';
+import { useEffect, useState, useRef } from 'react'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Card, Spinner } from 'react-bootstrap'
+import * as yup from 'yup'
+import { getProfile, updateProfile } from '@/helpers/userApi'
+import TextFormInput from '@/components/form/TextFormInput'
 
-
-
+// Validation schema for student fields
 const schema = yup.object({
   first_name: yup.string().required('Enter first name'),
   last_name: yup.string().required('Enter last name'),
   email: yup.string().email('Enter valid email').required('Email required'),
-  phone_number: yup.string().required('Enter phone'),
-  student_first_name: yup.string().required('Enter first name'),
-  student_last_name: yup.string().required('Enter last name'),
-  student_email: yup.string().email('Enter valid email').required('Email required'),
-  student_phone: yup.string().required('Enter phone'),
-  enrollment_date: yup.string(),
+  phone: yup.string().required('Enter phone'),
+  enrollment_date: yup.string().required('Enter enrollment date'),
   program: yup.string(),
   semester: yup.string(),
   year: yup.string(),
   status: yup.string(),
-  courses: yup.mixed(),
-});
+  courses: yup.string(),
+  // profile_picture is optional for now
+})
+
+const BLUE_AVATAR = (
+  <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+    <defs>
+      <linearGradient id="avatarGradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#38bdf8" />
+        <stop offset="1" stopColor="#2563eb" />
+      </linearGradient>
+    </defs>
+    <circle cx="32" cy="32" r="32" fill="url(#avatarGradient)" />
+    {/* Face */}
+    <ellipse cx="32" cy="25" rx="15" ry="13" fill="#fff" fillOpacity="0.95" />
+    {/* Shoulders */}
+    <ellipse cx="32" cy="49" rx="21" ry="12" fill="#fff" fillOpacity="0.85" />
+    {/* Head */}
+    <ellipse cx="32" cy="25" rx="10" ry="8.5" fill="#60a5fa" fillOpacity="0.8" />
+    {/* Eyes */}
+    <ellipse cx="27" cy="29" rx="1.5" ry="2" fill="#2563eb" />
+    <ellipse cx="37" cy="29" rx="1.5" ry="2" fill="#2563eb" />
+    {/* Smile */}
+    <path d="M27 33 Q32 37 37 33" stroke="#2563eb" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+  </svg>
+)
 
 const EditProfile = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const [avatar, setAvatar] = useState(null) // Preview image
+  const fileRef = useRef()
 
-  const { control, handleSubmit, reset, formState: { isSubmitting } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       first_name: '',
       last_name: '',
       email: '',
-      phone_number: '',
-      student_first_name: '',
-      student_last_name: '',
-      student_email: '',
-      student_phone: '',
+      phone: '',
       enrollment_date: '',
       program: '',
       semester: '',
       year: '',
       status: '',
       courses: '',
+      // profile_picture: '', // not part of validation schema
     },
-  });
+  })
 
+  // Fetch and set profile data
   useEffect(() => {
     getProfile().then((data) => {
       reset({
-        first_name: data.user_first_name || '',
-        last_name: data.user_last_name || '',
-        email: data.user_email || '',
-        phone_number: data.user_phone_number || '',
-        student_first_name: data.first_name || '',
-        student_last_name: data.last_name || '',
-        student_email: data.email || '',
-        student_phone: data.phone || '',
+        first_name: data.first_name || '',
+        last_name: data.last_name || '',
+        email: data.email || '',
+        phone: data.phone || '',
         enrollment_date: data.enrollment_date || '',
         program: data.program || '',
         semester: data.semester || '',
         year: data.year || '',
         status: data.status || '',
-        courses: data.courses || '',
-      });
-      setLoading(false);
-    });
-  }, [reset]);
+        courses: Array.isArray(data.courses) ? data.courses.join(', ') : data.courses || '',
+      })
+      setAvatar(data.profile_picture || null)
+      setLoading(false)
+    })
+  }, [reset])
+
+  // Preview logic for file upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setAvatar(URL.createObjectURL(file))
+      setValue('profile_picture', file)
+    }
+  }
 
   const onSubmit = async (formData) => {
-    await updateProfile(formData);
-  };
+    const form = new FormData()
+    Object.entries(formData).forEach(([key, value]) => {
+      // Handle courses as array if needed
+      if (key === 'courses' && typeof value === 'string') {
+        form.append(
+          key,
+          value
+            .split(',')
+            .map((str) => str.trim())
+            .filter(Boolean),
+        )
+      } else {
+        form.append(key, value)
+      }
+    })
+    // Profile picture
+    if (fileRef.current && fileRef.current.files[0]) {
+      form.append('profile_picture', fileRef.current.files[0])
+    }
+    await updateProfile(form)
+    // Optionally, show a success message
+  }
 
   return (
     <Card className="edit-profile-card px-3 py-2">
@@ -82,54 +133,74 @@ const EditProfile = () => {
         </div>
       ) : (
         <>
-          {/* Optional: Profile Image */}
-          <div className="edit-profile-avatar">
-            <img
-              src="/images/default-avatar.png"
-              alt="Profile"
-              className="edit-profile-avatar-img"
+          {/* Profile Avatar */}
+          <div className="edit-profile-avatar d-flex flex-column align-items-center mt-4 mb-3 position-relative">
+            <div
+              style={{
+                width: 90,
+                height: 90,
+                borderRadius: '50%',
+                background: '#e0f2fe',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 0 4px #fff',
+                overflow: 'hidden',
+              }}>
+              {avatar ? (
+                typeof avatar === 'string' && avatar.startsWith('http') ? (
+                  <img src={avatar} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : avatar.startsWith('blob:') ? (
+                  <img src={avatar} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  BLUE_AVATAR
+                )
+              ) : (
+                BLUE_AVATAR
+              )}
+            </div>
+
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{
+                position: 'absolute',
+                bottom: -5,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                opacity: 0,
+                width: 90,
+                height: 35,
+                cursor: 'pointer',
+              }}
+              title="Upload profile picture"
             />
-            {/* You can add a button here for uploading */}
+            <button type="button" className="btn btn-sm btn-primary mt-2" onClick={() => fileRef.current.click()}>
+              Change Photo
+            </button>
           </div>
-          <h5 className="text-center mb-1">Edit Profile</h5>
+
+          <h5 className="text-center mb-3 mt-2">Edit Profile</h5>
+
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* User Info */}
-            <div className="section-title">User Info</div>
-            <div className="row gx-2">
-              <div className="col-md-6 mb-3">
-                <TextFormInput name="first_name" label="User First Name" control={control} />
-              </div>
-              <div className="col-md-6 mb-3">
-                <TextFormInput name="last_name" label="User Last Name" control={control} />
-              </div>
-              <div className="col-md-6 mb-3">
-                <TextFormInput name="email" label="User Email" control={control} />
-              </div>
-              <div className="col-md-6 mb-3">
-                <TextFormInput name="phone_number" label="User Phone" control={control} />
-              </div>
-            </div>
             {/* Student Info */}
-            <div className="section-title">Student Info</div>
             <div className="row gx-2">
               <div className="col-md-6 mb-3">
-                <TextFormInput name="student_first_name" label="Student First Name" control={control} />
+                <TextFormInput name="first_name" label="First Name" control={control} />
               </div>
               <div className="col-md-6 mb-3">
-                <TextFormInput name="student_last_name" label="Student Last Name" control={control} />
+                <TextFormInput name="last_name" label="Last Name" control={control} />
               </div>
               <div className="col-md-6 mb-3">
-                <TextFormInput name="student_email" label="Student Email" control={control} />
+                <TextFormInput name="email" label="Email" control={control} />
               </div>
               <div className="col-md-6 mb-3">
-                <TextFormInput name="student_phone" label="Student Phone" control={control} />
+                <TextFormInput name="phone" label="Phone" control={control} />
               </div>
-            </div>
-            {/* Academic Details */}
-            <div className="section-title">Academic Details</div>
-            <div className="row gx-2">
               <div className="col-md-6 mb-3">
-                <TextFormInput name="enrollment_date" label="Enrollment Date" control={control} />
+                <TextFormInput name="enrollment_date" label="Enrollment Date" control={control} type="date" />
               </div>
               <div className="col-md-6 mb-3">
                 <TextFormInput name="program" label="Program" control={control} />
@@ -154,7 +225,7 @@ const EditProfile = () => {
         </>
       )}
     </Card>
-  );
-};
+  )
+}
 
-export default EditProfile;
+export default EditProfile
