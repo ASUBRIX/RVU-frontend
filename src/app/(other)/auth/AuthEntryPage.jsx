@@ -10,14 +10,13 @@ export default function MobileLoginPage() {
   const [mobile, setMobile] = useState('')
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState('')
+
+    const confirmationResultRef = useRef(null)
   const navigate = useNavigate()
-  const confirmationResultRef = useRef(null)
+
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      // Optionally handle user state
-    })
-    // Cleanup recaptcha and listener on unmount
+    const unsubscribe = onAuthStateChanged(auth, (user) => {})
     return () => {
       if (window.recaptchaVerifier) {
         window.recaptchaVerifier.clear()

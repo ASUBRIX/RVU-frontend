@@ -203,39 +203,6 @@ export const demosRoutes = [
   },
 ]
 
-export const shopRoutes = [
-  {
-    path: '/shop',
-    name: 'Shop grid',
-    element: <Shop />,
-  },
-  {
-    path: '/shop/product-detail/:eventId',
-    name: 'Product detail',
-    element: <ProductDetail />,
-  },
-  {
-    path: '/shop/cart',
-    name: 'Product detail',
-    element: <Cart />,
-  },
-  {
-    path: '/shop/checkout',
-    name: 'Checkout',
-    element: <Checkout />,
-  },
-  {
-    path: '/shop/empty-cart',
-    name: 'Empty Cart',
-    element: <EmptyCart />,
-  },
-  {
-    path: '/shop/wishlist',
-    name: 'Wishlist',
-    element: <Wishlist />,
-  },
-]
-
 export const authRoutes = [
   {
     path: '/auth',
@@ -327,58 +294,6 @@ export const rawStudentRoutes = [
     element: <StudentDeleteAccount />,
   },
 ]
-
-// export const InstructorRoutes = [
-//   {
-//     path: '/instructor/dashboard',
-//     name: 'Dashboard',
-//     element: <InstructorDashboard />,
-//   },
-//   {
-//     path: '/student/my-courses',
-//     name: 'Courses',
-//     element: <InstructorCourses />,
-//   },
-//   {
-//     path: '/student/chat',
-//     name: 'Chat with Admin',
-//     element: <InstructorChatPage />,
-//   },
-//   {
-//     path: '/student/course-add',
-//     name: 'Course Added',
-//     element: <InstructorCourseAdd />,
-//   },
-//   {
-//     path: '/instructor/quiz',
-//     name: 'Quiz',
-//     element: <Quiz />,
-//   },
-//   {
-//     path: '/instructor/earning',
-//     name: 'Earnings',
-//     element: <Earnings />,
-//   },
-//   {
-//     path: '/instructor/student-list',
-//     name: 'Students',
-//     element: <StudentsList />,
-//   },
-//   {
-//     path: '/student/test-details',
-//     name: 'Tests',
-//     element: <Tests />,
-//   },
-//   {
-//     path: '/instructor/review',
-//     name: 'Reviews',
-//     element: <InstructorReviews />,
-//   },
-//   {
-//     path: '/student/payment-history',
-//     name: 'Payout',
-//     element: <Payout />,
-//   },
 
 const rawAdminRoutes = [
   {
@@ -694,6 +609,95 @@ const pagesRoutes = [
     element: <AdmissionForm />,
   },
 ]
+
+
+
+export const shopRoutes = [
+  {
+    path: '/shop',
+    name: 'Shop grid',
+    element: <Shop />,
+  },
+  {
+    path: '/shop/product-detail/:eventId',
+    name: 'Product detail',
+    element: <ProductDetail />,
+  },
+  {
+    path: '/shop/cart',
+    name: 'Product detail',
+    element: <Cart />,
+  },
+  {
+    path: '/shop/checkout',
+    name: 'Checkout',
+    element: <Checkout />,
+  },
+  {
+    path: '/shop/empty-cart',
+    name: 'Empty Cart',
+    element: <EmptyCart />,
+  },
+  {
+    path: '/shop/wishlist',
+    name: 'Wishlist',
+    element: <Wishlist />,
+  },
+]
+
+
+// export const InstructorRoutes = [
+//   {
+//     path: '/instructor/dashboard',
+//     name: 'Dashboard',
+//     element: <InstructorDashboard />,
+//   },
+//   {
+//     path: '/student/my-courses',
+//     name: 'Courses',
+//     element: <InstructorCourses />,
+//   },
+//   {
+//     path: '/student/chat',
+//     name: 'Chat with Admin',
+//     element: <InstructorChatPage />,
+//   },
+//   {
+//     path: '/student/course-add',
+//     name: 'Course Added',
+//     element: <InstructorCourseAdd />,
+//   },
+//   {
+//     path: '/instructor/quiz',
+//     name: 'Quiz',
+//     element: <Quiz />,
+//   },
+//   {
+//     path: '/instructor/earning',
+//     name: 'Earnings',
+//     element: <Earnings />,
+//   },
+//   {
+//     path: '/instructor/student-list',
+//     name: 'Students',
+//     element: <StudentsList />,
+//   },
+//   {
+//     path: '/student/test-details',
+//     name: 'Tests',
+//     element: <Tests />,
+//   },
+//   {
+//     path: '/instructor/review',
+//     name: 'Reviews',
+//     element: <InstructorReviews />,
+//   },
+//   {
+//     path: '/student/payment-history',
+//     name: 'Payout',
+//     element: <Payout />,
+//   },
+
 
 const helpRoutes = [
   {

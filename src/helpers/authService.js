@@ -4,12 +4,9 @@ import httpClient from './httpClient';
 const authService = {
 
   register: async (userData) => {
-    console.log("register is calling");
     
     try {
       const response = await httpClient.post('/api/users/register', userData);
-      console.log(response);
-      
       return response.data;
     } catch (error) {
       console.error('Registration error:', error);
@@ -18,9 +15,9 @@ const authService = {
   },
 
 
-  loginWithEmail: async (credentials) => {
+  adminLogin: async (credentials) => {
     try {
-      const response = await httpClient.post('/api/users/login/email', credentials);
+      const response = await httpClient.post('/api/admin/login', credentials);
       return response.data;
     } catch (error) {
       console.error('Login error:', error);

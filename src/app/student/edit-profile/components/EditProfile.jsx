@@ -6,7 +6,6 @@ import * as yup from 'yup'
 import { getProfile, updateProfile } from '@/helpers/studentApi'
 import TextFormInput from '@/components/form/TextFormInput'
 
-// Validation schema for student fields
 const schema = yup.object({
   first_name: yup.string().required('Enter first name'),
   last_name: yup.string().required('Enter last name'),
@@ -18,7 +17,6 @@ const schema = yup.object({
   year: yup.string(),
   status: yup.string(),
   courses: yup.string(),
-  // profile_picture is optional for now
 })
 
 const BLUE_AVATAR = (
@@ -30,23 +28,18 @@ const BLUE_AVATAR = (
       </linearGradient>
     </defs>
     <circle cx="32" cy="32" r="32" fill="url(#avatarGradient)" />
-    {/* Face */}
     <ellipse cx="32" cy="25" rx="15" ry="13" fill="#fff" fillOpacity="0.95" />
-    {/* Shoulders */}
     <ellipse cx="32" cy="49" rx="21" ry="12" fill="#fff" fillOpacity="0.85" />
-    {/* Head */}
     <ellipse cx="32" cy="25" rx="10" ry="8.5" fill="#60a5fa" fillOpacity="0.8" />
-    {/* Eyes */}
     <ellipse cx="27" cy="29" rx="1.5" ry="2" fill="#2563eb" />
     <ellipse cx="37" cy="29" rx="1.5" ry="2" fill="#2563eb" />
-    {/* Smile */}
     <path d="M27 33 Q32 37 37 33" stroke="#2563eb" strokeWidth="1.5" fill="none" strokeLinecap="round" />
   </svg>
 )
 
 const EditProfile = () => {
   const [loading, setLoading] = useState(false)
-  const [avatar, setAvatar] = useState(null) // Preview image
+  const [avatar, setAvatar] = useState(null)
   const fileRef = useRef()
 
   const {
@@ -68,14 +61,11 @@ const EditProfile = () => {
       year: '',
       status: '',
       courses: '',
-      // profile_picture: '', // not part of validation schema
     },
   })
 
-  // Fetch and set profile data
   useEffect(() => {
     getProfile().then((data) => {
-      
       reset({
         first_name: data.first_name || '',
         last_name: data.last_name || '',
@@ -93,7 +83,6 @@ const EditProfile = () => {
     })
   }, [reset])
 
-  // Preview logic for file upload
   const handleFileChange = (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -102,37 +91,24 @@ const EditProfile = () => {
     }
   }
 
-const onSubmit = async (formData) => {
-  const form = new FormData();
-
-  // Convert plain values to FormData fields
-  Object.entries(formData).forEach(([key, value]) => {
-    if (key === 'courses') {
-      form.append(key, value); // send CSV string like "Math, Science"
-    } else {
-      form.append(key, value ?? '');
+  const onSubmit = async (formData) => {
+    const form = new FormData()
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key === 'courses') {
+        form.append(key, value)
+      } else {
+        form.append(key, value ?? '')
+      }
+    })
+    if (fileRef.current?.files[0]) {
+      form.append('profile_picture', fileRef.current.files[0])
     }
-  });
-
-  // Append profile picture if selected
-  if (fileRef.current?.files[0]) {
-    form.append('profile_picture', fileRef.current.files[0]);
+    try {
+      await updateProfile(form)
+    } catch (err) {
+      console.error('Update failed:', err)
+    }
   }
-
-  // Debug log
-  console.log('🔥 Submitting FormData:');
-  for (let [key, value] of form.entries()) {
-    console.log(`${key}:`, value);
-  }
-
-  try {
-    await updateProfile(form);
-    // Optional: show success toast
-  } catch (err) {
-    console.error('❌ Update failed:', err);
-  }
-};
-
 
   return (
     <Card className="edit-profile-card px-3 py-2">
@@ -142,7 +118,6 @@ const onSubmit = async (formData) => {
         </div>
       ) : (
         <>
-          {/* Profile Avatar */}
           <div className="edit-profile-avatar d-flex flex-column align-items-center mt-4 mb-3 position-relative">
             <div
               style={{
@@ -194,7 +169,6 @@ const onSubmit = async (formData) => {
           <h5 className="text-center mb-3 mt-2">Edit Profile</h5>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Student Info */}
             <div className="row gx-2">
               <div className="col-md-6 mb-3">
                 <TextFormInput name="first_name" label="First Name" control={control} />

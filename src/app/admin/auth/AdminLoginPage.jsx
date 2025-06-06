@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
     setErr('')
     setLoading(true)
     try {
-      const response = await authService.loginWithEmail({
+      const response = await authService.adminLogin({
         email: fields.email,
         password_hash: fields.password,
       })
