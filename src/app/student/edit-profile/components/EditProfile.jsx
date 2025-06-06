@@ -19,6 +19,7 @@ const schema = yup.object({
   courses: yup.string(),
 })
 
+
 const BLUE_AVATAR = (
   <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
     <defs>
@@ -66,6 +67,8 @@ const EditProfile = () => {
 
   useEffect(() => {
     getProfile().then((data) => {
+      console.log(data);
+      
       reset({
         first_name: data.first_name || '',
         last_name: data.last_name || '',

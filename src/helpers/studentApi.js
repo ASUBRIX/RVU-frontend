@@ -12,6 +12,7 @@ export const updateProfile = async (profileData) => {
   return res.data;
 };
 
+
 // Change email
 export const changeEmail = async (email) => {
   const res = await httpClient.put('/api/student/profile', { email });
