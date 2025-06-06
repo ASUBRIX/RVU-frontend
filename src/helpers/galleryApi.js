@@ -1,17 +1,14 @@
-// helpers/galleryApi.js
 import httpClient from './httpClient';
 
 
-// Get all gallery images (returns array!)
+// Get all gallery images
 export const getGalleryImages = async () => {
   const response = await httpClient.get('/api/admin/gallery');
   return response.data; 
 };
 
-// ... rest unchanged
 
-
-// Upload images (expects FormData with key 'images')
+// Upload images
 export const uploadGalleryImages = (formData) => {
   return httpClient.post('/api/admin/gallery/upload', formData);
 };
