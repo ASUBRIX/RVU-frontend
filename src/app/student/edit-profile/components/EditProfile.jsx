@@ -5,6 +5,7 @@ import { Card, Spinner } from 'react-bootstrap'
 import * as yup from 'yup'
 import { getProfile, updateProfile } from '@/helpers/studentApi'
 import TextFormInput from '@/components/form/TextFormInput'
+import { useNotificationContext } from '../../../../context/useNotificationContext'
 
 const schema = yup.object({
   first_name: yup.string().required('Enter first name'),
@@ -18,7 +19,6 @@ const schema = yup.object({
   status: yup.string(),
   courses: yup.string(),
 })
-
 
 const BLUE_AVATAR = (
   <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
@@ -39,9 +39,10 @@ const BLUE_AVATAR = (
 )
 
 const EditProfile = () => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [avatar, setAvatar] = useState(null)
   const fileRef = useRef()
+  const { showNotification } = useNotificationContext()
 
   const {
     control,
@@ -67,8 +68,6 @@ const EditProfile = () => {
 
   useEffect(() => {
     getProfile().then((data) => {
-      console.log(data);
-      
       reset({
         first_name: data.first_name || '',
         last_name: data.last_name || '',
@@ -97,21 +96,37 @@ const EditProfile = () => {
   const onSubmit = async (formData) => {
     const form = new FormData()
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === 'courses') {
-        form.append(key, value)
-      } else {
-        form.append(key, value ?? '')
-      }
+      form.append(key, value ?? '')
     })
     if (fileRef.current?.files[0]) {
       form.append('profile_picture', fileRef.current.files[0])
     }
+
     try {
       await updateProfile(form)
+      showNotification({
+        title: 'Success',
+        message: 'Profile updated successfully!',
+        variant: 'success',
+        delay: 3000
+      })
     } catch (err) {
       console.error('Update failed:', err)
+      showNotification({
+        title: 'Error',
+        message: 'Failed to update profile. Please try again.',
+        variant: 'danger',
+        delay: 3000
+      })
     }
   }
+
+  const resolvedAvatarURL =
+    avatar && typeof avatar === 'string'
+      ? avatar.startsWith('http') || avatar.startsWith('blob:')
+        ? avatar
+        : `${import.meta.env.VITE_API_BASE_URL}${avatar}`
+      : null
 
   return (
     <Card className="edit-profile-card px-3 py-2">
@@ -133,15 +148,17 @@ const EditProfile = () => {
                 justifyContent: 'center',
                 boxShadow: '0 0 0 4px #fff',
                 overflow: 'hidden',
-              }}>
-              {avatar ? (
-                typeof avatar === 'string' && avatar.startsWith('http') ? (
-                  <img src={avatar} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : avatar.startsWith('blob:') ? (
-                  <img src={avatar} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  BLUE_AVATAR
-                )
+              }}
+            >
+              {resolvedAvatarURL ? (
+                <img
+                  src={resolvedAvatarURL}
+                  alt="Profile"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => {
+                    e.currentTarget.src = ''
+                  }}
+                />
               ) : (
                 BLUE_AVATAR
               )}
