@@ -63,7 +63,7 @@ export default function OtpVerifyPage() {
     <AuthLayout>
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
         <div className="p-4 border rounded" style={{ minWidth: 320 }}>
-          <h2 className="mb-3">Verify OTP</h2>
+          <h2 className="mb-3 fs-4 text-center">Verify OTP</h2>
           <p className="mb-2">OTP sent to <strong>{mobile}</strong></p>
           <input
             className="form-control mb-3"

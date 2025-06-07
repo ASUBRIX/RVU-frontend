@@ -6,7 +6,7 @@ import avatar4 from '@/assets/images/logo.png';
 import elementImg from '@/assets/images/logo.png';
 import { Col, Container, Row } from 'react-bootstrap';
 
-export const AuthLayout = ({ children }) => {
+const AuthLayout = ({ children }) => {
   return (
     <main>
       <section className="p-0 m-0 d-flex align-items-center position-relative overflow-hidden" style={{ minHeight: '100vh' }}>
@@ -52,3 +52,6 @@ export const AuthLayout = ({ children }) => {
     </main>
   );
 };
+
+
+export default AuthLayout;

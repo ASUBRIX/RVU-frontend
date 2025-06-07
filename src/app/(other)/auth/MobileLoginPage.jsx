@@ -1,4 +1,4 @@
-import {AuthLayout} from './components/AuthLayout';
+import AuthLayout from './components/AuthLayout';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged } from 'firebase/auth';
