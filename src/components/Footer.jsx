@@ -12,7 +12,7 @@ import { useState, useEffect, useRef } from 'react'
 import httpClient from '../helpers/httpClient'
 
 // Backend base URL - adjust this to match your backend server
-const BACKEND_URL = 'https://server.pudhuyugamacademy.com/';
+const BACKEND_URL = 'import.meta.env.VITE_API_BASE_URL';
 
 // Create a cache for settings
 let settingsCache = null;
@@ -31,12 +31,13 @@ const Footer = ({ className }) => {
     instagram_url: 'https://www.instagram.com/pudhuyugamacademy/'
   };
 
+
+  
   const [settings, setSettings] = useState(settingsCache || defaultSettings);
   const [isLoading, setIsLoading] = useState(!settingsCache);
   const hasFetchedRef = useRef(false);
 
   useEffect(() => {
-    // Only fetch if we haven't already fetched in this session
     if (hasFetchedRef.current || settingsCache) {
       return;
     }
@@ -47,10 +48,10 @@ const Footer = ({ className }) => {
         hasFetchedRef.current = true;
         
         const response = await httpClient.get('/api/settings');
+        
         if (response.data) {
           // Process any path-based URLs to include the backend server
           const processedData = { ...response.data };
-          
           // Convert the logo path to a full URL if it's a relative path
           if (processedData.site_logo && processedData.site_logo.startsWith('/')) {
             processedData.site_logo = `${BACKEND_URL}${processedData.site_logo}`;
