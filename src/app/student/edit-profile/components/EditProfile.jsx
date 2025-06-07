@@ -44,13 +44,7 @@ const EditProfile = () => {
   const fileRef = useRef()
   const { showNotification } = useNotificationContext()
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { isSubmitting },
-  } = useForm({
+  const {control,handleSubmit,reset,setValue,formState: { isSubmitting },} = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       first_name: '',

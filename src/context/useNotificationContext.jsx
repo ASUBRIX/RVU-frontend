@@ -6,16 +6,29 @@ import ToastContainer from 'react-bootstrap/ToastContainer';
 
 const NotificationContext = createContext(undefined);
 
-function Toastr({show,title,message,onClose,variant = 'light',delay}) {
-  return <ToastContainer className="m-3 position-fixed" position="top-end">
+function Toastr({ show, title, message, onClose, variant = 'light', delay }) {
+  return (
+    <ToastContainer className="m-3 position-fixed" position="top-end">
       <Toast bg={variant} delay={delay} show={show} onClose={onClose} autohide>
-        {title && <ToastHeader className={`text-${variant}`}>
-            <strong className="me-auto">{title}</strong>
-          </ToastHeader>}
-        <ToastBody className={['dark', 'danger', 'success', 'primary'].includes(variant) ? 'text-white' : ''}>{message}</ToastBody>
+        {title && (
+          <ToastHeader className={`text-${variant} justify-content-center`}>
+            <strong className="me-auto text-center w-100">{title}</strong>
+          </ToastHeader>
+        )}
+        <ToastBody
+          className={`${
+            ['dark', 'danger', 'success', 'primary'].includes(variant)
+              ? 'text-white'
+              : ''
+          } text-center`}
+        >
+          {message}
+        </ToastBody>
       </Toast>
-    </ToastContainer>;
+    </ToastContainer>
+  )
 }
+
 
 export function useNotificationContext() {
   const context = useContext(NotificationContext);
@@ -25,8 +38,8 @@ export function useNotificationContext() {
   return context;
 }
 
-export function NotificationProvider({children}) {
 
+export function NotificationProvider({children}) {
   const defaultConfig = {
     show: false,
     message: '',
