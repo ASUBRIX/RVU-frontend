@@ -382,13 +382,11 @@ const Footer = ({ className }) => {
         <hr className="mt-4 mb-0" />
         <div className="py-3">
           <Container className="px-0">
-            <div className="text-center py-3">
-              <div className="text-body text-primary-hover">
-                Powered by{' '}
-                <Link to="https://asubrix.com/" target="_blank" className="text-body">
-                  Asubrix International Pvt Ltd
-                </Link>
-                {' '}| {settings.copyright_text || `© ${settings.site_name} ${currentYear}. All rights reserved`}
+            <div className="d-flex justify-content-center py-3">
+              <div className="text-body text-primary-hover text-center">
+                Powered by <Link to="https://asubrix.com/" target="_blank" className="text-body">Asubrix International Pvt Ltd</Link>
+                {/* <br /> */}
+                {settings.copyright_text || `© ${settings.site_name} ${currentYear}. All rights reserved`}
               </div>
             </div>
           </Container>
