@@ -78,7 +78,6 @@ const AuthEntryPage = lazy(() => import('@/app/(other)/auth/AuthEntryPage'))
 const OtpVerifyPage = lazy(() => import('@/app/(other)/auth/OtpVerifyPage'))
 const RegisterDetailsPage = lazy(() => import('@/app/(other)/auth/RegisterDetailsPage'))
 const MobileLoginPage = lazy(() => import('@/app/(other)/auth/MobileLoginPage'))
-const ForgotPassword = lazy(() => import('@/app/(other)/auth/forgot-password/page'))
 
 //Instructor
 const InstructorDashboard = lazy(() => import('@/app/instructor/dashboard/page'))
@@ -223,11 +222,6 @@ export const authRoutes = [
     path: '/auth/mobile-login',
     name: 'Sign In with Email',
     element: <MobileLoginPage />,
-  },
-  {
-    path: '/auth/forgot-password',
-    name: 'Forgot Password',
-    element: <ForgotPassword />,
   },
 ]
 

@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { FaBasketballBall, FaFacebookSquare, FaInstagram, FaLinkedinIn, FaPinterest, FaTwitter } from 'react-icons/fa';
+import {
+  FaFacebookSquare,
+  FaInstagram,
+  FaTwitter,
+  FaLinkedinIn,
+} from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import contactImg from '@/assets/images/element/contact.svg';
+import contactImg from '@/assets/images/logo.png';
 import TextFormInput from '@/components/form/TextFormInput';
 import TextAreaFormInput from '@/components/form/TextAreaFormInput';
 import { yupResolver } from '@hookform/resolvers/yup';
-import httpClient from '@/helpers/httpClient'; // <-- your Axios instance
+import httpClient from '@/helpers/httpClient';
+import './ContactFormAndMap.scss';
 
-// Validation schema including phone and subject
 const contactFormSchema = yup.object({
   name: yup.string().required('Please enter your name'),
-  email: yup.string().email('Please enter a valid email').required('Please enter your email'),
+  email: yup
+    .string()
+    .email('Please enter a valid email')
+    .required('Please enter your email'),
   phone: yup.string().max(20, 'Phone number is too long'),
   subject: yup.string().max(255, 'Subject is too long'),
   message: yup.string().required('Please enter your message'),
@@ -30,23 +38,29 @@ const ContactFormAndMap = () => {
     setFormStatus({ success: '', error: '' });
     try {
       await httpClient.post('/api/contact-enquiry', data);
-      setFormStatus({ success: 'Thank you! Your message has been sent.', error: '' });
+      setFormStatus({
+        success: 'Thank you! Your message has been sent.',
+        error: '',
+      });
       reset();
     } catch (error) {
-      setFormStatus({ success: '', error: 'Failed to send message. Please try again.' });
+      setFormStatus({
+        success: '',
+        error: 'Failed to send message. Please try again.',
+      });
     }
   };
 
   return (
     <>
-      <section>
+      <section className="contact-section">
         <Container>
-          <Row className="g-4 g-lg-0 align-items-center">
-            <Col md={6} className="align-items-center text-center">
-              <img src={contactImg} className="h-400px" alt="contact-image" />
-              <div className="d-sm-flex align-items-center justify-content-center mt-2 mt-sm-4">
-                <h5 className="mb-0">Follow us on:</h5>
-                <ul className="list-inline mb-0 ms-sm-2">
+          <Row className="g-3 align-items-center">
+            <Col md={6} className="text-center">
+              <img src={contactImg} className="h-300px" alt="contact-image" />
+              <div className="d-sm-flex align-items-center justify-content-center mt-3">
+                <h6 className="mb-0 me-2">Follow us:</h6>
+                <ul className="list-inline mb-0">
                   {[
                     { icon: <FaFacebookSquare />, class: 'text-facebook' },
                     { icon: <FaInstagram />, class: 'text-instagram' },
@@ -62,66 +76,69 @@ const ContactFormAndMap = () => {
                 </ul>
               </div>
             </Col>
-            <Col md={6}>
-              <h2 className="mt-4 mt-md-0">Let&apos;s talk</h2>
-              <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-                <TextFormInput
-                  name="name"
-                  label="Your Name *"
-                  control={control}
-                  className="form-control-lg"
-                  containerClassName="mb-4 bg-light-input"
-                />
-                <TextFormInput
-                  name="email"
-                  type="email"
-                  label="Email Address *"
-                  control={control}
-                  className="form-control-lg"
-                  containerClassName="mb-4 bg-light-input"
-                />
-                <TextFormInput
-                  name="phone"
-                  label="Phone"
-                  control={control}
-                  className="form-control-lg"
-                  containerClassName="mb-4 bg-light-input"
-                />
-                <TextFormInput
-                  name="subject"
-                  label="Subject"
-                  control={control}
-                  className="form-control-lg"
-                  containerClassName="mb-4 bg-light-input"
-                />
-                <TextAreaFormInput
-                  name="message"
-                  label="Message *"
-                  rows={4}
-                  control={control}
-                  containerClassName="mb-4 bg-light-input"
-                />
-                {formStatus.error && (
-                  <div className="alert alert-danger mt-2">{formStatus.error}</div>
-                )}
-                {formStatus.success && (
-                  <div className="alert alert-success mt-2">{formStatus.success}</div>
-                )}
-                <div className="d-grid">
-                  <Button variant="primary" size="lg" className="mb-0" type="submit">
-                    Send Message
-                  </Button>
-                </div>
-              </form>
+
+            <Col md={6} className="d-flex justify-content-center">
+              <div className="w-100" style={{ maxWidth: '400px' }}>
+                <h4 className="mb-3">Let&apos;s Talk</h4>
+                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
+                  <TextFormInput
+                    name="name"
+                    label="Name *"
+                    control={control}
+                    className="form-control-sm"
+                    containerClassName="mb-3 bg-light-input"
+                  />
+                  <TextFormInput
+                    name="email"
+                    type="email"
+                    label="Email *"
+                    control={control}
+                    className="form-control-sm"
+                    containerClassName="mb-3 bg-light-input"
+                  />
+                  <TextFormInput
+                    name="phone"
+                    label="Phone"
+                    control={control}
+                    className="form-control-sm"
+                    containerClassName="mb-3 bg-light-input"
+                  />
+                  <TextFormInput
+                    name="subject"
+                    label="Subject"
+                    control={control}
+                    className="form-control-sm"
+                    containerClassName="mb-3 bg-light-input"
+                  />
+                  <TextAreaFormInput
+                    name="message"
+                    label="Message *"
+                    rows={3}
+                    control={control}
+                    containerClassName="mb-3 bg-light-input"
+                  />
+                  {formStatus.error && (
+                    <div className="alert alert-danger mt-2">{formStatus.error}</div>
+                  )}
+                  {formStatus.success && (
+                    <div className="alert alert-success mt-2">{formStatus.success}</div>
+                  )}
+                  <div className="d-grid">
+                    <Button variant="primary" size="sm" type="submit">
+                      Send Message
+                    </Button>
+                  </div>
+                </form>
+              </div>
             </Col>
           </Row>
         </Container>
       </section>
-      {/* Full-width Map Section */}
-      <section className="pt-0 pb-0 mb-0 contact-map-section">
+
+      <section className="pt-0 pb-0 contact-map-section">
         <div className="w-100 vw-100 contact-map-container">
           <iframe
-            className="w-100 vw-100 h-500px rounded-0 m-0 p-0 contact-map-frame"
+            className="w-100 vw-100 h-400px rounded-0 m-0 p-0 contact-map-frame"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.261996232096!2d77.0243787!3d11.018958999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba85700125327fb%3A0x95423240cfd3a583!2sPudhuyugam%20Academy!5e0!3m2!1sen!2sin!4v1741930122609!5m2!1sen!2sin"
             aria-hidden="false"
             tabIndex={0}
