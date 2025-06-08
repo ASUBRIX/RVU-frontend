@@ -31,7 +31,7 @@ jobs:
             cd Learning-Application-Web
 
             echo "Building Docker image (with user-friendly name)..."
-            docker build -t pudhuyugam-frontend:latest .
+            docker build --no-cache -t pudhuyugam-frontend:latest .
 
             echo "Stopping and removing existing frontend container if any..."
             docker rm -f pudhuyugam-frontend || true
