@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { Container, Collapse, NavItem, Dropdown } from 'react-bootstrap'
@@ -13,11 +12,6 @@ const TopNavigationBar = () => {
   const { scrollY } = useScrollEvent()
   const { isTrue: isOpen, toggle } = useToggle()
   const { user, logout } = useAuthContext()
-
-  const [showDropdown, setShowDropdown] = useState(false)
-
-  const handleMouseEnter = () => setShowDropdown(true)
-  const handleMouseLeave = () => setShowDropdown(false)
 
   const menus = [
     { label: 'Home', path: '/' },
@@ -67,14 +61,8 @@ const TopNavigationBar = () => {
                 ))}
               </ul>
 
-              
               <div className="d-flex align-items-center ms-2 position-relative">
-                <Dropdown
-                  show={showDropdown}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                  className="centered-avatar-dropdown"
-                >
+                <Dropdown className="centered-avatar-dropdown">
                   <Dropdown.Toggle
                     variant="light"
                     id="dropdown-avatar"
