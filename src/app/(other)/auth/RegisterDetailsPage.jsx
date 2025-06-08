@@ -1,25 +1,26 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Col } from 'react-bootstrap';
-import authService from '@/helpers/authService';
 import AuthLayout from './components/AuthLayout';
 import { useAuthContext } from '../../../context/useAuthContext';
-
+import authService from '@/helpers/authService';
+import './RegisterDetailsPage.css'; // Import the dedicated CSS
 
 export default function RegisterDetailsPage() {
   const location = useLocation();
   const mobile = location.state?.mobile || '';
-  const { login } = useAuthContext(); 
+  const { login } = useAuthContext();
+  const navigate = useNavigate();
+
   const [fields, setFields] = useState({
     first_name: '',
     last_name: '',
     email: '',
     password_hash: '',
     phone_number: mobile,
-    role: 'student'
+    role: 'student',
   });
+
   const [err, setErr] = useState('');
-  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setFields({ ...fields, [e.target.name]: e.target.value });
@@ -29,8 +30,8 @@ export default function RegisterDetailsPage() {
     try {
       const res = await authService.register(fields);
       if (res.user && res.accessToken) {
-        login(res.user, res.accessToken);    
-        navigate('/home');                   
+        login(res.user, res.accessToken);
+        navigate('/home');
       } else {
         setErr('Registration failed.');
       }
@@ -41,9 +42,12 @@ export default function RegisterDetailsPage() {
 
   return (
     <AuthLayout>
-      {/* <Col xs={12} lg={6} className="m-auto"> */}
-        <div className="p-5">
-          <h2 className="mb-4">Complete Registration</h2>
+      <div className="register-wrapper">
+        <div className="register-box">
+          <h2 className="title-gradient text-center">Complete Registration</h2>
+          <p className="register-subtext text-center">
+            Please enter your details to complete registration.
+          </p>
           <form onSubmit={handleSubmit}>
             <input
               className="form-control mb-3"
@@ -64,10 +68,10 @@ export default function RegisterDetailsPage() {
             <input
               className="form-control mb-3"
               name="email"
+              type="email"
               value={fields.email}
               onChange={handleChange}
               placeholder="Email"
-              type="email"
               required
             />
             <input
@@ -79,13 +83,13 @@ export default function RegisterDetailsPage() {
               placeholder="Password"
               required
             />
-            <button className="btn btn-primary w-100" type="submit">
+            <button className="btn custom-signin-btn" type="submit">
               Register
             </button>
-            {err && <div className="text-danger mt-3">{err}</div>}
+            {err && <div className="error-text">{err}</div>}
           </form>
         </div>
-      {/* </Col> */}
+      </div>
     </AuthLayout>
   );
 }
