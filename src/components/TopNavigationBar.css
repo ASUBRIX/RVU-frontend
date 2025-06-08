@@ -148,6 +148,26 @@
   box-shadow: 0 2px 8px rgba(31,120,255,0.13);
   background: #f8fbff !important;
 }
+/* Optional: Style the dropdown header inside the menu */
+.dropdown-header {
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+}
+.custom-user-dropdown {
+  min-width: 180px;
+  box-shadow: 0 6px 24px rgba(31, 120, 255, 0.08);
+  border-radius: 0.5rem;
+}
+
+.dropdown-user-header {
+  border-bottom: 1px solid #eaeaea;
+}
+
+.dropdown-user-header span {
+  font-size: 0.95rem;
+}
+
 
 /* --- Existing styles (unchanged, include your prior code above this) --- */
 

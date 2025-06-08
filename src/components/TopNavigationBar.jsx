@@ -93,22 +93,38 @@ const TopNavigationBar = () => {
                     </Dropdown.Menu>
                   </Dropdown>
                 ) : (
-                  <Dropdown align="end">
-                    <Dropdown.Toggle
-                      variant="outline-primary"
-                      id="dropdown-profile"
-                      className="fw-semibold d-flex align-items-center rounded-pill custom-profile-dropdown"
-                      style={{ fontSize: 17, border: 0 }}
-                    >
-                      Hi, {user.first_name}
-                      <ChevronDown size={18} className="ms-1" />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item as={Link} to="/student/edit-profile">Dashboard</Dropdown.Item>
-                      <Dropdown.Divider />
-                      <Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
+
+
+ <Dropdown align="end" className="centered-avatar-dropdown">
+  <Dropdown.Toggle
+    variant="light"
+    id="dropdown-avatar"
+    className="border-0 bg-transparent d-flex align-items-center p-0"
+    style={{
+      borderRadius: '50%',
+      minWidth: 48,
+      minHeight: 48,
+      width: 48,
+      height: 48,
+      justifyContent: 'center',
+      position: 'relative'
+    }}
+  >
+    <PersonCircle size={38} color="#1f78ff" />
+  </Dropdown.Toggle>
+
+  <Dropdown.Menu className="custom-user-dropdown">
+    <div className="dropdown-user-header d-flex align-items-center px-3 py-2">
+      <PersonCircle size={36} color="#1f78ff" />
+      <span className="ms-2 fw-semibold text-dark">{user.first_name}</span>
+    </div>
+    <Dropdown.Divider />
+    <Dropdown.Item as={Link} to="/student/edit-profile">Dashboard</Dropdown.Item>
+    <Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
+  </Dropdown.Menu>
+</Dropdown>
+
+
                 )}
               </div>
             </div>
