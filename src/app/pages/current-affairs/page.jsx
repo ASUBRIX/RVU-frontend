@@ -61,22 +61,13 @@ const CurrentAffairs = () => {
           </div>
         </div>
 
-        <div className="row mb-5">
-          <div className="col-12 col-lg-10">
-            <div className="featured-post">
-              <CurrentAffairPost affair={affairs[0]} featured={true} />
-            </div>
-          </div>
-        </div>
-
         <div className="row g-4 mb-5">
-          {affairs.slice(1).map((affair) => (
+          {affairs.map((affair) => (
             <div key={affair.id} className="col-lg-4 col-md-6">
               <CurrentAffairPost affair={affair} />
             </div>
           ))}
         </div>
-        {/* Pagination can go here */}
       </div>
       <Footer className="custom-footer" />
     </>
