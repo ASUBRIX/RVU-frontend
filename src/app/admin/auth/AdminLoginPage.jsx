@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import authService from '@/helpers/authService'
 import { useAuthContext } from '../../../context/useAuthContext'
 import './AdminLoginPage.css'
+import AuthLayout from '../../(other)/auth/components/AuthLayout'
 
 export default function AdminLoginPage() {
   const [fields, setFields] = useState({ email: '', password: '' })
@@ -39,34 +40,37 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="admin-login-page">
-      <form className="admin-login-form" onSubmit={handleLogin}>
-        <h2>Admin Login</h2>
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={fields.email}
-          onChange={handleChange}
-          placeholder="Enter admin email"
-          required
-        />
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          value={fields.password}
-          onChange={handleChange}
-          placeholder="Enter password"
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing in...' : 'Sign In'}
-        </button>
-        {err && <div className="admin-login-error">{err}</div>}
-      </form>
-    </div>
+    <AuthLayout>
+      <div className="admin-login-page">
+        <div className="admin-login-form-wrapper">
+          <form className="admin-login-form" onSubmit={handleLogin}>
+            <h2>Admin Login</h2>
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={fields.email}
+              onChange={handleChange}
+              placeholder="Enter admin email"
+              required
+            />
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={fields.password}
+              onChange={handleChange}
+              placeholder="Enter password"
+              required
+            />
+            <button type="submit" disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+            {err && <div className="admin-login-error">{err}</div>}
+          </form>
+        </div>
+      </div>
+    </AuthLayout>
   )
 }
-
 

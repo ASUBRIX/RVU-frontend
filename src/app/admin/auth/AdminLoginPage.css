@@ -1,24 +1,35 @@
 .admin-login-page {
-  min-height: 100vh;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: #ffffff; /* clean white background */
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fde7ee; /* light pink background */
+  overflow: hidden;
+}
+
+.admin-login-form-wrapper {
+  width: 100%;
+  max-width: 360px;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .admin-login-form {
   background: #fff;
-  padding: 2.5rem 2rem 2rem 2rem;
+  padding: 2.5rem 2rem 2rem;
   border-radius: 18px;
-  box-shadow: 0 6px 32px 0 rgba(0, 102, 204, 0.09);
-  min-width: 340px;
-  max-width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  width: 100%;
 }
 
-/* Gradient blue text */
+/* Gradient blue heading */
 .admin-login-form h2 {
   text-align: center;
   margin-bottom: 1.2rem;
@@ -49,7 +60,6 @@
   box-shadow: 0 0 0 2px #b3d7ff33;
 }
 
-/* Avatar color used in button */
 .admin-login-form button {
   margin-top: 0.8rem;
   padding: 0.65rem;
@@ -60,12 +70,12 @@
   border-radius: 6px;
   transition: background 0.18s, box-shadow 0.15s;
   cursor: pointer;
-  box-shadow: 0 2px 8px 0 rgba(237, 21, 90, 0.14);
+  box-shadow: 0 2px 8px rgba(237, 21, 90, 0.14);
 }
 
 .admin-login-form button:hover:not(:disabled) {
   background: #d81350;
-  box-shadow: 0 4px 18px 0 rgba(237, 21, 90, 0.25);
+  box-shadow: 0 4px 18px rgba(237, 21, 90, 0.25);
 }
 
 .admin-login-form button:disabled {
