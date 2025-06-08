@@ -1,11 +1,25 @@
-#dropdown-avatar {
+#dropdown-avatar,
+.avatar-toggle-button {
   transition: box-shadow 0.2s;
+  position: relative;
+  z-index: 2;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 }
 
 #dropdown-avatar:hover,
-#dropdown-avatar:focus {
-  box-shadow: 0 2px 8px rgba(237, 21, 90, 0.13); /* pink shadow */
-  background: #ffeaf0 !important;                /* light pink bg */
+.avatar-toggle-button:hover,
+#dropdown-avatar:focus,
+.avatar-toggle-button:focus {
+  box-shadow: 0 2px 8px rgba(237, 21, 90, 0.13);
+  background: #ffeaf0 !important;
   color: #ed155a !important;
 }
 
@@ -13,15 +27,17 @@
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) !important;
+  top: 110% !important; 
+  margin-top: 0 !important;
   min-width: 140px;
   text-align: center;
-  margin-top: 0.5rem;
-  box-shadow: 0 6px 24px rgba(237, 21, 90, 0.08); /* pink shadow */
+  box-shadow: 0 6px 24px rgba(237, 21, 90, 0.08);
+  z-index: 1;
+  position: absolute !important;
 }
 
 .custom-user-dropdown {
   min-width: 180px;
-  box-shadow: 0 6px 24px rgba(237, 21, 90, 0.08); /* pink shadow */
   border-radius: 0.5rem;
 }
 

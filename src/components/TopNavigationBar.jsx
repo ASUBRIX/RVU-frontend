@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { Container, Collapse, NavItem, Dropdown } from 'react-bootstrap'
@@ -5,13 +6,18 @@ import LogoBox from '@/components/LogoBox'
 import useScrollEvent from '@/hooks/useScrollEvent'
 import useToggle from '@/hooks/useToggle'
 import { useAuthContext } from '../context/useAuthContext'
-import { ChevronDown, PersonCircle } from 'react-bootstrap-icons'
+import { PersonCircle } from 'react-bootstrap-icons'
 import './TopNavigationBar.css'
 
 const TopNavigationBar = () => {
   const { scrollY } = useScrollEvent()
   const { isTrue: isOpen, toggle } = useToggle()
   const { user, logout } = useAuthContext()
+
+  const [showDropdown, setShowDropdown] = useState(false)
+
+  const handleMouseEnter = () => setShowDropdown(true)
+  const handleMouseLeave = () => setShowDropdown(false)
 
   const menus = [
     { label: 'Home', path: '/' },
@@ -26,26 +32,19 @@ const TopNavigationBar = () => {
   ]
 
   return (
-    <header
-      className={clsx('navbar-light navbar-sticky custom-navbar', {
-        'navbar-sticky-on': scrollY >= 400,
-      })}
-    >
+    <header className={clsx('navbar-light navbar-sticky custom-navbar', {
+      'navbar-sticky-on': scrollY >= 400,
+    })}>
       <nav className="navbar navbar-expand-xl z-index-2 py-0">
         <Container fluid className="px-2 px-xl-4">
-          {/* Logo left */}
           <div className="d-flex align-items-center" style={{ marginLeft: 94 }}>
             <LogoBox height={90} width={240} />
           </div>
 
-          {/* Toggler for mobile */}
           <button
             onClick={toggle}
             className="navbar-toggler ms-2 custom-toggler"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarCollapse"
-            aria-controls="navbarCollapse"
             aria-expanded={isOpen}
             aria-label="Toggle navigation"
           >
@@ -56,10 +55,8 @@ const TopNavigationBar = () => {
             </span>
           </button>
 
-          {/* Menus and right actions */}
           <Collapse in={isOpen || window.innerWidth >= 1200} className="navbar-collapse">
             <div className="d-flex align-items-center">
-              {/* Menus */}
               <ul className="navbar-nav mb-2 mb-lg-0 d-flex flex-row flex-nowrap">
                 {menus.map(({ label, path }, idx) => (
                   <NavItem key={idx} className="flex-shrink-0">
@@ -70,67 +67,41 @@ const TopNavigationBar = () => {
                 ))}
               </ul>
 
-              {/* Right actions */}
-              <div className="d-flex align-items-center ms-2">
-                {!user ? (
-                  <Dropdown className="centered-avatar-dropdown">
-                    <Dropdown.Toggle
-                      variant="light"
-                      id="dropdown-avatar"
-                      className="border-0 bg-transparent d-flex align-items-center p-0"
-                      style={{
-                        borderRadius: '50%',
-                        minWidth: 48,
-                        minHeight: 48,
-                        width: 48,
-                        height: 48,
-                        justifyContent: 'center',
-                        color: '#ed155a',
-                      }}
-                    >
-                      <PersonCircle size={38} color="#ed155a" />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item as={Link} to="/auth">
-                        Register
-                      </Dropdown.Item>
-                      <Dropdown.Item as={Link} to="/auth/mobile-login">
-                        Sign In
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                ) : (
-                  <Dropdown align="end" className="centered-avatar-dropdown">
-                    <Dropdown.Toggle
-                      variant="light"
-                      id="dropdown-avatar"
-                      className="border-0 bg-transparent d-flex align-items-center p-0"
-                      style={{
-                        borderRadius: '50%',
-                        minWidth: 48,
-                        minHeight: 48,
-                        width: 48,
-                        height: 48,
-                        justifyContent: 'center',
-                        color: '#ed155a',
-                      }}
-                    >
-                      <PersonCircle size={38} color="#ed155a" />
-                    </Dropdown.Toggle>
+              
+              <div className="d-flex align-items-center ms-2 position-relative">
+                <Dropdown
+                  show={showDropdown}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  className="centered-avatar-dropdown"
+                >
+                  <Dropdown.Toggle
+                    variant="light"
+                    id="dropdown-avatar"
+                    className="avatar-toggle-button"
+                  >
+                    <PersonCircle size={38} color="#ed155a" />
+                  </Dropdown.Toggle>
 
-                    <Dropdown.Menu className="custom-user-dropdown">
-                      <div className="dropdown-user-header d-flex align-items-center px-3 py-2">
-                        <PersonCircle size={36} color="#ed155a" />
-                        <span className="ms-2 fw-semibold text-dark">{user.first_name}</span>
-                      </div>
-                      <Dropdown.Divider />
-                      <Dropdown.Item as={Link} to="/student/edit-profile">
-                        Dashboard
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                )}
+                  <Dropdown.Menu className="custom-user-dropdown">
+                    {!user ? (
+                      <>
+                        <Dropdown.Item as={Link} to="/auth">Register</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/auth/mobile-login">Sign In</Dropdown.Item>
+                      </>
+                    ) : (
+                      <>
+                        <div className="dropdown-user-header d-flex align-items-center px-3 py-2">
+                          <PersonCircle size={36} color="#ed155a" />
+                          <span className="ms-2 fw-semibold text-dark">{user.first_name}</span>
+                        </div>
+                        <Dropdown.Divider />
+                        <Dropdown.Item as={Link} to="/student/edit-profile">Dashboard</Dropdown.Item>
+                        <Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
+                      </>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
               </div>
             </div>
           </Collapse>
