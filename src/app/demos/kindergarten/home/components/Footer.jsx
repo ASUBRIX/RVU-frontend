@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Col, Container, Row } from 'react-bootstrap';
 import logoLight from '@/assets/images/logo-light.svg';
 import { developedBy, developedByLink } from '@/context/constants';
-import { footerLinks2, socialMediaLinks } from '@/assets/data/footer-items';
+import { socialMediaLinks } from '@/assets/data/footer-items';
 import clsx from 'clsx';
 const Footer = () => {
   return <footer className="pt-0 bg-success position-relative overflow-hidden">
@@ -77,13 +77,13 @@ const Footer = () => {
             <p className="mt-3 text-white">
               Eduport education theme, built specifically for the education centers which is dedicated to teaching and involving learners.
             </p>
-            <ul className="nav justify-content-center justify-content-center text-primary-hover mt-3 mt-md-0">
+            {/* <ul className="nav justify-content-center justify-content-center text-primary-hover mt-3 mt-md-0">
               {footerLinks2.map((item, idx) => <li className="nav-item" key={idx}>
                   <Link className="nav-link text-white" to={item.link ?? ''}>
                     {item.name}
                   </Link>
                 </li>)}
-            </ul>
+            </ul> */}
             <ul className="list-inline mb-0 mt-3">
               {socialMediaLinks.map((item, idx) => {
               const Icon = item.icon;
