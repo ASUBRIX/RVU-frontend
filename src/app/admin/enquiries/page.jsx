@@ -16,8 +16,8 @@ import TextFormInput from '@/components/form/TextFormInput';
 import TextAreaFormInput from '@/components/form/TextAreaFormInput';
 import httpClient from '@/helpers/httpClient';
 import { useAuthContext } from '@/context/useAuthContext';
+import '@/pages/about/contact-us/components/ContactFormAndMap.scss';
 
-import '../../pages/about/contact-us/components/ContactFormAndMap.css';
 
 const contactFormSchema = yup.object({
   name: yup.string().required('Please enter your name'),
