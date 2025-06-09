@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, FloatingLabel, Row, Col } from 'react-bootstrap';
 import { FiSend } from 'react-icons/fi';
-import httpClient from '@/helpers/httpClient';
+import { getEnquiryPrefill, submitEnquiry } from '@/helpers/userEnquiryApi';
 
 const ContactForm = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +11,26 @@ const ContactForm = ({ show, handleClose }) => {
     subject: '',
     message: ''
   });
+
+  useEffect(() => {
+    const prefillForm = async () => {
+      if (show) {
+        try {
+          const data = await getEnquiryPrefill();
+          setFormData(prev => ({
+            ...prev,
+            name: data.name || '',
+            email: data.email || '',
+            phone: data.phone || ''
+          }));
+        } catch (err) {
+          console.warn('User not logged in or fetch failed.');
+        }
+      }
+    };
+
+    prefillForm();
+  }, [show]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,8 +43,8 @@ const ContactForm = ({ show, handleClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await httpClient.post('/api/contact-enquiry', formData);
-      console.log('Form submitted successfully', res.data);
+      await submitEnquiry(formData);
+      console.log('Form submitted successfully');
       handleClose();
     } catch (error) {
       console.error('Error submitting form', error);

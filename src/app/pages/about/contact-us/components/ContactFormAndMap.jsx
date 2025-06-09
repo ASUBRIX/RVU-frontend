@@ -1,27 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import {
-  FaFacebookSquare,
-  FaInstagram,
-  FaTwitter,
-  FaLinkedinIn,
-} from 'react-icons/fa';
+import { FaFacebookSquare, FaInstagram, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import contactImg from '@/assets/images/logo.png';
 import TextFormInput from '@/components/form/TextFormInput';
 import TextAreaFormInput from '@/components/form/TextAreaFormInput';
 import { yupResolver } from '@hookform/resolvers/yup';
-import httpClient from '@/helpers/httpClient';
 import './ContactFormAndMap.scss';
+import { getEnquiryPrefill, submitEnquiry } from '@/helpers/userEnquiryApi';
 
 const contactFormSchema = yup.object({
   name: yup.string().required('Please enter your name'),
-  email: yup
-    .string()
-    .email('Please enter a valid email')
-    .required('Please enter your email'),
+  email: yup.string().email('Please enter a valid email').required('Please enter your email'),
   phone: yup.string().max(20, 'Phone number is too long'),
   subject: yup.string().max(255, 'Subject is too long'),
   message: yup.string().required('Please enter your message'),
@@ -34,19 +26,35 @@ const ContactFormAndMap = () => {
 
   const [formStatus, setFormStatus] = useState({ success: '', error: '' });
 
+  useEffect(() => {
+    const fetchPrefill = async () => {
+      try {
+        const data = await getEnquiryPrefill();
+        reset({
+          name: data.name || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          subject: '',
+          message: '',
+        });
+      } catch (err) {
+        console.warn('Prefill skipped: user may not be logged in.');
+      }
+    };
+
+    fetchPrefill();
+  }, [reset]);
+
   const onSubmit = async (data) => {
     setFormStatus({ success: '', error: '' });
     try {
-      await httpClient.post('/api/contact-enquiry', data);
-      setFormStatus({
-        success: 'Thank you! Your message has been sent.',
-        error: '',
-      });
-      reset();
-    } catch (error) {
+      const response = await submitEnquiry(data);
+      setFormStatus({ success: response.message, error: '' });
+      reset(); // clear form after submit
+    } catch (err) {
       setFormStatus({
         success: '',
-        error: 'Failed to send message. Please try again.',
+        error: err.response?.data?.error || 'Failed to send message. Please try again.',
       });
     }
   };
@@ -57,7 +65,7 @@ const ContactFormAndMap = () => {
         <Container>
           <Row className="g-3 align-items-center">
             <Col md={6} className="text-center">
-              <img src={contactImg} className="h-300px" alt="contact-image" />
+              <img src={contactImg} className="h-300px" alt="contact" />
               <div className="d-sm-flex align-items-center justify-content-center mt-3">
                 <h6 className="mb-0 me-2">Follow us:</h6>
                 <ul className="list-inline mb-0">
@@ -81,48 +89,13 @@ const ContactFormAndMap = () => {
               <div className="w-100" style={{ maxWidth: '400px' }}>
                 <h4 className="mb-3">Let&apos;s Talk</h4>
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-                  <TextFormInput
-                    name="name"
-                    label="Name *"
-                    control={control}
-                    className="form-control-sm"
-                    containerClassName="mb-3 bg-light-input"
-                  />
-                  <TextFormInput
-                    name="email"
-                    type="email"
-                    label="Email *"
-                    control={control}
-                    className="form-control-sm"
-                    containerClassName="mb-3 bg-light-input"
-                  />
-                  <TextFormInput
-                    name="phone"
-                    label="Phone"
-                    control={control}
-                    className="form-control-sm"
-                    containerClassName="mb-3 bg-light-input"
-                  />
-                  <TextFormInput
-                    name="subject"
-                    label="Subject"
-                    control={control}
-                    className="form-control-sm"
-                    containerClassName="mb-3 bg-light-input"
-                  />
-                  <TextAreaFormInput
-                    name="message"
-                    label="Message *"
-                    rows={3}
-                    control={control}
-                    containerClassName="mb-3 bg-light-input"
-                  />
-                  {formStatus.error && (
-                    <div className="alert alert-danger mt-2">{formStatus.error}</div>
-                  )}
-                  {formStatus.success && (
-                    <div className="alert alert-success mt-2">{formStatus.success}</div>
-                  )}
+                  <TextFormInput name="name" label="Name *" control={control} className="form-control-sm" containerClassName="mb-3 bg-light-input" />
+                  <TextFormInput name="email" type="email" label="Email *" control={control} className="form-control-sm" containerClassName="mb-3 bg-light-input" />
+                  <TextFormInput name="phone" label="Phone" control={control} className="form-control-sm" containerClassName="mb-3 bg-light-input" />
+                  <TextFormInput name="subject" label="Subject" control={control} className="form-control-sm" containerClassName="mb-3 bg-light-input" />
+                  <TextAreaFormInput name="message" label="Message *" rows={3} control={control} containerClassName="mb-3 bg-light-input" />
+                  {formStatus.error && <div className="alert alert-danger mt-2">{formStatus.error}</div>}
+                  {formStatus.success && <div className="alert alert-success mt-2">{formStatus.success}</div>}
                   <div className="d-grid">
                     <Button variant="primary" size="sm" type="submit">
                       Send Message
