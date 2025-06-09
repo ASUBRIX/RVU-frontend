@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Card, CardBody, Container, Form, Pagination, Table } from 'react-bootstrap';
 import { FiSearch } from 'react-icons/fi';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaUser } from 'react-icons/fa';
 import httpClient from '@/helpers/httpClient';
 import PageMetaData from '@/components/PageMetaData';
 import EnquiryDetailModal from './components/EnquiryDetailModal';
@@ -11,18 +11,24 @@ import { timeSince } from '@/utils/date';
 const EnquiryRow = ({ enquiry, onViewDetails }) => {
   const { id, name, email, phone, message, created_at, status } = enquiry;
 
-  const nameHash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const colorIndex = nameHash % colorVariants.length;
-  const avatarColor = colorVariants[colorIndex];
-
   return (
     <tr>
       <td>
         <div className="d-flex align-items-center">
-          <div className={`avatar avatar-sm me-2 bg-${avatarColor} bg-opacity-10 rounded-circle`}>
-            <span className={`position-absolute top-50 start-50 translate-middle text-${avatarColor} fw-bold small`}>
-              {name.charAt(0)}
-            </span>
+          <div
+            className="me-2 rounded-circle d-flex align-items-center justify-content-center"
+            style={{
+              width: '32px',
+              height: '32px',
+              backgroundColor: '#ed155a',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '16px'
+            }}
+          >
+            <FaUser />
           </div>
           <div>
             <h6 className="mb-0">{name}</h6>
