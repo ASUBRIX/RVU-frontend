@@ -60,12 +60,12 @@ const AllSettings = () => {
                       Mail Configurations
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item>
+                  {/* <Nav.Item>
                     <Nav.Link eventKey="tab-5">
                       <FaUserLock className="me-2" />
                       Roles & Permission
                     </Nav.Link>
-                  </Nav.Item>
+                  </Nav.Item> */}
                 </Nav>
               </Col>
               <Col xl={9}>

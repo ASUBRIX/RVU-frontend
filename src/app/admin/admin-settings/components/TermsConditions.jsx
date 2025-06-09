@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useAuthContext } from '@/context/useAuthContext';
-import httpClient from '../../../../helpers/httpClient';
+import { fetchTerms, updateTerms } from '@/helpers/admin/termsApi';
 
 const TermsConditions = () => {
   const [content, setContent] = useState('');
@@ -11,91 +11,44 @@ const TermsConditions = () => {
   const [fetchLoading, setFetchLoading] = useState(true);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const quillRef = useRef(null);
-  const { user } = useAuthContext();
 
-  // Fetch existing terms and conditions
   useEffect(() => {
-    const fetchTerms = async () => {
+    const fetchData = async () => {
       try {
         setFetchLoading(true);
-        const response = await httpClient.get('/api/admin/legal', {
-          headers: {
-            'auth_key': user?.token
-          }
-        });
-        
+        const response = await fetchTerms();
         if (response.data && response.data.content) {
           setContent(response.data.content);
         }
-        
-        setFetchLoading(false);
       } catch (error) {
         console.error('Error fetching terms:', error);
         setFeedback({
           type: 'danger',
           message: error.response?.data?.message || 'Failed to load terms and conditions'
         });
+      } finally {
         setFetchLoading(false);
       }
     };
+    fetchData();
+  }, []);
 
-    fetchTerms();
-  }, [user?.token]);
-
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      [{ 'align': [] }],
-      ['link'],
-      ['clean']
-    ],
-  };
-
-  const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike',
-    'list', 'bullet', 'indent',
-    'align',
-    'link'
-  ];
-
-  const handleChange = (value) => {
-    setContent(value);
-  };
+  const handleChange = (value) => setContent(value);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
       setLoading(true);
       setFeedback({ type: '', message: '' });
-      
-      const response = await httpClient.put('/api/admin/legal', 
-        { content },
-        {
-          headers: {
-            'auth_key': user?.token,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      setFeedback({
-        type: 'success',
-        message: response.data.message || 'Terms and conditions updated successfully'
-      });
-      
-      console.log("Terms and Conditions saved successfully:", response.data);
-      setLoading(false);
+      const response = await updateTerms(content);
+      setFeedback({ type: 'success', message: response.data.message });
     } catch (error) {
       console.error('Error updating terms:', error);
       setFeedback({
         type: 'danger',
-        message: error.response?.data?.message || 'Failed to update terms and conditions'
+        message: error.response?.data?.message || 'Failed to update terms and conditions',
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -104,9 +57,7 @@ const TermsConditions = () => {
     return (
       <Card>
         <Card.Body className="text-center py-5">
-          <Spinner animation="border" role="status" variant="primary">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          <Spinner animation="border" />
           <p className="mt-3">Loading terms and conditions...</p>
         </Card.Body>
       </Card>
@@ -124,34 +75,39 @@ const TermsConditions = () => {
             {feedback.message}
           </Alert>
         )}
-        
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-4">
             <Form.Label>Terms & Conditions Content</Form.Label>
-            <div className="mb-3">
-              <ReactQuill
-                ref={quillRef}
-                theme="snow"
-                value={content}
-                onChange={handleChange}
-                modules={modules}
-                formats={formats}
-                // style={{ height: '300px', marginBottom: '40px' }}
-              />
-            </div>
-            <Form.Text className="text-muted">
-              This content will be displayed on your Terms & Conditions page.
-            </Form.Text>
+            <ReactQuill
+              ref={quillRef}
+              theme="snow"
+              value={content}
+              onChange={handleChange}
+              modules={{
+                toolbar: [
+                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ list: 'ordered' }, { list: 'bullet' }],
+                  [{ indent: '-1' }, { indent: '+1' }],
+                  [{ align: [] }],
+                  ['link'],
+                  ['clean'],
+                ],
+              }}
+              formats={[
+                'header',
+                'bold', 'italic', 'underline', 'strike',
+                'list', 'bullet', 'indent',
+                'align', 'link',
+              ]}
+              style={{ height: '300px', marginBottom: '60px' }}
+            />
           </Form.Group>
-          <div className="text-end mt-5">
-            <button 
-              type="submit" 
-              className="btn btn-primary"
-              disabled={loading}
-            >
+          <div className="text-end mt-4">
+            <button type="submit" className="btn btn-primary" disabled={loading}>
               {loading ? (
                 <>
-                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  <Spinner animation="border" size="sm" />
                   <span className="ms-2">Saving...</span>
                 </>
               ) : 'Save Changes'}

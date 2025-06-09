@@ -26,6 +26,7 @@ instance.interceptors.request.use(
 
     return config;
   },
+  
   (error) => {
     console.error('HttpClient Request Error:', error);
     return Promise.reject(error);
