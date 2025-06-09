@@ -16,7 +16,7 @@ import TextFormInput from '@/components/form/TextFormInput';
 import TextAreaFormInput from '@/components/form/TextAreaFormInput';
 import httpClient from '@/helpers/httpClient';
 import { useAuthContext } from '@/context/useAuthContext';
-import '@/pages/about/contact-us/components/ContactFormAndMap.scss';
+import '@/app/pages/about/contact-us/components/ContactFormAndMap.scss';
 
 
 const contactFormSchema = yup.object({
