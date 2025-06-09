@@ -4,11 +4,6 @@ import { Modal, Button } from 'react-bootstrap';
 const EnquiryDetailModal = ({ show, onHide, enquiry }) => {
   if (!enquiry) return null;
 
-  const handleSendResponse = () => {
-    const mailtoLink = `mailto:${enquiry.email}?subject=Response to Your Enquiry&body=Dear ${enquiry.name},%0D%0A%0D%0ARegarding your enquiry:%0D%0A${enquiry.message}%0D%0A%0D%0AOur Response:%0D%0A%0D%0ABest Regards,%0D%0APudhuyugam Team`;
-    window.location.href = mailtoLink;
-  };
-
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
@@ -26,7 +21,6 @@ const EnquiryDetailModal = ({ show, onHide, enquiry }) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>Close</Button>
-        <Button variant="primary" onClick={handleSendResponse}>Send Response</Button>
       </Modal.Footer>
     </Modal>
   );
