@@ -18,8 +18,8 @@ export const footerLinks = [
     items: [
       { name: 'Support', link: '/contact-us' },
       { name: 'FAQ', link: '/faq' },
-      { name: 'Terms and Conditions', link: '/terms-conditions' },
-      { name: 'Privacy Policy', link: '/privacy-policy' },
+      { name: 'Terms and Conditions', link: '/terms' },
+      { name: 'Privacy Policy', link: '/privacy' },
     ],
   },
   {

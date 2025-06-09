@@ -506,11 +506,6 @@ const pagesRoutes = [
     element: <InstructorList />,
   },
   {
-    path: '/privacy-policy',
-    name: 'Privacy Policy',
-    element: <PrivacyPolicy />,
-  },
-  {
     path: '/blogs',
     name: 'Blog Page',
     element: <BlogPage />,
@@ -522,9 +517,14 @@ const pagesRoutes = [
   },
 
   {
-    path: '/terms-conditions',
+    path: '/terms',
     name: 'Terms And Conditions',
     element: <TermsAndConditions />,
+  },
+    {
+    path: '/privacy',
+    name: 'Privacy Policy',
+    element: <PrivacyPolicy />,
   },
   {
     path: '/gallery',

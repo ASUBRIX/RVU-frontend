@@ -3,7 +3,9 @@ import TopNavigationBar from "@/components/TopNavigationBar";
 import Footer from "@/components/Footer";
 import HeroImage from "./components/HeroImage";
 import { useState, useEffect } from 'react';
-import httpClient from '../../../helpers/httpClient';
+import { fetchTerms } from '@/helpers/user/legalApi';
+
+
 
 const TermsAndConditions = () => {
   const [termsContent, setTermsContent] = useState('');
@@ -14,7 +16,7 @@ const TermsAndConditions = () => {
     const fetchTermsAndConditions = async () => {
       try {
         setLoading(true);
-        const response = await httpClient.get('/api/admin/legal');
+        const response = await fetchTerms();
         if (response.data && response.data.content) {
           setTermsContent(response.data.content);
         } else {

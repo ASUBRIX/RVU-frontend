@@ -3,7 +3,7 @@ import TopNavigationBar from '@/components/TopNavigationBar'
 import Footer from '@/components/Footer'
 import HeroImage from './components/HeroImage'
 import { useState, useEffect } from 'react'
-import httpClient from '../../../helpers/httpClient'
+import { fetchPrivacyPolicy } from '@/helpers/user/legalApi'
 
 const PrivacyPolicy = () => {
   const [policyContent, setPolicyContent] = useState('')
@@ -11,10 +11,10 @@ const PrivacyPolicy = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    const fetchPrivacyPolicy = async () => {
+    const loadPrivacyPolicy = async () => {
       try {
         setLoading(true)
-        const response = await httpClient.get('/api/admin/legal')
+        const response = await fetchPrivacyPolicy()
         if (response.data && response.data.content) {
           setPolicyContent(response.data.content)
         } else {
@@ -28,16 +28,16 @@ const PrivacyPolicy = () => {
       }
     }
 
-    fetchPrivacyPolicy()
+    loadPrivacyPolicy()
   }, [])
 
   return (
     <>
       <TopNavigationBar />
-      <HeroImage/>
+      <HeroImage />
       <Container className="my-5">
         <h3 className="mb-4">Privacy Policy</h3>
-        
+
         {loading ? (
           <div className="text-center py-5">
             <Spinner animation="border" role="status" variant="primary">
@@ -46,12 +46,10 @@ const PrivacyPolicy = () => {
             <p className="mt-3">Loading privacy policy...</p>
           </div>
         ) : error ? (
-          <Alert variant="danger">
-            {error}
-          </Alert>
+          <Alert variant="danger">{error}</Alert>
         ) : (
-          <div 
-            dangerouslySetInnerHTML={{ __html: policyContent }} 
+          <div
+            dangerouslySetInnerHTML={{ __html: policyContent }}
             className="privacy-policy-content"
           />
         )}
