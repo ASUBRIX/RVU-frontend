@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Form, Button, Row, Col, Modal } from 'react-bootstrap';
-import { FaImages, FaTrash, FaPlus, FaCog, FaEdit } from 'react-icons/fa';
-import { BsFullscreen } from 'react-icons/bs';
-import GlightBox from '@/components/GlightBox';
+import { FaImages, FaTrash, FaPlus, FaCog } from 'react-icons/fa';
 import 'glightbox/dist/css/glightbox.min.css';
 import { uploadGalleryImages, getGalleryImages, deleteGalleryImage } from '@/helpers/galleryApi';
+import { useNotificationContext } from '../../../../context/useNotificationContext';
 
 const GallerySettings = () => {
   const [activeTab, setActiveTab] = useState('images');
@@ -21,9 +20,10 @@ const GallerySettings = () => {
   const [images, setImages] = useState([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editingImage, setEditingImage] = useState(null);
   const [hoveredImage, setHoveredImage] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState(null);
+  const { showNotification } = useNotificationContext();
 
   useEffect(() => {
     loadImages();
@@ -74,20 +74,32 @@ const GallerySettings = () => {
     }
   };
 
-  const removeImage = async (id) => {
-    if (window.confirm('Are you sure you want to delete this image?')) {
-      try {
-        await deleteGalleryImage(id);
-        setImages(prev => prev.filter(img => img.id !== id));
-      } catch (err) {
-        console.error('Failed to delete image', err);
-      }
-    }
+  const handleDeleteClick = (image) => {
+    setImageToDelete(image);
+    setShowConfirmModal(true);
   };
 
-  const handleEditImage = (image) => {
-    setEditingImage(image);
-    setShowEditModal(true);
+  const removeImage = async () => {
+    if (!imageToDelete) return;
+    try {
+      await deleteGalleryImage(imageToDelete.id);
+      setImages(prev => prev.filter(img => img.id !== imageToDelete.id));
+      showNotification({
+        title: 'Deleted',
+        message: 'Image deleted successfully.',
+        variant: 'success'
+      });
+    } catch (err) {
+      console.error('Failed to delete image', err);
+      showNotification({
+        title: 'Error',
+        message: 'Failed to delete image.',
+        variant: 'danger'
+      });
+    } finally {
+      setShowConfirmModal(false);
+      setImageToDelete(null);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -95,7 +107,6 @@ const GallerySettings = () => {
     console.log('Gallery Settings Saved:', galleryConfig);
   };
 
-  // Custom styles for the hover effect
   const imageCardStyle = {
     cursor: 'pointer',
     transition: 'transform 0.3s ease, box-shadow 0.3s ease'
@@ -111,7 +122,6 @@ const GallerySettings = () => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: '10px',
     opacity: 0,
     transition: 'opacity 0.3s ease',
     borderRadius: '0.375rem'
@@ -167,47 +177,7 @@ const GallerySettings = () => {
                         alt={image.name}
                         style={{ height: '200px', objectFit: 'cover' }}
                       />
-                      
-                      {/* Overlay with Edit and Delete buttons */}
-                      <div 
-                        style={hoveredImage === image.id ? overlayVisibleStyle : overlayStyle}
-                      >
-                        <Button 
-                          variant="warning" 
-                          size="sm" 
-                          className="d-flex align-items-center justify-content-center"
-                          style={{ width: '40px', height: '40px', borderRadius: '50%' }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleEditImage(image);
-                          }}
-                          title="Edit Image"
-                        >
-                          <FaEdit />
-                        </Button>
-                        
-                        <Button 
-                          variant="light" 
-                          size="sm" 
-                          className="d-flex align-items-center justify-content-center"
-                          style={{ 
-                            width: '40px', 
-                            height: '40px', 
-                            borderRadius: '50%',
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)'
-                          }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            // Add fullscreen functionality here
-                            window.open(image.image_url, '_blank');
-                          }}
-                          title="View Fullscreen"
-                        >
-                          <BsFullscreen />
-                        </Button>
-                        
+                      <div style={hoveredImage === image.id ? overlayVisibleStyle : overlayStyle}>
                         <Button 
                           variant="danger" 
                           size="sm" 
@@ -216,7 +186,7 @@ const GallerySettings = () => {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            removeImage(image.id);
+                            handleDeleteClick(image);
                           }}
                           title="Delete Image"
                         >
@@ -224,8 +194,6 @@ const GallerySettings = () => {
                         </Button>
                       </div>
                     </div>
-                    
-                    {/* Image name */}
                     <Card.Body className="p-2">
                       <p className="text-center mb-0 text-truncate small">{image.name}</p>
                     </Card.Body>
@@ -233,6 +201,48 @@ const GallerySettings = () => {
                 </Col>
               ))}
             </Row>
+
+            <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)} size="lg">
+              <Modal.Header closeButton>
+                <Modal.Title>Upload Images</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form.Group className="mb-3">
+                  <Form.Label>Select Images</Form.Label>
+                  <Form.Control
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowUploadModal(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" onClick={confirmUpload} disabled={selectedFiles.length === 0}>
+                  Upload Images
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirm Deletion</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                Are you sure you want to delete this image?
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+                  Cancel
+                </Button>
+                <Button variant="danger" onClick={removeImage}>
+                  Delete
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </>
         )}
 
@@ -290,97 +300,6 @@ const GallerySettings = () => {
           </Form>
         )}
       </Card.Body>
-
-      {/* Upload Modal */}
-      <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Upload Images</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label>Select Images</Form.Label>
-            <Form.Control
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-          </Form.Group>
-          
-          {selectedFiles.length > 0 && (
-            <>
-              <h6>Selected Images:</h6>
-              <Row className="g-3">
-                {selectedFiles.map((file) => (
-                  <Col key={file.id} xs={6} md={4}>
-                    <Card>
-                      <img src={file.src} className="img-fluid" alt={file.name} style={{ height: '100px', objectFit: 'cover' }} />
-                      <Card.Body className="p-2">
-                        <div className="d-flex justify-content-between align-items-center">
-                          <small className="text-truncate">{file.name}</small>
-                          <Button variant="outline-danger" size="sm" onClick={() => removeSelectedFile(file.id)}>
-                            <FaTrash />
-                          </Button>
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowUploadModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={confirmUpload} disabled={selectedFiles.length === 0}>
-            Upload Images
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Edit Modal */}
-      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Image</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {editingImage && (
-            <>
-              <img src={editingImage.image_url} className="img-fluid mb-3" alt={editingImage.name} />
-              <Form.Group className="mb-3">
-                <Form.Label>Image Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={editingImage.name}
-                  onChange={(e) => setEditingImage({...editingImage, name: e.target.value})}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Alt Text</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={editingImage.alt_text || ''}
-                  onChange={(e) => setEditingImage({...editingImage, alt_text: e.target.value})}
-                />
-              </Form.Group>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={() => {
-            // Add save functionality here
-            console.log('Saving image:', editingImage);
-            setShowEditModal(false);
-          }}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </Card>
   );
 };
