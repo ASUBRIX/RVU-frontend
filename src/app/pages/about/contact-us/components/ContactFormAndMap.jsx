@@ -108,7 +108,7 @@ const ContactFormAndMap = () => {
         </Container>
       </section>
 
-      {/* <section className="pt-0 pb-0 contact-map-section">
+      <section className="pt-0 pb-0 contact-map-section">
         <div className="w-100 vw-100 contact-map-container">
           <iframe
             className="w-100 vw-100 h-400px rounded-0 m-0 p-0 contact-map-frame"
@@ -118,7 +118,7 @@ const ContactFormAndMap = () => {
             title="Pudhuyugam Academy Map"
           />
         </div>
-      </section> */}
+      </section>
     </>
   );
 };
