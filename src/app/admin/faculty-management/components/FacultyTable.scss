@@ -1,0 +1,40 @@
+.faculty-management {
+  padding: 1rem;
+}
+
+.faculty-stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.faculty-stat-box {
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  border: 2px solid #ed155a;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  transition: transform 0.2s ease;
+
+  h6 {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  h3 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: bold;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}

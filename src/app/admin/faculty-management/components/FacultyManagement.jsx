@@ -21,7 +21,14 @@ const FacultyManagement = () => {
   const fetchFaculties = async () => {
     try {
       const res = await getAllFaculties();
-      setFaculties(res.data);
+      console.log('fetach faculties:',res);
+      
+      const normalized = res.data.map((f) => ({
+  ...f,
+  facultyId: f.facultyId || f.faculty_id || `FAC${String(f.id).padStart(3, '0')}`
+}));
+setFaculties(normalized);
+
     } catch (err) {
       console.error('Error fetching faculties:', err);
     }
@@ -163,7 +170,7 @@ const FacultyManagement = () => {
               setCurrentFaculty(faculty);
               setShowDeleteModal(true);
             }}
-            onStatusChange={handleStatusChange}  // <<=== pass dynamic status handler
+            onStatusChange={handleStatusChange}  
           />
         </Tab>
         <Tab eventKey="active" title="Active Faculty">

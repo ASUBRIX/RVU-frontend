@@ -1,14 +1,9 @@
-/**
- * Component SCSS:
- * - Table styles: src/assets/scss/components/_tables.scss
- * - Faculty specific styles: src/assets/scss/components/_faculty-management.scss
- */
-
 import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs';
 import { FaLock, FaLockOpen } from 'react-icons/fa';
 import FacultyDetails from './FacultyDetails';
+import './FacultyTable.scss';
 
 const FacultyTable = ({ faculty = [], onEdit, onDelete, onStatusChange }) => {
   const [selectedFaculty, setSelectedFaculty] = useState(null);
@@ -29,6 +24,9 @@ const FacultyTable = ({ faculty = [], onEdit, onDelete, onStatusChange }) => {
     setSelectedFaculty(null);
   };
 
+  const totalCount = faculty.length;
+  const activeCount = faculty.filter(f => f.status === 'active').length;
+
   if (showDetails && selectedFaculty) {
     return (
       <FacultyDetails 
@@ -42,6 +40,19 @@ const FacultyTable = ({ faculty = [], onEdit, onDelete, onStatusChange }) => {
 
   return (
     <div className="faculty-management">
+      {/* COUNTERS */}
+      <div className="faculty-stats-container">
+        <div className="faculty-stat-box">
+          <h6>Total Faculty</h6>
+          <h3>{totalCount}</h3>
+        </div>
+        <div className="faculty-stat-box">
+          <h6>Active Faculty</h6>
+          <h3>{activeCount}</h3>
+        </div>
+      </div>
+
+      {/* TABLE */}
       <Card className="faculty-card">
         <Card.Body>
           <div className="table-responsive">
@@ -59,7 +70,7 @@ const FacultyTable = ({ faculty = [], onEdit, onDelete, onStatusChange }) => {
                 {faculty.map((faculty) => (
                   <tr key={faculty.id}>
                     <td>{faculty.name}</td>
-                    <td>{faculty.facultyId}</td>
+                    <td>{faculty.faculty_id || `FAC${String(faculty.id).padStart(3, '0')}`}</td>
                     <td>{faculty.designation}</td>
                     <td>
                       <span className={`badge bg-${faculty.status === 'active' ? 'success' : 'secondary'}`}>
@@ -100,4 +111,4 @@ const FacultyTable = ({ faculty = [], onEdit, onDelete, onStatusChange }) => {
   );
 };
 
-export default FacultyTable; 
+export default FacultyTable;

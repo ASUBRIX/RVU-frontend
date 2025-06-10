@@ -19,7 +19,7 @@ const FacultyForm = ({ faculty, onSubmit }) => {
     experience: '',
     avatar: 'default',
     bio: '',
-    board_member: false, // ✅ NEW FIELD
+    board_member: false, 
   };
 
   const [formData, setFormData] = useState(initialFormState);
