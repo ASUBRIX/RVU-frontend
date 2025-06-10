@@ -3,7 +3,7 @@ import { Card, Button, Row, Col, Form, InputGroup, Modal, Tabs, Tab } from 'reac
 import { FaSearch, FaPlus, FaFilter, FaDownload, FaUpload } from 'react-icons/fa';
 import FacultyTable from './FacultyTable';
 import FacultyForm from './FacultyForm';
-import { getAllFaculties, createFaculty, updateFaculty, deleteFaculty } from '../../../../helpers/facultyApi';
+import { getAllFaculties, createFaculty, updateFaculty, deleteFaculty } from '@/helpers/facultyApi';
 
 const FacultyManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -59,7 +59,7 @@ const FacultyManagement = () => {
     }
   };
 
-  // *** NEW: Dynamic status change ***
+
   const handleStatusChange = async (facultyId, newStatus) => {
     try {
       const facultyToUpdate = faculties.find((f) => f.id === facultyId);

@@ -1,7 +1,3 @@
-/**
- * SCSS file: src/assets/scss/components/_admin-settings.scss
- */
-
 import AllSettings from './components/AllSettings';
 import PageMetaData from '@/components/PageMetaData';
 

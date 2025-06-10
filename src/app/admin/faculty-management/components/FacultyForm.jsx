@@ -1,8 +1,7 @@
-// ---------- FacultyForm.jsx ----------
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Row, Col, Button, InputGroup, Modal } from 'react-bootstrap';
 import {
-  FaUser, FaEnvelope, FaPhone, FaGraduationCap, FaCalendar, FaBriefcase,
+  FaUser, FaEnvelope, FaPhone, FaGraduationCap, FaBriefcase,
   FaUserCircle, FaUpload, FaPlus
 } from 'react-icons/fa';
 
@@ -19,7 +18,8 @@ const FacultyForm = ({ faculty, onSubmit }) => {
     qualification: '',
     experience: '',
     avatar: 'default',
-    bio: '',                // <-- Added bio field
+    bio: '',
+    board_member: false, // ✅ NEW FIELD
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -39,13 +39,19 @@ const FacultyForm = ({ faculty, onSubmit }) => {
   const [newDepartment, setNewDepartment] = useState('');
   const [newDesignation, setNewDesignation] = useState('');
 
-  useEffect(() => {
-    if (faculty) {
-      setFormData({ ...initialFormState, ...faculty });
-    } else {
-      setFormData(initialFormState);
-    }
-  }, [faculty]);
+useEffect(() => {
+  if (faculty) {
+    setFormData({
+      ...initialFormState,
+      ...faculty,
+      board_member: Boolean(faculty.board_member), 
+    });
+  } else {
+    setFormData(initialFormState);
+  }
+}, [faculty]);
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -123,7 +129,7 @@ const FacultyForm = ({ faculty, onSubmit }) => {
           </Col>
           <Col md={9}>
             <Row className="g-3">
-              {/* Full Name */}
+              {/* Name */}
               <Col md={12}>
                 <Form.Group controlId="facultyName">
                   <Form.Label>Full Name</Form.Label>
@@ -167,7 +173,9 @@ const FacultyForm = ({ faculty, onSubmit }) => {
                       {departmentOptions.map((d, i) => <option key={i}>{d}</option>)}
                     </Form.Select>
                   </InputGroup>
-                  <Button variant="link" size="sm" className="p-0" onClick={() => setShowDepartmentModal(true)}><FaPlus /> Add new</Button>
+                  <Button variant="link" size="sm" className="p-0" onClick={() => setShowDepartmentModal(true)}>
+                    <FaPlus /> Add new
+                  </Button>
                 </Form.Group>
               </Col>
               <Col md={6}>
@@ -179,7 +187,9 @@ const FacultyForm = ({ faculty, onSubmit }) => {
                       {designationOptions.map((d, i) => <option key={i}>{d}</option>)}
                     </Form.Select>
                   </InputGroup>
-                  <Button variant="link" size="sm" className="p-0" onClick={() => setShowDesignationModal(true)}><FaPlus /> Add new</Button>
+                  <Button variant="link" size="sm" className="p-0" onClick={() => setShowDesignationModal(true)}>
+                    <FaPlus /> Add new
+                  </Button>
                 </Form.Group>
               </Col>
 
@@ -194,6 +204,23 @@ const FacultyForm = ({ faculty, onSubmit }) => {
                 <Form.Group controlId="facultyExperience">
                   <Form.Label>Experience</Form.Label>
                   <Form.Control required name="experience" value={formData.experience} onChange={handleChange} />
+                </Form.Group>
+              </Col>
+
+              {/* ✅ Board Member Checkbox */}
+              <Col md={12}>
+                <Form.Group controlId="facultyBoardMember" className="form-check">
+                  <Form.Check
+                    type="checkbox"
+                    label="Member of Board of Directors"
+                    checked={formData.board_member}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        board_member: e.target.checked,
+                      }))
+                    }
+                  />
                 </Form.Group>
               </Col>
 
@@ -234,7 +261,7 @@ const FacultyForm = ({ faculty, onSubmit }) => {
         </div>
       </Form>
 
-      {/* Add Department Modal */}
+      {/* Department Modal */}
       <Modal show={showDepartmentModal} onHide={() => setShowDepartmentModal(false)}>
         <Modal.Header closeButton><Modal.Title>Add Department</Modal.Title></Modal.Header>
         <Modal.Body>
@@ -249,7 +276,7 @@ const FacultyForm = ({ faculty, onSubmit }) => {
         </Modal.Footer>
       </Modal>
 
-      {/* Add Designation Modal */}
+      {/* Designation Modal */}
       <Modal show={showDesignationModal} onHide={() => setShowDesignationModal(false)}>
         <Modal.Header closeButton><Modal.Title>Add Designation</Modal.Title></Modal.Header>
         <Modal.Body>
@@ -268,4 +295,3 @@ const FacultyForm = ({ faculty, onSubmit }) => {
 };
 
 export default FacultyForm;
-
