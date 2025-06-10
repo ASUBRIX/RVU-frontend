@@ -11,7 +11,6 @@ import useToggle from '@/hooks/useToggle'
 import { useAuthContext } from '@/context/useAuthContext'
 
 const Banner = lazy(() => import('@/components/StudentLayoutComponents/Banner'))
-const Footer = lazy(() => import('@/components/StudentLayoutComponents/Footer'))
 const TopNavigationBar = lazy(() => import('@/components/TopNavigationBar'))
 
 const StudentLayout = ({ children }) => {
@@ -50,10 +49,6 @@ const StudentLayout = ({ children }) => {
           </Container>
         </section>
       </main>
-
-      <Suspense fallback={null}>
-        <Footer />
-      </Suspense>
     </>
   )
 }
