@@ -1,9 +1,8 @@
 import { footerLinks } from '@/assets/data/footer-items';
 import playStore from '@/assets/images/client/app-store.svg';
 import googlePlay from '@/assets/images/client/google-play.svg';
-import pylogo from '@/assets/images/puthuyougam_logo.png'
+import pylogo from '@/assets/images/puthuyougam_logo.png';
 import '@/assets/scss/style.scss';
-import { currentYear } from '@/context/constants';
 import clsx from 'clsx';
 import { Col, Container, Row } from 'react-bootstrap';
 import { FaFacebookF, FaInstagram, FaTelegramPlane, FaYoutube } from 'react-icons/fa';
@@ -21,7 +20,6 @@ const Footer = ({ className }) => {
     site_phone: '9488722512, 6381048227',
     site_address: '4, Hari Garderns, Ramanuja Nagar, Uppilipayam Post, Coimbatore - 641 015',
     site_logo: pylogo,
-    copyright_text: `© Pudhuyugam Academy ${currentYear}. All rights reserved`,
     facebook_url: 'https://www.facebook.com/people/Pudhuyugamacademy/61553787314656/',
     youtube_url: 'https://www.youtube.com/@PudhuyugamAcademy',
     telegram_url: 'https://t.me/pudhuyugam',
@@ -46,11 +44,14 @@ const Footer = ({ className }) => {
           if (processedData.site_logo && processedData.site_logo.startsWith('/')) {
             processedData.site_logo = `${BACKEND_URL}${processedData.site_logo}`;
           }
+
           const newSettings = {
             ...defaultSettings,
             ...processedData,
             site_logo: processedData.site_logo || pylogo
+            // ❌ do NOT set copyright_text
           };
+
           setSettings(newSettings);
           settingsCache = newSettings;
         }
@@ -81,33 +82,54 @@ const Footer = ({ className }) => {
               />
             </Link>
             <p className="my-3">
-              {settings.site_description || 'Pudhuyugam Academy embarked on a resolute mission to deliver top-notch education for a spectrum of competitive examinations'}
+              {settings.site_description ||
+                'Pudhuyugam Academy embarked on a resolute mission to deliver top-notch education for a spectrum of competitive examinations'}
             </p>
             <ul className="list-inline mb-0 mt-3">
               {settings.facebook_url && (
                 <li className="list-inline-item">
-                  <a className="btn btn-white btn-sm shadow px-2 text-facebook" href={settings.facebook_url} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="btn btn-white btn-sm shadow px-2 text-facebook"
+                    href={settings.facebook_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <FaFacebookF className="fa-fw" />
                   </a>
                 </li>
               )}
               {settings.instagram_url && (
                 <li className="list-inline-item">
-                  <a className="btn btn-white btn-sm shadow px-2 text-instagram" href={settings.instagram_url} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="btn btn-white btn-sm shadow px-2 text-instagram"
+                    href={settings.instagram_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <FaInstagram className="fa-fw" />
                   </a>
                 </li>
               )}
               {settings.telegram_url && (
                 <li className="list-inline-item">
-                  <a className="btn btn-white btn-sm shadow px-2 text-telegram" href={settings.telegram_url} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="btn btn-white btn-sm shadow px-2 text-telegram"
+                    href={settings.telegram_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <FaTelegramPlane className="fa-fw" />
                   </a>
                 </li>
               )}
               {settings.youtube_url && (
                 <li className="list-inline-item">
-                  <a className="btn btn-white btn-sm shadow px-2 text-youtube" href={settings.youtube_url} target="_blank" rel="noopener noreferrer">
+                  <a
+                    className="btn btn-white btn-sm shadow px-2 text-youtube"
+                    href={settings.youtube_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <FaYoutube className="fa-fw" />
                   </a>
                 </li>
@@ -123,7 +145,9 @@ const Footer = ({ className }) => {
                   <ul className="nav flex-column">
                     {link.items.map((item, idx) => (
                       <li className="nav-item" key={idx}>
-                        <Link className="nav-link" to={item.link ?? ''}>{item.name}</Link>
+                        <Link className="nav-link" to={item.link ?? ''}>
+                          {item.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -135,8 +159,12 @@ const Footer = ({ className }) => {
           <Col lg={4}>
             <h5 className="mb-2 mb-md-4">Contact</h5>
             <p className="mb-2">{settings.site_address}</p>
-            <p className="mb-0">Contact Number: <span className="h6 fw-light ms-1">{settings.site_phone}</span></p>
-            <p className="mb-0">Email: <span className="h6 fw-light ms-1">{settings.site_email}</span></p>
+            <p className="mb-0">
+              Contact Number: <span className="h6 fw-light ms-1">{settings.site_phone}</span>
+            </p>
+            <p className="mb-0">
+              Email: <span className="h6 fw-light ms-1">{settings.site_email}</span>
+            </p>
             <Row className="g-2 mt-2">
               <Col xs={6} sm={4} md={3} lg={6}>
                 <span role="button">
@@ -157,9 +185,11 @@ const Footer = ({ className }) => {
           <Container className="px-0">
             <div className="d-flex justify-content-center py-3">
               <div className="text-body text-primary-hover text-center">
-                Powered by <Link to="https://asubrix.com/" target="_blank" className="text-body">Asubrix International Pvt Ltd</Link>
-                <br />
-                {settings.copyright_text || `© ${settings.site_name} ${currentYear}. All rights reserved`}
+                Powered by{' '}
+                <Link to="https://asubrix.com/" target="_blank" className="text-body">
+                  Asubrix International Pvt Ltd
+                </Link>{' '}
+                | © Pudhuyugam Academy 2025. All rights reserved
               </div>
             </div>
           </Container>
