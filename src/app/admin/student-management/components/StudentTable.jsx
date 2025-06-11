@@ -3,10 +3,9 @@ import { Card } from 'react-bootstrap'
 import { BsPencilSquare, BsTrash, BsEye } from 'react-icons/bs'
 import { FaLock, FaLockOpen } from 'react-icons/fa'
 import StudentDetails from './StudentDetails'
+import './StudentTable.scss'
 
 const StudentTable = ({ students = [], onEdit, onDelete, onStatusChange }) => {
-  console.log(students);
-  
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [showDetails, setShowDetails] = useState(false)
 
@@ -25,16 +24,32 @@ const StudentTable = ({ students = [], onEdit, onDelete, onStatusChange }) => {
     setSelectedStudent(null)
   }
 
+  const totalStudents = students.length
+  const activeStudents = students.filter((s) => s.status === 'active').length
+
   if (showDetails && selectedStudent) {
     return <StudentDetails student={selectedStudent} onBack={handleBack} onEdit={onEdit} onDelete={onDelete} />
   }
 
   return (
     <div className="student-management">
+      {/* COUNT BOXES */}
+      <div className="student-stats-container">
+        <div className="student-stat-box">
+          <h6>Total Students</h6>
+          <h3>{totalStudents}</h3>
+        </div>
+        <div className="student-stat-box">
+          <h6>Active Students</h6>
+          <h3>{activeStudents}</h3>
+        </div>
+      </div>
+
+      {/* TABLE */}
       <Card className="student-card">
         <Card.Body>
           <div className="table-responsive">
-            <table className="table">
+            <table className="table align-middle">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -44,33 +59,40 @@ const StudentTable = ({ students = [], onEdit, onDelete, onStatusChange }) => {
                 </tr>
               </thead>
               <tbody>
-                {students.map((student) => (
+                {students.map((student, index) => (
                   <tr key={student.id}>
-                    <td>{student.name}</td>
-                    <td>{`STU${String(student.id).padStart(3, '0')}`}</td>
+                    <td>{`${student.first_name} ${student.last_name}`}</td>
+                    <td>{`STU${String(index + 1).padStart(3, '0')}`}</td>
                     <td>
                       <span className={`badge bg-${student.status === 'active' ? 'success' : 'secondary'}`}>
                         {student.status === 'active' ? 'Active' : 'Blocked'}
                       </span>
                     </td>
                     <td>
-                      <div className="action-buttons">
-                        <button className="btn-action view-btn" onClick={() => handleViewDetails(student)}>
+                      <div className="action-buttons d-flex gap-2">
+                        <button className="btn btn-sm btn-outline-info" onClick={() => handleViewDetails(student)}>
                           <BsEye />
                         </button>
-                        <button className="btn-action edit-btn" onClick={() => onEdit(student)}>
+                        <button className="btn btn-sm btn-outline-primary" onClick={() => onEdit(student)}>
                           <BsPencilSquare />
                         </button>
-                        <button className="btn-action delete-btn" onClick={() => onDelete(student)}>
+                        <button className="btn btn-sm btn-outline-danger" onClick={() => onDelete(student)}>
                           <BsTrash />
                         </button>
-                        <button className="btn-action" onClick={() => handleStatusChange(student)}>
+                        <button className="btn btn-sm btn-outline-warning" onClick={() => handleStatusChange(student)}>
                           {student.status === 'blocked' ? <FaLockOpen /> : <FaLock />}
                         </button>
                       </div>
                     </td>
                   </tr>
                 ))}
+                {students.length === 0 && (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4">
+                      No students found
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

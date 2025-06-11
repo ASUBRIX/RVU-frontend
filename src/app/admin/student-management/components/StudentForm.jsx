@@ -1,13 +1,13 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
-import { FaUser, FaEnvelope, FaPhone, FaGraduationCap, FaCalendar, FaBook, FaUserCircle } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaGraduationCap, FaCalendar, FaBook } from 'react-icons/fa';
 
 const StudentForm = ({ student, onSubmit, onCancel }) => {
   const fileInputRef = useRef(null);
 
   const initialFormState = {
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
     phone: '',
     enrollmentDate: '',
@@ -57,20 +57,39 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
     <Form noValidate validated={validated} onSubmit={handleSubmit}>
       <Row className="g-3">
         <Col md={6}>
-          <Form.Group controlId="studentName">
-            <Form.Label>Full Name</Form.Label>
+          <Form.Group controlId="studentFirstName">
+            <Form.Label>First Name</Form.Label>
             <InputGroup hasValidation>
               <InputGroup.Text><FaUser /></InputGroup.Text>
               <Form.Control
                 required
                 type="text"
-                placeholder="Enter full name"
-                name="name"
-                value={formData.name}
+                placeholder="Enter first name"
+                name="first_name"
+                value={formData.first_name}
                 onChange={handleChange}
               />
               <Form.Control.Feedback type="invalid">
-                Please provide a valid name.
+                Please provide a valid first name.
+              </Form.Control.Feedback>
+            </InputGroup>
+          </Form.Group>
+        </Col>
+        <Col md={6}>
+          <Form.Group controlId="studentLastName">
+            <Form.Label>Last Name</Form.Label>
+            <InputGroup hasValidation>
+              <InputGroup.Text><FaUser /></InputGroup.Text>
+              <Form.Control
+                required
+                type="text"
+                placeholder="Enter last name"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
+              />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid last name.
               </Form.Control.Feedback>
             </InputGroup>
           </Form.Group>
@@ -216,3 +235,4 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
 };
 
 export default StudentForm;
+

@@ -1,65 +1,69 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { Card, Button, Row, Col, Form, InputGroup, Modal, Tabs, Tab } from 'react-bootstrap'
-import { FaSearch, FaPlus, FaDownload, FaUpload, FaFilter } from 'react-icons/fa'
-import StudentTable from './StudentTable'
-import StudentForm from './StudentForm'
-import { getAllStudents, addStudent, updateStudent, deleteStudent } from '@/helpers/studentManagementApi.js'
-import * as XLSX from 'xlsx'
-import { saveAs } from 'file-saver'
+import React, { useState, useEffect, useMemo } from 'react';
+import { Card, Button, Row, Col, Form, InputGroup, Modal, Tabs, Tab } from 'react-bootstrap';
+import { FaSearch, FaPlus, FaDownload, FaUpload, FaFilter } from 'react-icons/fa';
+import StudentTable from './StudentTable';
+import StudentForm from './StudentForm';
+import { getAllStudents, addStudent, updateStudent, deleteStudent } from '@/helpers/studentManagementApi.js';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import './StudentManagement.scss';
 
 const StudentManagement = () => {
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [currentStudent, setCurrentStudent] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filter, setFilter] = useState('all')
-  const [students, setStudents] = useState([])
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [students, setStudents] = useState([]);
 
   const fetchStudents = async () => {
     try {
-      const res = await getAllStudents()
-      setStudents(res.data)
+      const res = await getAllStudents();
+      setStudents(res.data);
     } catch (error) {
-      console.error('Failed to load students:', error)
+      console.error('Failed to load students:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchStudents()
-  }, [])
+    fetchStudents();
+  }, []);
+
+  const generateStudentId = (index) => `STU${String(index + 1).padStart(3, '0')}`;
 
   const handleAddStudent = async (studentData) => {
     try {
       if (currentStudent) {
-        await updateStudent(currentStudent.id, studentData)
+        await updateStudent(currentStudent.id, studentData);
       } else {
-        await addStudent(studentData)
+        studentData.enrollment_id = generateStudentId(students.length);
+        await addStudent(studentData);
       }
-      fetchStudents()
-      setShowAddModal(false)
-      setCurrentStudent(null)
+      fetchStudents();
+      setShowAddModal(false);
+      setCurrentStudent(null);
     } catch (error) {
-      console.error('Save failed:', error)
+      console.error('Save failed:', error);
     }
-  }
+  };
 
   const handleDeleteStudent = async (studentId) => {
-    await deleteStudent(studentId)
-    fetchStudents()
-  }
+    await deleteStudent(studentId);
+    fetchStudents();
+  };
 
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
       const match =
         student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.enrollment_id?.toLowerCase().includes(searchTerm.toLowerCase())
+        student.enrollment_id?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const statusFilter =
-        filter === 'all' || (filter === 'active' && student.status === 'active') || (filter === 'inactive' && student.status === 'inactive')
+        filter === 'all' || (filter === 'active' && student.status === 'active') || (filter === 'inactive' && student.status === 'inactive');
 
-      return match && statusFilter
-    })
-  }, [students, searchTerm, filter])
+      return match && statusFilter;
+    });
+  }, [students, searchTerm, filter]);
 
   const handleExportExcel = () => {
     const exportData = filteredStudents.map((student) => ({
@@ -73,16 +77,19 @@ const StudentManagement = () => {
       Status: student.status || '',
       Courses: Array.isArray(student.courses) ? student.courses.join(', ') : '',
       EnrollmentDate: student.enrollment_date ? new Date(student.enrollment_date).toLocaleDateString() : '',
-    }))
+    }));
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData)
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Students')
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Students');
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
 
-    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' })
-    saveAs(blob, 'students.xlsx')
-  }
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'students.xlsx');
+  };
+
+  const totalCount = students.length;
+  const activeCount = students.filter(s => s.status === 'active').length;
 
   return (
     <div className="student-management">
@@ -92,6 +99,8 @@ const StudentManagement = () => {
           <FaPlus className="me-2" /> Add New Student
         </Button>
       </div>
+
+
 
       <Card className="shadow-sm border-0 mb-4">
         <Card.Body>
@@ -136,8 +145,8 @@ const StudentManagement = () => {
           <StudentTable
             students={filteredStudents}
             onEdit={(student) => {
-              setCurrentStudent(student)
-              setShowAddModal(true)
+              setCurrentStudent(student);
+              setShowAddModal(true);
             }}
             onDelete={(student) => handleDeleteStudent(student.id)}
           />
@@ -147,8 +156,8 @@ const StudentManagement = () => {
       <Modal
         show={showAddModal}
         onHide={() => {
-          setShowAddModal(false)
-          setCurrentStudent(null)
+          setShowAddModal(false);
+          setCurrentStudent(null);
         }}
         size="lg"
         centered>
@@ -160,14 +169,14 @@ const StudentManagement = () => {
             onSubmit={handleAddStudent}
             student={currentStudent}
             onCancel={() => {
-              setShowAddModal(false)
-              setCurrentStudent(null)
+              setShowAddModal(false);
+              setCurrentStudent(null);
             }}
           />
         </Modal.Body>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default StudentManagement
+export default StudentManagement;
