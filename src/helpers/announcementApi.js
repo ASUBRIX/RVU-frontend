@@ -18,3 +18,4 @@ export const updateAnnouncement = (id, data) => {
 export const deleteAnnouncement = (id) => {
   return httpClient.delete(`${ANNOUNCEMENT_BASE_URL}/${id}`);
 };
+
