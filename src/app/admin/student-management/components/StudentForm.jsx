@@ -50,6 +50,9 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
       return;
     }
 
+    console.log('form data',formData);
+    
+
     onSubmit(formData);
   };
 
@@ -235,4 +238,6 @@ const StudentForm = ({ student, onSubmit, onCancel }) => {
 };
 
 export default StudentForm;
+
+
 
