@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Modal, Table } from 'react-bootstrap';
-import {getCurrentAffairs,createCurrentAffair,updateCurrentAffair,deleteCurrentAffair} from '../../../helpers/currentAffairsApi';
+import { Button, Form, Modal, Table, Badge, Card, Container, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { getCurrentAffairs, createCurrentAffair, updateCurrentAffair, deleteCurrentAffair } from '@/helpers/currentAffairsApi';
+import { useNotificationContext } from '../../../context/useNotificationContext';
 
 const CurrentAffairsPage = () => {
   const [affairs, setAffairs] = useState([]);
@@ -13,6 +15,11 @@ const CurrentAffairsPage = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteItem, setDeleteItem] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { showNotification } = useNotificationContext();
 
   const fetchAffairs = async () => {
     try {
@@ -20,6 +27,11 @@ const CurrentAffairsPage = () => {
       setAffairs(res.data);
     } catch (err) {
       console.error('Failed to fetch current affairs:', err);
+      showNotification && showNotification({ 
+        title: 'Error', 
+        message: 'Failed to fetch current affairs', 
+        variant: 'danger' 
+      });
     }
   };
 
@@ -40,13 +52,28 @@ const CurrentAffairsPage = () => {
     try {
       if (editId) {
         await updateCurrentAffair(editId, formData);
+        showNotification && showNotification({ 
+          title: 'Updated', 
+          message: 'Current affair updated successfully', 
+          variant: 'success' 
+        });
       } else {
         await createCurrentAffair(formData);
+        showNotification && showNotification({ 
+          title: 'Created', 
+          message: 'Current affair added successfully', 
+          variant: 'success' 
+        });
       }
       fetchAffairs();
       handleClose();
     } catch (err) {
       console.error('Failed to submit form:', err);
+      showNotification && showNotification({ 
+        title: 'Error', 
+        message: 'Failed to save current affair', 
+        variant: 'danger' 
+      });
     }
   };
 
@@ -62,13 +89,43 @@ const CurrentAffairsPage = () => {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
+  const confirmDelete = (item) => {
+    setDeleteId(item.id);
+    setDeleteItem(item);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    if (!deleteId) return;
+    
+    setIsDeleting(true);
     try {
-      await deleteCurrentAffair(id);
-      fetchAffairs();
+      await deleteCurrentAffair(deleteId);
+      await fetchAffairs();
+      showNotification && showNotification({ 
+        title: 'Deleted', 
+        message: `"${deleteItem?.title}" has been deleted successfully`, 
+        variant: 'success' 
+      });
     } catch (err) {
       console.error('Failed to delete item:', err);
+      showNotification && showNotification({ 
+        title: 'Error', 
+        message: 'Failed to delete current affair', 
+        variant: 'danger' 
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+      setDeleteId(null);
+      setDeleteItem(null);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
+    setDeleteId(null);
+    setDeleteItem(null);
   };
 
   const handleClose = () => {
@@ -77,46 +134,100 @@ const CurrentAffairsPage = () => {
     setFormData({ title: '', content: '', date: '', isActive: true, category: '' });
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
-    <div className="container py-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3>Current Affairs Management</h3>
-        <Button onClick={() => setShowModal(true)}>+ Add Entry</Button>
-      </div>
+    <Container className="py-5">
+      <Card className="shadow rounded-4 p-4 border-0">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="fw-bold mb-0 text-primary">📰 Current Affairs Management</h2>
+          <Button
+            variant="primary"
+            className="rounded-pill px-4 shadow-sm"
+            onClick={() => setShowModal(true)}
+          >
+            + Add Entry
+          </Button>
+        </div>
 
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Title</th>
-            <th>Date</th>
-            <th>Content</th>
-            <th>Category</th>
-            <th>Status</th>
-            <th style={{ width: 150 }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {affairs.map((item, index) => (
-            <tr key={item.id}>
-              <td>{index + 1}</td>
-              <td>{item.title}</td>
-              <td>{item.date}</td>
-              <td>{item.content}</td>
-              <td>{item.category || '-'}</td>
-              <td>{item.is_active ? 'Active' : 'Inactive'}</td>
-              <td>
-                <Button size="sm" onClick={() => handleEdit(item)}>Edit</Button>{' '}
-                <Button size="sm" variant="danger" onClick={() => handleDelete(item.id)}>Delete</Button>
-              </td>
+        <Table bordered hover responsive className="table-striped align-middle text-center">
+          <thead className="table-primary">
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Content</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {affairs.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-muted py-4">
+                  No current affairs found. Click "Add Entry" to create your first entry.
+                </td>
+              </tr>
+            ) : (
+              affairs.map((item) => (
+                <tr key={item.id}>
+                  <td className="fw-medium">{item.title}</td>
+                  <td>{formatDate(item.date)}</td>
+                  <td className="text-start">
+                    {item.content.length > 100 
+                      ? `${item.content.substring(0, 100)}...` 
+                      : item.content
+                    }
+                  </td>
+                  <td>{item.category || '-'}</td>
+                  <td>
+                    <Badge
+                      bg={item.is_active ? 'success' : 'secondary'}
+                      className="px-3 py-1 rounded-pill"
+                    >
+                      {item.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </td>
+                  <td>
+                    <div className="d-flex justify-content-center gap-2">
+                      <OverlayTrigger placement="top" overlay={<Tooltip>Edit</Tooltip>}>
+                        <Button
+                          style={{ backgroundColor: '#ed155a', border: 'none', color: '#fff' }}
+                          size="sm"
+                          className="rounded-circle d-flex align-items-center justify-content-center"
+                          onClick={() => handleEdit(item)}
+                        >
+                          <FiEdit />
+                        </Button>
+                      </OverlayTrigger>
+                      <OverlayTrigger placement="top" overlay={<Tooltip>Delete</Tooltip>}>
+                        <Button
+                          style={{ backgroundColor: '#dc3545', border: 'none', color: '#fff' }}
+                          size="sm"
+                          className="rounded-circle d-flex align-items-center justify-content-center"
+                          onClick={() => confirmDelete(item)}
+                        >
+                          <FiTrash2 />
+                        </Button>
+                      </OverlayTrigger>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </Table>
+      </Card>
 
-      <Modal show={showModal} onHide={handleClose}>
+      {/* Add/Edit Modal */}
+      <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>{editId ? 'Edit' : 'Add'} Current Affair</Modal.Title>
+          <Modal.Title className="fw-semibold">
+            {editId ? 'Edit Current Affair' : 'Add Current Affair'}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
@@ -128,6 +239,7 @@ const CurrentAffairsPage = () => {
                 value={formData.title}
                 onChange={handleChange}
                 required
+                placeholder="Enter title"
               />
             </Form.Group>
 
@@ -135,11 +247,12 @@ const CurrentAffairsPage = () => {
               <Form.Label>Content</Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={4}
                 name="content"
                 value={formData.content}
                 onChange={handleChange}
                 required
+                placeholder="Enter content"
               />
             </Form.Group>
 
@@ -150,6 +263,7 @@ const CurrentAffairsPage = () => {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
+                placeholder="e.g., Politics, Sports, Technology"
               />
             </Form.Group>
 
@@ -165,20 +279,76 @@ const CurrentAffairsPage = () => {
             </Form.Group>
 
             <Form.Check
-              type="checkbox"
+              type="switch"
               label="Active"
               name="isActive"
               checked={formData.isActive}
               onChange={handleChange}
+              className="mb-3"
             />
 
-            <div className="text-end mt-3">
-              <Button type="submit">{editId ? 'Update' : 'Create'}</Button>
+            <div className="text-end">
+              <Button
+                variant="secondary"
+                className="rounded-pill px-4 me-2"
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                style={{ backgroundColor: '#ed155a', border: 'none' }}
+                className="rounded-pill px-4"
+              >
+                {editId ? 'Update' : 'Create'}
+              </Button>
             </div>
           </Form>
         </Modal.Body>
       </Modal>
-    </div>
+
+      {/* Enhanced Delete Confirmation Modal */}
+      <Modal show={showDeleteConfirm} onHide={handleDeleteCancel} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="fw-semibold text-danger">
+            ⚠️ Confirm Deletion
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <div className="mb-3">
+            <p className="mb-2">Are you sure you want to delete this current affair?</p>
+            {deleteItem && (
+              <div className="bg-light p-3 rounded mb-3">
+                <strong>"{deleteItem.title}"</strong>
+                <br />
+                <small className="text-muted">
+                  {formatDate(deleteItem.date)} • {deleteItem.category || 'No category'}
+                </small>
+              </div>
+            )}
+            <p className="text-muted small">This action cannot be undone.</p>
+          </div>
+          <div className="d-flex justify-content-center gap-3">
+            <Button 
+              variant="secondary" 
+              onClick={handleDeleteCancel}
+              disabled={isDeleting}
+              className="px-4"
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="danger" 
+              onClick={handleDeleteConfirmed}
+              disabled={isDeleting}
+              className="px-4"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </Container>
   );
 };
 

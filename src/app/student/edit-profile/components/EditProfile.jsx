@@ -5,7 +5,7 @@ import { Card, Spinner } from 'react-bootstrap'
 import * as yup from 'yup'
 import { getProfile, updateProfile } from '@/helpers/studentApi'
 import TextFormInput from '@/components/form/TextFormInput'
-import { useNotificationContext } from '../../../../context/useNotificationContext'
+import { useNotificationContext } from '@/context/useNotificationContext'
 
 const schema = yup.object({
   first_name: yup.string().required('Enter first name'),
@@ -44,7 +44,13 @@ const EditProfile = () => {
   const fileRef = useRef()
   const { showNotification } = useNotificationContext()
 
-  const {control,handleSubmit,reset,setValue,formState: { isSubmitting },} = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       first_name: '',
@@ -102,7 +108,7 @@ const EditProfile = () => {
         title: 'Success',
         message: 'Profile updated successfully!',
         variant: 'success',
-        delay: 3000
+        delay: 3000,
       })
     } catch (err) {
       console.error('Update failed:', err)
@@ -110,7 +116,7 @@ const EditProfile = () => {
         title: 'Error',
         message: 'Failed to update profile. Please try again.',
         variant: 'danger',
-        delay: 3000
+        delay: 3000,
       })
     }
   }
@@ -123,18 +129,20 @@ const EditProfile = () => {
       : null
 
   return (
-    <Card className="edit-profile-card px-3 py-2">
+    <Card className="edit-profile-card px-4 py-3" style={{ maxWidth: '100%', width: '100%' }}>
       {loading ? (
         <div className="d-flex justify-content-center align-items-center" style={{ height: 200 }}>
           <Spinner animation="border" variant="primary" />
         </div>
       ) : (
         <>
-          <div className="edit-profile-avatar d-flex flex-column align-items-center mt-4 mb-3 position-relative">
+           {/* Heading moved below avatar */}
+          <h5 className="text-center mb-4 mt-2 fw-bold">Edit Profile</h5>
+          <div className="edit-profile-avatar d-flex flex-column align-items-center mt-3 mb-1 position-relative">
             <div
               style={{
-                width: 90,
-                height: 90,
+                width: 100,
+                height: 100,
                 borderRadius: '50%',
                 background: '#e0f2fe',
                 display: 'flex',
@@ -180,7 +188,7 @@ const EditProfile = () => {
             </button>
           </div>
 
-          <h5 className="text-center mb-3 mt-2">Edit Profile</h5>
+       
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row gx-2">

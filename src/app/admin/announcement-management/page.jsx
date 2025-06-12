@@ -7,12 +7,16 @@ import {
   updateAnnouncement,
   deleteAnnouncement
 } from '@/helpers/announcementApi';
+import { useNotificationContext } from '../../../context/useNotificationContext';
 
 const AnnouncementManagement = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [formData, setFormData] = useState({ title: '', content: '', isActive: true });
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { showNotification } = useNotificationContext();
 
   const fetchData = async () => {
     try {
@@ -57,15 +61,22 @@ const AnnouncementManagement = () => {
     setShowModal(true);
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this announcement?');
-    if (confirmDelete) {
-      try {
-        await deleteAnnouncement(id);
-        fetchData();
-      } catch (err) {
-        console.error('Error deleting announcement:', err);
-      }
+  const confirmDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    try {
+      await deleteAnnouncement(deleteId);
+      fetchData();
+      showNotification && showNotification({ title: 'Deleted', message: 'Announcement deleted successfully', variant: 'success' });
+    } catch (err) {
+      console.error('Error deleting announcement:', err);
+      showNotification && showNotification({ title: 'Error', message: 'Failed to delete announcement', variant: 'danger' });
+    } finally {
+      setShowDeleteConfirm(false);
+      setDeleteId(null);
     }
   };
 
@@ -120,11 +131,7 @@ const AnnouncementManagement = () => {
                     <div className="d-flex justify-content-center gap-2">
                       <OverlayTrigger placement="top" overlay={<Tooltip>Edit</Tooltip>}>
                         <Button
-                          style={{
-                            backgroundColor: '#ed155a',
-                            border: 'none',
-                            color: '#fff'
-                          }}
+                          style={{ backgroundColor: '#ed155a', border: 'none', color: '#fff' }}
                           size="sm"
                           className="rounded-circle d-flex align-items-center justify-content-center"
                           onClick={() => handleEdit(a)}
@@ -134,14 +141,10 @@ const AnnouncementManagement = () => {
                       </OverlayTrigger>
                       <OverlayTrigger placement="top" overlay={<Tooltip>Delete</Tooltip>}>
                         <Button
-                          style={{
-                            backgroundColor: '#ed155a',
-                            border: 'none',
-                            color: '#fff'
-                          }}
+                          style={{ backgroundColor: '#ed155a', border: 'none', color: '#fff' }}
                           size="sm"
                           className="rounded-circle d-flex align-items-center justify-content-center"
-                          onClick={() => handleDelete(a.id)}
+                          onClick={() => confirmDelete(a.id)}
                         >
                           <FiTrash2 />
                         </Button>
@@ -220,6 +223,24 @@ const AnnouncementManagement = () => {
               </Button>
             </div>
           </Form>
+        </Modal.Body>
+      </Modal>
+
+      {/* Confirm Delete Modal */}
+      <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="fw-semibold">Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>Are you sure you want to delete this announcement?</p>
+          <div className="d-flex justify-content-center gap-3 mt-4">
+            <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDeleteConfirmed}>
+              Delete
+            </Button>
+          </div>
         </Modal.Body>
       </Modal>
     </Container>
