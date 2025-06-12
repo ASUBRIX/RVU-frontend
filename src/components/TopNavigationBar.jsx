@@ -5,7 +5,7 @@ import LogoBox from '@/components/LogoBox'
 import useScrollEvent from '@/hooks/useScrollEvent'
 import useToggle from '@/hooks/useToggle'
 import { useAuthContext } from '../context/useAuthContext'
-import { PersonCircle } from 'react-bootstrap-icons'
+import { PersonCircle, Person, BoxArrowRight, PencilSquare, BoxArrowInRight, DoorOpen } from 'react-bootstrap-icons'
 import './TopNavigationBar.css'
 
 const TopNavigationBar = () => {
@@ -26,22 +26,17 @@ const TopNavigationBar = () => {
   ]
 
   return (
-    <header className={clsx('navbar-light navbar-sticky custom-navbar', {
-      'navbar-sticky-on': scrollY >= 400,
-    })}>
+    <header
+      className={clsx('navbar-light navbar-sticky custom-navbar', {
+        'navbar-sticky-on': scrollY >= 400,
+      })}>
       <nav className="navbar navbar-expand-xl z-index-2 py-0">
         <Container fluid className="px-2 px-xl-4">
           <div className="d-flex align-items-center" style={{ marginLeft: 94 }}>
             <LogoBox height={90} width={240} />
           </div>
 
-          <button
-            onClick={toggle}
-            className="navbar-toggler ms-2 custom-toggler"
-            type="button"
-            aria-expanded={isOpen}
-            aria-label="Toggle navigation"
-          >
+          <button onClick={toggle} className="navbar-toggler ms-2 custom-toggler" type="button" aria-expanded={isOpen} aria-label="Toggle navigation">
             <span className="navbar-toggler-animation">
               <span />
               <span />
@@ -63,19 +58,20 @@ const TopNavigationBar = () => {
 
               <div className="d-flex align-items-center ms-2 position-relative">
                 <Dropdown className="centered-avatar-dropdown">
-                  <Dropdown.Toggle
-                    variant="light"
-                    id="dropdown-avatar"
-                    className="avatar-toggle-button"
-                  >
+                  <Dropdown.Toggle variant="light" id="dropdown-avatar" className="avatar-toggle-button">
                     <PersonCircle size={38} color="#ed155a" />
                   </Dropdown.Toggle>
-
                   <Dropdown.Menu className="custom-user-dropdown">
                     {!user ? (
                       <>
-                        <Dropdown.Item as={Link} to="/auth">Register</Dropdown.Item>
-                        <Dropdown.Item as={Link} to="/auth/mobile-login">Sign In</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/auth" className="d-flex align-items-center gap-2">
+                          <PencilSquare size={18} className="text-muted" />
+                          Register
+                        </Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/auth/mobile-login" className="d-flex align-items-center gap-2">
+                          <BoxArrowInRight size={18} className="text-muted" />
+                          Sign In
+                        </Dropdown.Item>
                       </>
                     ) : (
                       <>
@@ -84,8 +80,24 @@ const TopNavigationBar = () => {
                           <span className="ms-2 fw-semibold text-dark">{user.first_name}</span>
                         </div>
                         <Dropdown.Divider />
-                        <Dropdown.Item as={Link} to="/student/edit-profile">Dashboard</Dropdown.Item>
-                        <Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
+                        <Dropdown.Item as={Link} to="/student/edit-profile" className="d-flex align-items-center gap-2">
+                          <Person size={18} color="#6c757d" />
+                          Dashboard
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={logout} className="d-flex align-items-center gap-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="#6c757d"
+                            strokeWidth="2">
+                            <path d="M12 2v6" strokeLinecap="round" />
+                            <path d="M5.64 5.64a9 9 0 1 0 12.72 0" strokeLinecap="round" />
+                          </svg>
+                          Sign Out
+                        </Dropdown.Item>
                       </>
                     )}
                   </Dropdown.Menu>
