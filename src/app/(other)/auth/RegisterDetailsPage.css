@@ -9,26 +9,28 @@
 
 .register-box {
   width: 100%;
-  max-width: 600px; 
+  max-width: 900px; 
   background: #fff;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
 .title-gradient {
-  font-size: 1.6rem;
-  font-weight: bold;
+  font-size: 1.4rem; /* reduced from 2rem */
+  font-weight: 600; /* slightly lighter */
   background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
+
 .register-subtext {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #555;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .custom-signin-btn {
@@ -36,9 +38,10 @@
   color: white;
   border: none;
   font-weight: 600;
-  padding: 0.6rem;
+  padding: 0.75rem;
   width: 100%;
   transition: background-color 0.3s ease;
+  font-size: 1rem;
 }
 
 .custom-signin-btn:hover {

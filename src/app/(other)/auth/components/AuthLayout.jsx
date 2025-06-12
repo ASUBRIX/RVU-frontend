@@ -1,4 +1,3 @@
-// AuthLayout.jsx
 import avatar1 from '@/assets/images/avatar/01.jpg';
 import avatar2 from '@/assets/images/avatar/02.jpg';
 import avatar3 from '@/assets/images/avatar/03.jpg';
@@ -13,7 +12,11 @@ const AuthLayout = ({ children }) => {
         <Container fluid className="p-0 m-0">
           <Row className="g-0">
             {/* Left side */}
-            <Col xs={12} lg={6} className="d-flex flex-column align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100 p-4 text-center">
+            <Col
+              xs={12}
+              lg={6}
+              className="d-flex flex-column align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100 p-4 text-center"
+            >
               <div className="mb-3">
                 <h2 className="fw-bold fs-3">Welcome to Pudhuyugam Academy</h2>
                 <p className="mb-0 h6 fw-light">Let's learn something new today!</p>
@@ -23,24 +26,29 @@ const AuthLayout = ({ children }) => {
                   src={elementImg}
                   className="img-fluid"
                   alt="element"
-                  style={{ 
-                    maxHeight: 200,
-                    display: 'block'
+                  style={{
+                    maxHeight: 120, // reduced size
+                    display: 'block',
                   }}
                 />
               </div>
             </Col>
-            
+
             {/* Right side */}
-            <Col xs={12} lg={6} className="d-flex align-items-center justify-content-center min-vh-100 p-0 m-0">
+            <Col
+              xs={12}
+              lg={6}
+              className="d-flex align-items-center justify-content-center min-vh-100 p-0 m-0"
+            >
               <div
                 className="w-100 py-4 m-0"
                 style={{
-                  maxWidth: 340,
+                  maxWidth: 700, // increased width
                   margin: '0 auto',
                   background: 'white',
                   borderRadius: 16,
-                  boxShadow: 'none',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                  padding: '2rem',
                 }}
               >
                 {children}
@@ -52,6 +60,5 @@ const AuthLayout = ({ children }) => {
     </main>
   );
 };
-
 
 export default AuthLayout;
