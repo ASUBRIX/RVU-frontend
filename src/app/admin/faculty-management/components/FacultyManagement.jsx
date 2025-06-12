@@ -4,6 +4,7 @@ import { FaSearch, FaPlus, FaFilter, FaDownload, FaUpload } from 'react-icons/fa
 import FacultyTable from './FacultyTable';
 import FacultyForm from './FacultyForm';
 import { getAllFaculties, createFaculty, updateFaculty, deleteFaculty } from '@/helpers/facultyApi';
+import { useNotificationContext } from '../../../../context/useNotificationContext';
 
 const FacultyManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -13,6 +14,7 @@ const FacultyManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
   const [faculties, setFaculties] = useState([]);
+  const { showNotification } = useNotificationContext();
 
   useEffect(() => {
     fetchFaculties();
@@ -21,14 +23,11 @@ const FacultyManagement = () => {
   const fetchFaculties = async () => {
     try {
       const res = await getAllFaculties();
-      console.log('fetach faculties:',res);
-      
       const normalized = res.data.map((f) => ({
-  ...f,
-  facultyId: f.facultyId || f.faculty_id || `FAC${String(f.id).padStart(3, '0')}`
-}));
-setFaculties(normalized);
-
+        ...f,
+        facultyId: f.facultyId || f.faculty_id || `FAC${String(f.id).padStart(3, '0')}`
+      }));
+      setFaculties(normalized);
     } catch (err) {
       console.error('Error fetching faculties:', err);
     }
@@ -41,8 +40,10 @@ setFaculties(normalized);
       const res = await createFaculty({ ...faculty, facultyId: newFacultyId });
       setFaculties((prev) => [...prev, res.data]);
       setShowAddModal(false);
+      showNotification && showNotification({ title: 'Created', message: 'Faculty added successfully', variant: 'success' });
     } catch (err) {
       console.error('Error adding faculty:', err);
+      showNotification && showNotification({ title: 'Error', message: 'Failed to add faculty', variant: 'danger' });
     }
   };
 
@@ -51,8 +52,10 @@ setFaculties(normalized);
       const res = await updateFaculty(updatedFaculty.id, updatedFaculty);
       setFaculties((prev) => prev.map((f) => (f.id === updatedFaculty.id ? res.data : f)));
       setShowEditModal(false);
+      showNotification && showNotification({ title: 'Updated', message: 'Faculty updated successfully', variant: 'success' });
     } catch (err) {
       console.error('Error updating faculty:', err);
+      showNotification && showNotification({ title: 'Error', message: 'Failed to update faculty', variant: 'danger' });
     }
   };
 
@@ -61,11 +64,12 @@ setFaculties(normalized);
       await deleteFaculty(currentFaculty.id);
       setFaculties((prev) => prev.filter((f) => f.id !== currentFaculty.id));
       setShowDeleteModal(false);
+      showNotification && showNotification({ title: 'Deleted', message: 'Faculty deleted successfully', variant: 'success' });
     } catch (err) {
       console.error('Error deleting faculty:', err);
+      showNotification && showNotification({ title: 'Error', message: 'Failed to delete faculty', variant: 'danger' });
     }
   };
-
 
   const handleStatusChange = async (facultyId, newStatus) => {
     try {
