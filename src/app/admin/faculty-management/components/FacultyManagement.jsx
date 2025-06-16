@@ -150,14 +150,12 @@ const FacultyManagement = () => {
                 </Form.Select>
               </InputGroup>
             </Col>
-            <Col md={3} lg={2} className="d-flex gap-2">
-              <Button variant="outline-success" className="w-100">
-                <FaDownload className="me-2" /> Export
-              </Button>
-              <Button variant="outline-secondary" className="w-100">
-                <FaUpload className="me-2" /> Import
-              </Button>
-            </Col>
+           <Col md={3} lg={2}>
+  <Button variant="outline-success" className="w-100">
+    <FaDownload className="me-2" /> Export
+  </Button>
+</Col>
+
           </Row>
         </Card.Body>
       </Card>

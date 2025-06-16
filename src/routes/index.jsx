@@ -428,7 +428,6 @@ const pagesRoutes = [
     name: 'Course Grid Classic',
     element: <Grid />,
   },
-  // course listing page route
   {
     path: '/courses',
     name: 'Course Grid Minimal',

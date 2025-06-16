@@ -36,4 +36,4 @@ const CreateChoiceModal = ({ show, onHide, onSelectFolder, onSelectTest }) => {
   );
 };
 
-export default CreateChoiceModal; 
+export default CreateChoiceModal;
