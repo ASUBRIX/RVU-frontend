@@ -66,7 +66,7 @@ useEffect(() => {
                     style={{ objectFit: 'cover', height: 250 }}
                   />
                 </div>
-                {img.name && <div className="p-2 text-center fw-semibold">{img.name}</div>}
+              
               </Card>
             </Col>
           ))}
