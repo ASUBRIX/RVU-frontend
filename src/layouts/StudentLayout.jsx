@@ -19,12 +19,13 @@ const StudentLayout = ({ children }) => {
 
   return (
     <>
-      <Suspense fallback={null}>
-        <TopNavigationBar />
-      </Suspense>
+      <div className="navigation-wrapper">
+        <Suspense fallback={null}>
+          <TopNavigationBar />
+        </Suspense>
+      </div>
 
       <main>
-
         <section className="pt-0">
           <Container>
             <Row>
@@ -49,12 +50,41 @@ const StudentLayout = ({ children }) => {
           </Container>
         </section>
       </main>
+
+      <style jsx>{`
+        .navigation-wrapper {
+          position: relative;
+          z-index: 10;
+          box-shadow: 0 4px 10px rgba(237, 21, 90, 0.1);
+          background: white;
+          border-bottom: 1px solid rgba(237, 21, 90, 0.08);
+        }
+        
+        .navigation-wrapper::after {
+          content: '';
+          position: absolute;
+          bottom: -10px;
+          left: 0;
+          right: 0;
+          height: 10px;
+          background: linear-gradient(180deg, rgba(237, 21, 90, 0.05) 0%, transparent 100%);
+          pointer-events: none;
+        }
+        
+        main {
+          position: relative;
+          z-index: 1;
+          background: #fafafa;
+          min-height: calc(100vh - 90px);
+        }
+        
+        section {
+          padding-top: 2rem !important;
+        }
+      `}</style>
     </>
   )
 }
-
-
-
 
 const VerticalMenu = () => {
   const { pathname } = useLocation()
@@ -62,8 +92,6 @@ const VerticalMenu = () => {
   const { removeSession } = useAuthContext()
 
   return (
-
-    
     <div className="bg-dark border rounded-3 pb-0 p-3 w-100">
       <div className="list-group list-group-dark list-group-borderless collapse-list">
         {STUDENT_MENU_ITEMS.map(({ label, url, icon }, idx) => {
@@ -75,8 +103,7 @@ const VerticalMenu = () => {
             </Link>
           )
         })}
-
-
+        
         <button
           className="list-group-item text-danger bg-danger-soft-hover"
           onClick={removeSession}

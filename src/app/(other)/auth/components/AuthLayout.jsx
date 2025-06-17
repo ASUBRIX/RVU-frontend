@@ -2,7 +2,7 @@ import avatar1 from '@/assets/images/avatar/01.jpg';
 import avatar2 from '@/assets/images/avatar/02.jpg';
 import avatar3 from '@/assets/images/avatar/03.jpg';
 import avatar4 from '@/assets/images/logo.png';
-import elementImg from '@/assets/images/logo.png';
+import elementImg from '@/assets/images/logo-transparent.png';
 import { Col, Container, Row } from 'react-bootstrap';
 
 const AuthLayout = ({ children }) => {
@@ -27,7 +27,7 @@ const AuthLayout = ({ children }) => {
                   className="img-fluid"
                   alt="element"
                   style={{
-                    maxHeight: 120, // reduced size
+                    maxHeight: 300,
                     display: 'block',
                   }}
                 />
@@ -43,7 +43,7 @@ const AuthLayout = ({ children }) => {
               <div
                 className="w-100 py-4 m-0"
                 style={{
-                  maxWidth: 700, // increased width
+                  maxWidth: 700, 
                   margin: '0 auto',
                   background: 'white',
                   borderRadius: 16,
