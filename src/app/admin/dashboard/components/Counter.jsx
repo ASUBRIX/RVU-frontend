@@ -16,7 +16,7 @@ const calculateMetrics = () => {
       count: totalRevenue,
       title: 'Total Revenue',
       icon: BsCurrencyDollar,
-      prefix: '$',
+      prefix: '₹',
       variant: 'success'
     },
     {
