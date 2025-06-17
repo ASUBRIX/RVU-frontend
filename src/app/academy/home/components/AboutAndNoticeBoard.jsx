@@ -47,24 +47,49 @@ const AboutAndNoticeBoard = () => {
               <TfiAnnouncement className="mx-3 text-primary" />
             </h3>
             <div className="notice-board">
-              <div className="notice-board-container manual-scroll">
+              <div className="notice-board-container">
                 {notices.length > 0 ? (
-                  notices.map((notice) => (
-                    <div key={notice.id} className="notice-item">
-                      <div className="d-flex align-items-center">
-                        <h5 className="text-primary mb-0">
-                          <BsFillPinFill />
-                        </h5>
-                        <p className="mb-0 ms-2">{notice.title}</p>
-                      </div>
-                      <div className="mt-1 mb-2">
-                        <small className="notice-date">
-                          {new Date(notice.created_at).toLocaleDateString()}
-                        </small>
-                      </div>
-                      {notice.content && <strong>{notice.content}</strong>}
+                  <div className="notice-ticker">
+                    <div className="notice-content">
+                      {notices.map((notice) => (
+                        <div key={notice.id} className="notice-item">
+                          <div className="notice-first-line">
+                            <BsFillPinFill className="text-primary pin-icon" />
+                            <small className="notice-date">
+                              {new Date(notice.created_at).toLocaleDateString()}
+                            </small>
+                          </div>
+                          <div className="notice-heading">
+                            <strong>{notice.title}</strong>
+                          </div>
+                          {notice.content && (
+                            <div className="notice-description">
+                              {notice.content}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      {/* Duplicate notices for seamless loop */}
+                      {notices.map((notice) => (
+                        <div key={`duplicate-${notice.id}`} className="notice-item">
+                          <div className="notice-first-line">
+                            <BsFillPinFill className="text-primary pin-icon" />
+                            <small className="notice-date">
+                              {new Date(notice.created_at).toLocaleDateString()}
+                            </small>
+                          </div>
+                          <div className="notice-heading">
+                            <strong>{notice.title}</strong>
+                          </div>
+                          {notice.content && (
+                            <div className="notice-description">
+                              {notice.content}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  ))
+                  </div>
                 ) : (
                   <div className="text-center py-4">
                     <p className="text-muted mb-0">No announcements to display</p>
