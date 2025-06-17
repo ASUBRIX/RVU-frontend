@@ -1,5 +1,5 @@
-#dropdown-avatar,
-.avatar-toggle-button {
+/* TopNavigationBar.css */
+#dropdown-avatar, .avatar-toggle-button {
   transition: box-shadow 0.2s;
   position: relative;
   z-index: 2;
@@ -14,10 +14,8 @@
   border-radius: 50%;
 }
 
-#dropdown-avatar:hover,
-.avatar-toggle-button:hover,
-#dropdown-avatar:focus,
-.avatar-toggle-button:focus {
+#dropdown-avatar:hover, .avatar-toggle-button:hover, 
+#dropdown-avatar:focus, .avatar-toggle-button:focus {
   box-shadow: 0 2px 8px rgba(237, 21, 90, 0.13);
   background: #ffeaf0 !important;
   color: #ed155a !important;
@@ -27,9 +25,9 @@
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) !important;
-  top: 110% !important; 
+  top: 110% !important;
   margin-top: 0 !important;
-  min-width: 140px;
+  min-width: 170px;
   text-align: center;
   box-shadow: 0 6px 24px rgba(237, 21, 90, 0.08);
   z-index: 1;
@@ -42,9 +40,17 @@
 }
 
 .dropdown-user-header {
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: none;
 }
 
 .dropdown-user-header span {
   font-size: 0.95rem;
+}
+
+.single-divider {
+  height: 0;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-top: 1px solid #ed155a ;
+  border-bottom: none;
 }

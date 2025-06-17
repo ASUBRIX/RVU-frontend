@@ -1,3 +1,4 @@
+// TopNavigationBar.jsx
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { Container, Collapse, NavItem, Dropdown } from 'react-bootstrap'
@@ -35,7 +36,6 @@ const TopNavigationBar = () => {
           <div className="d-flex align-items-center" style={{ marginLeft: 94 }}>
             <LogoBox height={90} width={240} />
           </div>
-
           <button onClick={toggle} className="navbar-toggler ms-2 custom-toggler" type="button" aria-expanded={isOpen} aria-label="Toggle navigation">
             <span className="navbar-toggler-animation">
               <span />
@@ -43,7 +43,6 @@ const TopNavigationBar = () => {
               <span />
             </span>
           </button>
-
           <Collapse in={isOpen || window.innerWidth >= 1200} className="navbar-collapse">
             <div className="d-flex align-items-center">
               <ul className="navbar-nav mb-2 mb-lg-0 d-flex flex-row flex-nowrap">
@@ -55,7 +54,6 @@ const TopNavigationBar = () => {
                   </NavItem>
                 ))}
               </ul>
-
               <div className="d-flex align-items-center ms-2 position-relative">
                 <Dropdown className="centered-avatar-dropdown">
                   <Dropdown.Toggle variant="light" id="dropdown-avatar" className="avatar-toggle-button">
@@ -79,7 +77,7 @@ const TopNavigationBar = () => {
                           <PersonCircle size={36} color="#ed155a" />
                           <span className="ms-2 fw-semibold text-dark">{user.first_name}</span>
                         </div>
-                        <Dropdown.Divider />
+                        <hr className="single-divider" />
                         <Dropdown.Item as={Link} to="/student/edit-profile" className="d-flex align-items-center gap-2">
                           <Person size={18} color="#6c757d" />
                           Dashboard
@@ -112,3 +110,4 @@ const TopNavigationBar = () => {
 }
 
 export default TopNavigationBar
+
