@@ -97,6 +97,7 @@ const InstructorChatPage = lazy(() => import('@/app/instructor/chat/page'))
 
 // Student
 const StudentDashboard = lazy(() => import('@/app/student/dashboard/page'))
+const StudentAddress = lazy(() => import('@/app/student/address/page'))
 const StudentChatPage = lazy(() => import('@/app/student/chat/page'))
 const Subscription = lazy(() => import('@/app/student/subscription/page'))
 const StudentCourseList = lazy(() => import('@/app/student/course-list/page'))
@@ -235,6 +236,11 @@ export const rawStudentRoutes = [
     path: '/student/edit-profile',
     name: 'Edit Profile',
     element: <StudentEditProfile />,
+  },
+  {
+    path: '/student/address',
+    name: 'Address',
+    element: <StudentAddress />,
   },
   {
     path: '/student/chat',
