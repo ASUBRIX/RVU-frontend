@@ -89,6 +89,33 @@
   margin-left: 0.5rem !important;
 }
 
+/* Additional gap reduction styles */
+.navbar-collapse .d-flex.align-items-center {
+  gap: 0 !important; /* Remove gap between logo area and nav items */
+}
+
+.navbar-nav {
+  margin-left: -1rem !important; /* Pull nav items closer to logo */
+}
+
+/* Logo size adjustments */
+.d-flex.align-items-center[style*="marginLeft"] {
+  margin-left: 86px !important;
+  margin-right: -2rem !important; /* Reduce gap between logo and menus */
+}
+
+/* Increase logo container size */
+.d-flex.align-items-center[style*="marginLeft"] > * {
+  transform: scale(1.2);
+  transform-origin: left center;
+}
+
+/* Alternative: Direct logo sizing if you want more control */
+.logo-container {
+  width: 288px !important; /* 240px * 1.2 */
+  height: 108px !important; /* 90px * 1.2 */
+}
+
 /* Optional: Make the entire navbar more compact on the right */
 @media (min-width: 1200px) {
   .navbar-collapse .d-flex.align-items-center {
@@ -101,5 +128,10 @@
   
   .navbar-nav .nav-item:last-child {
     margin-right: 0;
+  }
+  
+  /* Larger logo on desktop */
+  .d-flex.align-items-center[style*="marginLeft"] > * {
+    transform: scale(1.3);
   }
 }
