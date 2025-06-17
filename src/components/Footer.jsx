@@ -189,7 +189,7 @@ const Footer = ({ className }) => {
                 <Link to="https://asubrix.com/" target="_blank" className="text-body">
                   Asubrix International Pvt Ltd
                 </Link>{' '}
-                | © Pudhuyugam Academy 2025. All rights reserved
+                 © Pudhuyugam Academy 2025. All rights reserved
               </div>
             </div>
           </Container>

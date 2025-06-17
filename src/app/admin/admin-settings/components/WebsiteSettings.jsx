@@ -36,8 +36,8 @@ const WebsiteSettings = () => {
           siteEmail: apiData.site_email || '',
           sitePhone: apiData.site_phone || '',
           siteAddress: apiData.site_address || '',
-          siteLogo: apiData.site_logo || null,
-          siteFavicon: apiData.site_favicon || null,
+          siteLogo: null,
+          siteFavicon: null,
           copyrightText: apiData.copyright_text || '',
           facebookUrl: apiData.facebook_url || '',
           youtubeUrl: apiData.youtube_url || '',
@@ -76,24 +76,6 @@ const WebsiteSettings = () => {
       });
       const response = await updateWebsiteSettingsAdmin(formData);
       setFeedback({ type: 'success', message: response.message || 'Website settings updated successfully' });
-      if (response.settings) {
-        const updated = response.settings;
-        setSettings({
-          siteName: updated.site_name || '',
-          siteTitle: updated.site_title || '',
-          siteDescription: updated.site_description || '',
-          siteEmail: updated.site_email || '',
-          sitePhone: updated.site_phone || '',
-          siteAddress: updated.site_address || '',
-          siteLogo: updated.site_logo || null,
-          siteFavicon: updated.site_favicon || null,
-          copyrightText: updated.copyright_text || '',
-          facebookUrl: updated.facebook_url || '',
-          youtubeUrl: updated.youtube_url || '',
-          telegramUrl: updated.telegram_url || '',
-          instagramUrl: updated.instagram_url || ''
-        });
-      }
     } catch (error) {
       setFeedback({
         type: 'danger',
@@ -158,12 +140,6 @@ const WebsiteSettings = () => {
                     onChange={handleChange}
                     accept="image/*"
                   />
-                  {typeof settings[field] === 'string' && settings[field] && (
-                    <div className="mt-2">
-                      <small>Current {field.replace(/([A-Z])/g, ' $1')}: </small>
-                      <img src={settings[field]} alt={field} style={{ maxHeight: field === 'siteLogo' ? '40px' : '32px', maxWidth: '100%' }} />
-                    </div>
-                  )}
                 </Form.Group>
               </Col>
             ))}
