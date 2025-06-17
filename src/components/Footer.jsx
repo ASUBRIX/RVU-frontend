@@ -14,6 +14,26 @@ const BACKEND_URL = import.meta.env.VITE_API_BASE_URL;
 let settingsCache = null;
 
 const Footer = ({ className }) => {
+  // Inline styles for footer
+  const footerStyles = {
+    logoImageFooter: {
+      marginLeft: 0,
+      textAlign: 'left',
+      objectFit: 'contain'
+    },
+    logoColumn: {
+      textAlign: 'left'
+    },
+    termsLink: {
+      whiteSpace: 'nowrap',
+      wordBreak: 'keep-all'
+    },
+    logoLink: {
+      display: 'inline-block',
+      marginRight: '0 !important'
+    }
+  };
+
   const defaultSettings = {
     site_name: 'Pudhuyugam Academy',
     site_email: 'official@pudhuyugamacademy.in',
@@ -69,15 +89,16 @@ const Footer = ({ className }) => {
     <footer className={clsx('pt-5', className)}>
       <Container>
         <Row className="g-4">
-          <Col lg={3}>
-            <Link className="me-0" to="/">
+          {/* Logo section - explicitly kept on left */}
+          <Col lg={3} className="d-flex flex-column" style={footerStyles.logoColumn}>
+            <Link className="me-0" to="/" style={footerStyles.logoLink}>
               <img
                 className="light-mode-item logo-image-footer"
                 width={189}
                 height={40}
                 src={settings.site_logo}
                 alt={settings.site_name}
-                style={{ objectFit: 'contain' }}
+                style={footerStyles.logoImageFooter}
                 onError={(e) => { e.target.src = pylogo; }}
               />
             </Link>
@@ -137,6 +158,7 @@ const Footer = ({ className }) => {
             </ul>
           </Col>
 
+          {/* Footer Links */}
           <Col lg={5}>
             <Row className="g-4">
               {footerLinks.slice(0, 2).map((link, idx) => (
@@ -145,7 +167,11 @@ const Footer = ({ className }) => {
                   <ul className="nav flex-column">
                     {link.items.map((item, idx) => (
                       <li className="nav-item" key={idx}>
-                        <Link className="nav-link" to={item.link ?? ''}>
+                        <Link 
+                          className="nav-link" 
+                          to={item.link ?? ''}
+                          style={item.name === 'Terms and Conditions' ? footerStyles.termsLink : {}}
+                        >
                           {item.name}
                         </Link>
                       </li>
@@ -156,6 +182,7 @@ const Footer = ({ className }) => {
             </Row>
           </Col>
 
+          {/* Contact section */}
           <Col lg={4}>
             <h5 className="mb-2 mb-md-4">Contact</h5>
             <p className="mb-2">{settings.site_address}</p>
