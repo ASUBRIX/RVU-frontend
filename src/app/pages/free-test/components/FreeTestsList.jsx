@@ -1,11 +1,9 @@
 import { FaSearch, FaFolderOpen } from 'react-icons/fa';
 import { Card, CardTitle, Col, Container, Row, Button, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Pagination from './Pagination';
-import { useAuthContext } from '@/context/useAuthContext';
-import { useNotificationContext } from '@/context/useNotificationContext';
-import authService from '@/helpers/authService';
+import { getFreeFolders } from '@/helpers/user/testApi'; // ✅ Using your user-side testApi
 
 const ITEMS_PER_PAGE = 6;
 
@@ -15,77 +13,22 @@ const FreeTestsList = () => {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user, isAuthenticated } = useAuthContext();
-  const { showNotification } = useNotificationContext();
-  const hasFetchedRef = useRef(false);
-
-  // Debug auth state and session
-  useEffect(() => {
-    console.log('🔐 Checking session state...');
-    console.log('- isAuthenticated:', isAuthenticated);
-    console.log('- user object:', user);
-    if (user?.token) {
-      console.log('- Token present:', user.token.substring(0, 20) + '...');
-    } else {
-      console.warn('⚠️ No token found in user context.');
-    }
-  }, [user, isAuthenticated]);
 
   useEffect(() => {
-    hasFetchedRef.current = false;
-  }, [isAuthenticated, user?.token]);
-
-  useEffect(() => {
-    if (hasFetchedRef.current || !isAuthenticated) {
-      if (!isAuthenticated) {
-        console.warn('❌ Not authenticated. Skipping fetch.');
-        setError('Please sign in to view free tests');
-        setLoading(false);
-      }
-      return;
-    }
-
-    if (!user?.token) {
-      console.warn('❌ Token missing. Cannot fetch tests.');
-      setError('Authentication token missing. Please sign in again.');
-      setLoading(false);
-      return;
-    }
-
     const fetchTests = async () => {
       try {
-        hasFetchedRef.current = true;
-        console.log('📡 Fetching free tests with token...');
-        const responseData = await authService.getFreeTests(user.token);
-        console.log('✅ Free tests fetched:', responseData);
-        setTests(responseData.folders || []);
+        const response = await getFreeFolders();
+        setTests(response.data?.folders || []);
       } catch (err) {
-        console.error('🚨 Error fetching tests:', err);
-        if (err.response) {
-          if (err.response.status === 401) {
-            showNotification({ message: 'Session expired. Sign in again.', variant: 'danger' });
-            setError('Authentication failed. Sign in again.');
-          } else {
-            setError(err.response?.data?.error || 'Failed to fetch tests');
-            showNotification({
-              message: err.response?.data?.error || 'Fetch failed',
-              variant: 'danger',
-            });
-          }
-        } else if (err.request) {
-          setError('No response from server. Check your connection.');
-          showNotification({ message: 'No response from server', variant: 'danger' });
-        } else {
-          setError('Request setup error: ' + err.message);
-          showNotification({ message: 'Setup error: ' + err.message, variant: 'danger' });
-        }
+        console.error('Error fetching free folders:', err);
+        setError('Failed to fetch free tests.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchTests();
-  }, [isAuthenticated, user?.token, showNotification]);
+  }, []);
 
   const filteredTests = tests.filter((test) =>
     test.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -102,15 +45,6 @@ const FreeTestsList = () => {
     window.scrollTo(0, 0);
   };
 
-  if (!isAuthenticated) {
-    return (
-      <Container className="text-center py-5">
-        <p className="text-danger">Please sign in to view free tests</p>
-        <Link to="/auth" className="btn btn-primary">Sign In</Link>
-      </Container>
-    );
-  }
-
   if (loading) {
     return (
       <Container className="text-center py-5">
@@ -124,7 +58,7 @@ const FreeTestsList = () => {
   if (error) {
     return (
       <Container className="text-center py-5">
-        <p className="text-danger">Error: {error}</p>
+        <p className="text-danger">{error}</p>
       </Container>
     );
   }
