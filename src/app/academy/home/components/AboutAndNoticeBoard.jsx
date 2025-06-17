@@ -20,7 +20,6 @@ const AboutAndNoticeBoard = () => {
       <Row className="py-5">
         <Col lg={7}>
           <div className="p-4 d-flex flex-column">
-            <h5>About Us</h5>
             <h3 className="mb-3">Welcome to Pudhuyugam</h3>
             <p>
               Pudhuyugam Academy embarked on a resolute mission – to deliver top-notch education for a spectrum of competitive examinations. Our

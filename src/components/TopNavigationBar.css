@@ -1,4 +1,4 @@
-/* TopNavigationBar.css */
+/* Existing dropdown styles */
 #dropdown-avatar, .avatar-toggle-button {
   transition: box-shadow 0.2s;
   position: relative;
@@ -14,7 +14,7 @@
   border-radius: 50%;
 }
 
-#dropdown-avatar:hover, .avatar-toggle-button:hover, 
+#dropdown-avatar:hover, .avatar-toggle-button:hover,
 #dropdown-avatar:focus, .avatar-toggle-button:focus {
   box-shadow: 0 2px 8px rgba(237, 21, 90, 0.13);
   background: #ffeaf0 !important;
@@ -51,6 +51,55 @@
   height: 0;
   margin: 0.5rem 0;
   overflow: hidden;
-  border-top: 1px solid #ed155a ;
+  border-top: 1px solid #ed155a;
   border-bottom: none;
+}
+
+/* New styles for larger menus and reduced right padding */
+.navbar-nav .nav-link.custom-nav-link {
+  font-size: 1.1rem !important;
+  font-weight: 500 !important;
+  padding: 0.75rem 1rem !important;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link.custom-nav-link:hover {
+  color: #ed155a !important;
+  transform: translateY(-1px);
+}
+
+/* Reduce right-side padding/margin for the entire navigation container */
+.navbar-collapse {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+.navbar-nav {
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Adjust the container padding */
+.container-fluid.px-2.px-xl-4 {
+  padding-right: 1rem !important;
+}
+
+/* Reduce spacing between navigation items and avatar dropdown */
+.d-flex.align-items-center.ms-2 {
+  margin-left: 0.5rem !important;
+}
+
+/* Optional: Make the entire navbar more compact on the right */
+@media (min-width: 1200px) {
+  .navbar-collapse .d-flex.align-items-center {
+    gap: 0.5rem;
+  }
+  
+  .navbar-nav .nav-item {
+    margin-right: 0.25rem;
+  }
+  
+  .navbar-nav .nav-item:last-child {
+    margin-right: 0;
+  }
 }

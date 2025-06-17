@@ -1,4 +1,3 @@
-// TopNavigationBar.jsx
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 import { Container, Collapse, NavItem, Dropdown } from 'react-bootstrap'
@@ -33,7 +32,7 @@ const TopNavigationBar = () => {
       })}>
       <nav className="navbar navbar-expand-xl z-index-2 py-0">
         <Container fluid className="px-2 px-xl-4">
-          <div className="d-flex align-items-center" style={{ marginLeft: 94 }}>
+          <div className="d-flex align-items-center" style={{ marginLeft: 86 }}>
             <LogoBox height={90} width={240} />
           </div>
           <button onClick={toggle} className="navbar-toggler ms-2 custom-toggler" type="button" aria-expanded={isOpen} aria-label="Toggle navigation">
@@ -110,4 +109,6 @@ const TopNavigationBar = () => {
 }
 
 export default TopNavigationBar
+
+
 
