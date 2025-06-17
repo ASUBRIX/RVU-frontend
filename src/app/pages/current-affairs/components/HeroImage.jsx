@@ -1,5 +1,5 @@
 import { Col, Container, Row } from 'react-bootstrap';
-import bgImg3 from '@/assets/images/bg/03.jpg';
+import bgImg3 from '@/assets/images/bg/03.png';
 
 const CurrentAffairsHeroImage = () => (
   <section

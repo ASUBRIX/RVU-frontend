@@ -54,7 +54,6 @@ const CurrentAffairs = () => {
       <div className="current-affairs-page container py-5">
         <div className="row mb-4">
           <div className="col-12 col-lg-8">
-            <h2 className="display-4 fw-bold mb-3 text-start">Latest Current Affairs</h2>
             <p className="lead text-secondary text-start">
               Stay updated with the latest current affairs, news, and happenings.
             </p>

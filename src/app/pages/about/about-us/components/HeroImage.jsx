@@ -1,7 +1,7 @@
 import GlightBox from '@/components/GlightBox';
 import { Col, Container, Row } from 'react-bootstrap';
 import { FaPlay } from 'react-icons/fa';
-import bgImg3 from '@/assets/images/bg/03.jpg';
+import bgImg3 from '@/assets/images/bg/03.png';
 
 const HeroImage = () => {
   return (
