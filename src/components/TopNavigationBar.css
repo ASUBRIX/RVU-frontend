@@ -14,7 +14,7 @@
   border-radius: 50%;
 }
 
-#dropdown-avatar:hover, .avatar-toggle-button:hover,
+#dropdown-avatar:hover, .avatar-toggle-button:hover, 
 #dropdown-avatar:focus, .avatar-toggle-button:focus {
   box-shadow: 0 2px 8px rgba(237, 21, 90, 0.13);
   background: #ffeaf0 !important;
@@ -53,6 +53,43 @@
   overflow: hidden;
   border-top: 1px solid #ed155a;
   border-bottom: none;
+}
+
+/* Enhanced dropdown item styles with proper icon spacing */
+.custom-user-dropdown .dropdown-item {
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+  margin: 0.0625rem 0.5rem;
+}
+
+.custom-user-dropdown .dropdown-item:hover {
+  background-color: #ffeaf0;
+  color: #ed155a;
+}
+
+/* Icon spacing within dropdown items */
+.custom-user-dropdown .dropdown-item.d-flex.align-items-center {
+  gap: 0.125rem !important; /* Consistent gap between icon and text */
+}
+
+/* Alternative approach using margin if gap doesn't work as expected */
+.custom-user-dropdown .dropdown-item svg,
+.custom-user-dropdown .dropdown-item .bi {
+  margin-right: 0.75rem;
+}
+
+/* Ensure icons are properly aligned */
+.custom-user-dropdown .dropdown-item svg,
+.custom-user-dropdown .dropdown-item .bi {
+  flex-shrink: 0; /* Prevent icons from shrinking */
+  width: 18px;
+  height: 18px;
+}
+
+/* User header icon spacing */
+.dropdown-user-header .bi {
+  margin-right: 0.5rem;
 }
 
 /* New styles for larger menus and reduced right padding */

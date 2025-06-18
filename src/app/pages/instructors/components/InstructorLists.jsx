@@ -57,7 +57,7 @@ console.log('faculty members:',facultyMembers);
   return (
     <>
       {/* Board of Directors */}
-      <section className="py-5 bg-light board-section">
+      <section className="py-5 bg-white board-section">
         <Container>
           <div className="board-title-wrap">
             <h2 className="board-title">Board of Directors</h2>

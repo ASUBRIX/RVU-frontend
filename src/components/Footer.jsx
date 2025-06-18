@@ -18,11 +18,14 @@ const Footer = ({ className }) => {
   const footerStyles = {
     logoImageFooter: {
       marginLeft: 0,
-      textAlign: 'left',
-      objectFit: 'contain'
+      objectFit: 'contain',
+      display: 'block'
     },
     logoColumn: {
-      textAlign: 'left'
+      textAlign: 'left',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start'
     },
     termsLink: {
       whiteSpace: 'nowrap',
@@ -30,7 +33,19 @@ const Footer = ({ className }) => {
     },
     logoLink: {
       display: 'inline-block',
-      marginRight: '0 !important'
+      marginRight: 0,
+      alignSelf: 'flex-start'
+    },
+    logoDescription: {
+      textAlign: 'left',
+      marginTop: '1rem',
+      marginBottom: '1rem'
+    },
+    socialLinks: {
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+      marginTop: '1rem'
     }
   };
 
@@ -90,7 +105,7 @@ const Footer = ({ className }) => {
       <Container>
         <Row className="g-4">
           {/* Logo section - explicitly kept on left */}
-          <Col lg={3} className="d-flex flex-column" style={footerStyles.logoColumn}>
+          <Col lg={3} style={footerStyles.logoColumn}>
             <Link className="me-0" to="/" style={footerStyles.logoLink}>
               <img
                 className="light-mode-item logo-image-footer"
@@ -102,11 +117,12 @@ const Footer = ({ className }) => {
                 onError={(e) => { e.target.src = pylogo; }}
               />
             </Link>
-            <p className="my-3">
+            <p className="my-3" style={footerStyles.logoDescription}>
               {settings.site_description ||
                 'Pudhuyugam Academy embarked on a resolute mission to deliver top-notch education for a spectrum of competitive examinations'}
             </p>
-            <ul className="list-inline mb-0 mt-3">
+            <div style={footerStyles.socialLinks}>
+              <ul className="list-inline mb-0 mt-3" style={{ margin: 0, padding: 0 }}>
               {settings.facebook_url && (
                 <li className="list-inline-item">
                   <a
@@ -156,6 +172,7 @@ const Footer = ({ className }) => {
                 </li>
               )}
             </ul>
+            </div>
           </Col>
 
           {/* Footer Links */}
