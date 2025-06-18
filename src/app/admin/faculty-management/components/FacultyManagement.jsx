@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Card, Button, Row, Col, Form, InputGroup, Modal, Tabs, Tab } from 'react-bootstrap';
-import { FaSearch, FaPlus, FaFilter, FaDownload, FaUpload } from 'react-icons/fa';
+import { Card, Button, Row, Col, Form, InputGroup, Modal } from 'react-bootstrap';
+import { FaSearch, FaPlus, FaFilter, FaDownload } from 'react-icons/fa';
 import FacultyTable from './FacultyTable';
 import FacultyForm from './FacultyForm';
 import { getAllFaculties, createFaculty, updateFaculty, deleteFaculty } from '@/helpers/facultyApi';
@@ -150,60 +150,28 @@ const FacultyManagement = () => {
                 </Form.Select>
               </InputGroup>
             </Col>
-           <Col md={3} lg={2}>
-  <Button variant="outline-success" className="w-100">
-    <FaDownload className="me-2" /> Export
-  </Button>
-</Col>
-
+            <Col md={3} lg={2}>
+              <Button variant="outline-success" className="w-100">
+                <FaDownload className="me-2" /> Export
+              </Button>
+            </Col>
           </Row>
         </Card.Body>
       </Card>
 
-      <Tabs defaultActiveKey="allFaculties" className="mb-4">
-        <Tab eventKey="allFaculties" title="All Faculty">
-          <FacultyTable
-            faculty={filteredFaculties}
-            onEdit={(faculty) => {
-              setCurrentFaculty(faculty);
-              setShowEditModal(true);
-            }}
-            onDelete={(faculty) => {
-              setCurrentFaculty(faculty);
-              setShowDeleteModal(true);
-            }}
-            onStatusChange={handleStatusChange}  
-          />
-        </Tab>
-        <Tab eventKey="active" title="Active Faculty">
-          <FacultyTable
-            faculty={filteredFaculties.filter((f) => f.status === 'active')}
-            onEdit={(faculty) => {
-              setCurrentFaculty(faculty);
-              setShowEditModal(true);
-            }}
-            onDelete={(faculty) => {
-              setCurrentFaculty(faculty);
-              setShowDeleteModal(true);
-            }}
-            onStatusChange={handleStatusChange}
-          />
-        </Tab>
-        <Tab eventKey="inactive" title="Inactive Faculty">
-          <FacultyTable
-            faculty={filteredFaculties.filter((f) => f.status === 'inactive')}
-            onEdit={(faculty) => {
-              setCurrentFaculty(faculty);
-              setShowEditModal(true);
-            }}
-            onDelete={(faculty) => {
-              setCurrentFaculty(faculty);
-              setShowDeleteModal(true);
-            }}
-            onStatusChange={handleStatusChange}
-          />
-        </Tab>
-      </Tabs>
+      {/* Removed Tabs - Direct Faculty Table */}
+      <FacultyTable
+        faculty={filteredFaculties}
+        onEdit={(faculty) => {
+          setCurrentFaculty(faculty);
+          setShowEditModal(true);
+        }}
+        onDelete={(faculty) => {
+          setCurrentFaculty(faculty);
+          setShowDeleteModal(true);
+        }}
+        onStatusChange={handleStatusChange}  
+      />
 
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)} size="lg" centered>
         <Modal.Header closeButton>

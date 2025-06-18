@@ -4,46 +4,59 @@
  * - Faculty specific styles: src/assets/scss/components/_faculty-management.scss
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Table } from 'react-bootstrap';
 import { 
-  FaUserTie, FaEnvelope, FaPhone, FaCalendarAlt,
+  FaUserTie, FaEnvelope, FaPhone,
   FaBuilding, FaChalkboardTeacher, FaArrowLeft,
   FaEdit, FaTrash, FaBook, FaClock, FaUsers
 } from 'react-icons/fa';
 
-// Dummy teaching courses data
-const dummyTeachingCourses = [
-  {
-    id: 1,
-    code: 'CS301',
-    name: 'Advanced Programming',
-    schedule: 'Mon, Wed 10:00 AM',
-    students: 45,
-    status: 'ongoing',
-    completion: 70
-  },
-  {
-    id: 2,
-    code: 'CS401',
-    name: 'Software Engineering',
-    schedule: 'Tue, Thu 2:00 PM',
-    students: 38,
-    status: 'completed',
-    completion: 100
-  },
-  {
-    id: 3,
-    code: 'CS201',
-    name: 'Data Structures',
-    schedule: 'Wed, Fri 11:30 AM',
-    students: 52,
-    status: 'upcoming',
-    completion: 0
-  }
-];
-
 const FacultyDetails = ({ faculty, onBack, onEdit, onDelete }) => {
+  const [teachingCourses, setTeachingCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Avatar display function
+  const getAvatarDisplay = () => {
+    if (faculty.avatar && faculty.avatar !== 'default' && faculty.avatar.startsWith('data:')) {
+      return (
+        <img 
+          src={faculty.avatar} 
+          alt="Faculty Avatar" 
+          className="rounded-circle" 
+          width="80" 
+          height="80" 
+          style={{ objectFit: 'cover' }}
+        />
+      );
+    }
+    return <FaUserTie size={80} className="text-primary" />;
+  };
+
+  // Fetch teaching courses for this faculty
+  useEffect(() => {
+    if (faculty?.id) {
+      fetchTeachingCourses(faculty.id);
+    }
+  }, [faculty]);
+
+  const fetchTeachingCourses = async (facultyId) => {
+    try {
+      setLoading(true);
+      // Replace this with your actual API call
+      // const response = await getTeachingCourses(facultyId);
+      // setTeachingCourses(response.data);
+      
+      // For now, using empty array until API is implemented
+      setTeachingCourses([]);
+    } catch (error) {
+      console.error('Error fetching teaching courses:', error);
+      setTeachingCourses([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!faculty) {
     return (
       <Container fluid className="py-4">
@@ -84,7 +97,7 @@ const FacultyDetails = ({ faculty, onBack, onEdit, onDelete }) => {
           <Row className="align-items-center">
             <Col md={2} className="text-center">
               <div className="avatar-circle">
-                <FaUserTie />
+                {getAvatarDisplay()}
               </div>
             </Col>
             <Col md={8}>
@@ -111,7 +124,7 @@ const FacultyDetails = ({ faculty, onBack, onEdit, onDelete }) => {
                   </div>
                   <div className="info-content">
                     <span className="label">Faculty ID</span>
-                    <span className="value">{faculty.facultyId}</span>
+                    <span className="value">{faculty.faculty_id || faculty.facultyId || `FAC${String(faculty.id).padStart(3, '0')}`}</span>
                   </div>
                 </div>
                 <div className="info-item">
@@ -132,15 +145,17 @@ const FacultyDetails = ({ faculty, onBack, onEdit, onDelete }) => {
                     <span className="value">{faculty.phone}</span>
                   </div>
                 </div>
-                <div className="info-item">
-                  <div className="icon">
-                    <FaCalendarAlt />
+                {faculty.qualification && (
+                  <div className="info-item">
+                    <div className="icon">
+                      <FaBook />
+                    </div>
+                    <div className="info-content">
+                      <span className="label">Qualification</span>
+                      <span className="value">{faculty.qualification}</span>
+                    </div>
                   </div>
-                  <div className="info-content">
-                    <span className="label">Join Date</span>
-                    <span className="value">{faculty.joinDate}</span>
-                  </div>
-                </div>
+                )}
               </div>
             </Card.Body>
           </Card>
@@ -170,67 +185,99 @@ const FacultyDetails = ({ faculty, onBack, onEdit, onDelete }) => {
                     <span className="value">{faculty.department}</span>
                   </div>
                 </div>
-                <div className="info-item">
-                  <div className="icon">
-                    <FaClock />
+                {faculty.experience && (
+                  <div className="info-item">
+                    <div className="icon">
+                      <FaClock />
+                    </div>
+                    <div className="info-content">
+                      <span className="label">Experience</span>
+                      <span className="value">{faculty.experience}</span>
+                    </div>
                   </div>
-                  <div className="info-content">
-                    <span className="label">Experience</span>
-                    <span className="value">{faculty.experience || '8 Years'}</span>
+                )}
+                {faculty.board_member && (
+                  <div className="info-item">
+                    <div className="icon">
+                      <FaUsers />
+                    </div>
+                    <div className="info-content">
+                      <span className="label">Board Member</span>
+                      <span className="value">Yes</span>
+                    </div>
                   </div>
-                </div>
-                <div className="info-item">
-                  <div className="icon">
-                    <FaBook />
-                  </div>
-                  <div className="info-content">
-                    <span className="label">Specialization</span>
-                    <span className="value">{faculty.specialization || 'Computer Science'}</span>
-                  </div>
-                </div>
+                )}
               </div>
             </Card.Body>
           </Card>
         </Col>
 
-        {/* Teaching Courses */}
+        {/* Bio Section */}
+        {faculty.bio && (
+          <Col md={12} className="mb-4">
+            <Card className="info-card">
+              <Card.Body>
+                <h4 className="card-title">Biography</h4>
+                <p className="text-muted">{faculty.bio}</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        )}
+
+        {/* Teaching Courses - Dynamic */}
         <Col md={12}>
           <Card className="courses-card">
             <Card.Body>
               <h4 className="card-title">Teaching Courses</h4>
-              <Table responsive className="courses-table">
-                <thead>
-                  <tr>
-                    <th>Course Code</th>
-                    <th>Course Name</th>
-                    <th>Schedule</th>
-                    <th>Students</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dummyTeachingCourses.map((course) => (
-                    <tr key={course.id}>
-                      <td><strong>{course.code}</strong></td>
-                      <td>{course.name}</td>
-                      <td>{course.schedule}</td>
-                      <td>
-                        <div className="instructor-info">
-                          <div className="instructor-avatar">
-                            <FaUsers />
-                          </div>
-                          {course.students} students
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`course-status ${course.status}`}>
-                          {course.status.charAt(0).toUpperCase() + course.status.slice(1)}
-                        </span>
-                      </td>
+              
+              {loading ? (
+                <div className="text-center py-4">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p className="mt-2 text-muted">Loading courses...</p>
+                </div>
+              ) : teachingCourses.length > 0 ? (
+                <Table responsive className="courses-table">
+                  <thead>
+                    <tr>
+                      <th>Course Code</th>
+                      <th>Course Name</th>
+                      <th>Schedule</th>
+                      <th>Students</th>
+                      <th>Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
+                  </thead>
+                  <tbody>
+                    {teachingCourses.map((course) => (
+                      <tr key={course.id}>
+                        <td><strong>{course.code}</strong></td>
+                        <td>{course.name}</td>
+                        <td>{course.schedule}</td>
+                        <td>
+                          <div className="instructor-info">
+                            <div className="instructor-avatar">
+                              <FaUsers />
+                            </div>
+                            {course.students} students
+                          </div>
+                        </td>
+                        <td>
+                          <span className={`course-status ${course.status}`}>
+                            {course.status.charAt(0).toUpperCase() + course.status.slice(1)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              ) : (
+                <div className="text-center py-5">
+                  <FaBook size={48} className="text-muted mb-3" />
+                  <h5 className="text-muted">No Courses Assigned</h5>
+                  <p className="text-muted">This faculty member is not currently assigned to any courses.</p>
+                </div>
+              )}
             </Card.Body>
           </Card>
         </Col>
@@ -239,4 +286,4 @@ const FacultyDetails = ({ faculty, onBack, onEdit, onDelete }) => {
   );
 };
 
-export default FacultyDetails; 
+export default FacultyDetails;

@@ -61,6 +61,7 @@ const FacultyTable = ({ faculty = [], onEdit, onDelete, onStatusChange }) => {
                 <tr>
                   <th>Name</th>
                   <th>ID</th>
+                  <th>Department</th>
                   <th>Designation</th>
                   <th>Status</th>
                   <th className='text-end'>Actions</th>
@@ -71,6 +72,7 @@ const FacultyTable = ({ faculty = [], onEdit, onDelete, onStatusChange }) => {
                   <tr key={faculty.id}>
                     <td>{faculty.name}</td>
                     <td>{faculty.faculty_id || `FAC${String(faculty.id).padStart(3, '0')}`}</td>
+                    <td>{faculty.department}</td>
                     <td>{faculty.designation}</td>
                     <td>
                       <span className={`badge bg-${faculty.status === 'active' ? 'success' : 'secondary'}`}>
