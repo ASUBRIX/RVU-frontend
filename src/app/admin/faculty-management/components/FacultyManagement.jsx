@@ -143,10 +143,6 @@ const FacultyManagement = () => {
                   <option value="all">All Faculties</option>
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
-                  <option disabled>─────────────</option>
-                  {departments.map((dept) => (
-                    <option key={dept} value={dept}>{dept}</option>
-                  ))}
                 </Form.Select>
               </InputGroup>
             </Col>
