@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './components/BlogManagement.scss'
-import { Container, Button, Form, Modal } from 'react-bootstrap'
-import { FaPlus, FaEye  } from 'react-icons/fa'
+import { Container, Button, Form, Modal, Alert, Spinner } from 'react-bootstrap'
+import { FaPlus, FaEye, FaEdit, FaTrash, FaEyeSlash } from 'react-icons/fa'
 import { FiSearch } from 'react-icons/fi'
 import { BsFileEarmarkRichtext, BsFileEarmarkBreak } from "react-icons/bs";
 import { getBlogs, createBlog, updateBlog, deleteBlog } from '@/helpers/blogApi';
@@ -9,6 +9,9 @@ import { getBlogs, createBlog, updateBlog, deleteBlog } from '@/helpers/blogApi'
 const BlogManagement = () => {
   // State for blog posts
   const [blogPosts, setBlogPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [submitLoading, setSubmitLoading] = useState(false)
 
   // State for the form
   const [formData, setFormData] = useState({
@@ -23,6 +26,9 @@ const BlogManagement = () => {
     isPublished: true,
   })
 
+  // Form validation errors
+  const [formErrors, setFormErrors] = useState({})
+
   // State for image preview
   const [imagePreview, setImagePreview] = useState(null)
   
@@ -35,114 +41,70 @@ const BlogManagement = () => {
   // State for showing confirmation dialog
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [postToDelete, setPostToDelete] = useState(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   // State for modal
   const [showAddModal, setShowAddModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('newest')
   const [showOnlyPublished, setShowOnlyPublished] = useState(false)
+  const [filterByTag, setFilterByTag] = useState('')
 
-  // Mock function to load posts
-  // useEffect(() => {
-  //   // Sample blog data
-  //   const initialBlogPosts = [
-  //     {
-  //       id: 1,
-  //       title: 'Getting Started with React',
-  //       date: 'March 25, 2025',
-  //       author: 'Jane Doe',
-  //       excerpt:
-  //         'React is a popular JavaScript library for building user interfaces. In this post, we will explore the basics of React and how to get started with your first app.',
-  //       content:
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-  //       imageUrl: 'https://www.adverity.com/hubfs/6%20Key%20Digital%20Marketing%20Metrics%20for%202025%20blog%20hero.png',
-  //       tags: ['React', 'JavaScript', 'Web Development'],
-  //       isPublished: true,
-  //     },
-  //     {
-  //       id: 2,
-  //       title: 'Styling in React with SCSS',
-  //       date: 'March 20, 2025',
-  //       author: 'John Smith',
-  //       excerpt:
-  //         'SCSS is a powerful CSS preprocessor that can help you write more maintainable styles for your React applications. Learn how to integrate SCSS with React.',
-  //       content:
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-  //       imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
-  //       tags: ['SCSS', 'CSS', 'Styling', 'React'],
-  //       isPublished: true,
-  //     },
-  //     {
-  //       id: 3,
-  //       title: 'State Management in React Applications',
-  //       date: 'March 15, 2025',
-  //       author: 'Sarah Johnson',
-  //       excerpt:
-  //         'Managing state in React applications can be challenging. In this post, we will look at different approaches to state management and when to use each one.',
-  //       content:
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-  //       imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
-  //       tags: ['React', 'State Management', 'Redux', 'Context API'],
-  //       isPublished: true,
-  //     },
-  //     {
-  //       id: 4,
-  //       title: 'Building Accessible React Components',
-  //       date: 'March 10, 2025',
-  //       author: 'Alex Williams',
-  //       excerpt:
-  //         'Accessibility is crucial for modern web applications. Discover how to create React components that are accessible to all users, including those with disabilities.',
-  //       content:
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-  //       imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
-  //       tags: ['React', 'Accessibility', 'a11y', 'Web Development'],
-  //       isPublished: true,
-  //     },
-  //     {
-  //       id: 5,
-  //       title: 'React Performance Optimization Techniques',
-  //       date: 'March 5, 2025',
-  //       author: 'Jamie Lee',
-  //       excerpt:
-  //         'Optimizing React application performance is essential for providing a smooth user experience. Learn about memoization, code splitting, and other optimization techniques.',
-  //       content:
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl. Nullam auctor, nisl eget ultricies tincidunt, nisl nisl aliquam nisl, eget ultricies nisl nisl eget nisl.',
-  //       imageUrl: 'https://images.pexels.com/photos/261662/pexels-photo-261662.jpeg?cs=srgb&dl=pexels-pixabay-261662.jpg&fm=jpg',
-  //       tags: ['React', 'Performance', 'Optimization', 'JavaScript'],
-  //       isPublished: true,
-  //     },
-  //   ]
-
-  //   setBlogPosts(initialBlogPosts)
-  // }, [])
+  // Success message
+  const [successMessage, setSuccessMessage] = useState('')
 
   useEffect(() => {
-  fetchBlogs();
-}, []);
+    fetchBlogs();
+  }, []);
 
-const fetchBlogs = async () => {
-  try {
-    const res = await getBlogs();
-    setBlogPosts(res.data);
-  } catch (err) {
-    console.error('Failed to load blogs:', err);
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const res = await getBlogs();
+      setBlogPosts(res.data);
+    } catch (err) {
+      console.error('Failed to load blogs:', err);
+      setError('Failed to load blogs. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  };
+
+  // Validate form
+  const validateForm = () => {
+    const errors = {}
+    
+    if (!formData.title.trim()) errors.title = 'Title is required'
+    if (!formData.author.trim()) errors.author = 'Author is required'
+    if (!formData.excerpt.trim()) errors.excerpt = 'Excerpt is required'
+    if (!formData.content.trim()) errors.content = 'Content is required'
+    if (!formData.tags.trim()) errors.tags = 'At least one tag is required'
+    
+    // Validate tags format
+    if (formData.tags.trim()) {
+      const tags = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+      if (tags.length === 0) errors.tags = 'At least one valid tag is required'
+    }
+
+    setFormErrors(errors)
+    return Object.keys(errors).length === 0
   }
-};
 
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
 
-    if (name === 'tags') {
-      // Handle tags as a comma-separated string
-      setFormData({
-        ...formData,
-        [name]: value,
-      })
-    } else {
-      setFormData({
-        ...formData,
-        [name]: type === 'checkbox' ? checked : value,
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    })
+
+    // Clear specific field error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors({
+        ...formErrors,
+        [name]: null
       })
     }
   }
@@ -152,6 +114,18 @@ const fetchBlogs = async () => {
     const file = e.target.files[0]
     
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file')
+        return
+      }
+
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image file must be less than 5MB')
+        return
+      }
+
       setSelectedFile(file)
       
       // Create a preview URL for the selected image
@@ -167,75 +141,80 @@ const fetchBlogs = async () => {
   }
 
   // Handle form submission for creating or updating a post
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log("handle submit is calling");
-
-  // Format the tags from comma-separated string to array
-  const formattedTags = formData.tags.split(',').map((tag) => tag.trim());
-  console.log('Formatted Tags:', formattedTags);
-
-  // Use today's date if none provided
-  const submitDate =
-    formData.date ||
-    new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
-  // Use uploaded preview or existing image URL
-  const imageUrl = imagePreview || formData.imageUrl;
-
-  try {
-    if (editMode) {
-      // Update blog via API
-      const updatedPost = {
-        ...formData,
-        date: submitDate,
-        tags: formattedTags,
-        imageUrl
-      };
-      const res = await updateBlog(formData.id, updatedPost);
-      console.log("Blog updated:", res.data);
-
-      // Update frontend list
-      setBlogPosts((prev) =>
-        prev.map((post) => (post.id === res.data.id ? res.data : post))
-      );
-    } else {
-      // Create new blog via API
-      const newPost = {
-        ...formData,
-        date: submitDate,
-        tags: formattedTags,
-        imageUrl
-      };
-      const res = await createBlog(newPost);
-      console.log("New Blog Post:", res.data);
-
-      // Add new blog to frontend list
-      setBlogPosts((prev) => [...prev, res.data]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return
     }
 
-    // Reset form and close modal
-    resetForm();
-    setShowAddModal(false);
-  } catch (err) {
-    console.error("Error saving blog post:", err);
-  }
-};
+    setSubmitLoading(true)
+    setError(null)
 
+    try {
+      // Format the tags from comma-separated string to array
+      const formattedTags = formData.tags.split(',').map((tag) => tag.trim()).filter(tag => tag);
+
+      // Use today's date if none provided
+      const submitDate = formData.date || new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+
+      // Use uploaded preview or existing image URL
+      const imageUrl = imagePreview || formData.imageUrl;
+
+      const postData = {
+        ...formData,
+        date: submitDate,
+        tags: formattedTags,
+        imageUrl
+      };
+
+      if (editMode) {
+        // Update blog via API
+        const res = await updateBlog(formData.id, postData);
+        
+        // Update frontend list
+        setBlogPosts((prev) =>
+          prev.map((post) => (post.id === res.data.id ? res.data : post))
+        );
+        setSuccessMessage('Blog post updated successfully!')
+      } else {
+        // Create new blog via API
+        const res = await createBlog(postData);
+        
+        // Add new blog to frontend list
+        setBlogPosts((prev) => [res.data, ...prev]);
+        setSuccessMessage('Blog post created successfully!')
+      }
+
+      // Reset form and close modal
+      resetForm();
+      setShowAddModal(false);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(''), 3000)
+      
+    } catch (err) {
+      console.error("Error saving blog post:", err);
+      setError(err.response?.data?.error || 'Failed to save blog post. Please try again.')
+    } finally {
+      setSubmitLoading(false)
+    }
+  };
 
   // Handle edit button click
   const handleEdit = (post) => {
     setEditMode(true)
     setFormData({
       ...post,
-      tags: post.tags.join(', '),
+      tags: Array.isArray(post.tags) ? post.tags.join(', ') : post.tags,
     })
     setImagePreview(post.imageUrl)
     setShowAddModal(true)
+    setFormErrors({})
   }
 
   // Handle delete confirmation
@@ -245,10 +224,20 @@ const handleSubmit = async (e) => {
   }
 
   // Handle actual deletion
-  const handleDelete = () => {
-    if (postToDelete) {
-      const filteredPosts = blogPosts.filter((post) => post.id !== postToDelete.id)
-      setBlogPosts(filteredPosts)
+  const handleDelete = async () => {
+    if (!postToDelete) return
+
+    setDeleteLoading(true)
+    try {
+      await deleteBlog(postToDelete.id)
+      setBlogPosts(prev => prev.filter((post) => post.id !== postToDelete.id))
+      setSuccessMessage('Blog post deleted successfully!')
+      setTimeout(() => setSuccessMessage(''), 3000)
+    } catch (err) {
+      console.error('Failed to delete blog:', err)
+      setError('Failed to delete blog post. Please try again.')
+    } finally {
+      setDeleteLoading(false)
       setShowDeleteConfirm(false)
       setPostToDelete(null)
     }
@@ -270,6 +259,8 @@ const handleSubmit = async (e) => {
     setEditMode(false)
     setSelectedFile(null)
     setImagePreview(null)
+    setFormErrors({})
+    setError(null)
   }
 
   // Handle closing modal
@@ -279,28 +270,53 @@ const handleSubmit = async (e) => {
   }
 
   // Handle changing post publish status
-  const togglePublishStatus = (id) => {
-    const updatedPosts = blogPosts.map((post) => (post.id === id ? { ...post, isPublished: !post.isPublished } : post))
-    setBlogPosts(updatedPosts)
+  const togglePublishStatus = async (post) => {
+    try {
+      const updatedPost = { ...post, isPublished: !post.isPublished }
+      await updateBlog(post.id, updatedPost)
+      
+      setBlogPosts(prev => 
+        prev.map((p) => (p.id === post.id ? { ...p, isPublished: !p.isPublished } : p))
+      )
+      setSuccessMessage(`Post ${updatedPost.isPublished ? 'published' : 'unpublished'} successfully!`)
+      setTimeout(() => setSuccessMessage(''), 3000)
+    } catch (err) {
+      console.error('Failed to update publish status:', err)
+      setError('Failed to update publish status. Please try again.')
+    }
   }
 
-  // Filter posts based on search query and published status
+  // Get all unique tags for filter dropdown
+  const getAllTags = () => {
+    const allTags = new Set()
+    blogPosts.forEach(post => {
+      if (Array.isArray(post.tags)) {
+        post.tags.forEach(tag => allTags.add(tag))
+      }
+    })
+    return Array.from(allTags).sort()
+  }
+
+  // Filter posts based on search query, published status, and tag
   const filteredPosts = blogPosts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      (Array.isArray(post.tags) && post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())))
 
-    return (!showOnlyPublished || post.isPublished) && matchesSearch
+    const matchesPublishFilter = !showOnlyPublished || post.isPublished
+    const matchesTagFilter = !filterByTag || (Array.isArray(post.tags) && post.tags.includes(filterByTag))
+
+    return matchesSearch && matchesPublishFilter && matchesTagFilter
   })
 
   // Sort posts
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     switch (sortBy) {
       case 'newest':
-        return new Date(b.date) - new Date(a.date)
+        return new Date(b.created_at || b.date) - new Date(a.created_at || a.date)
       case 'oldest':
-        return new Date(a.date) - new Date(b.date)
+        return new Date(a.created_at || a.date) - new Date(b.created_at || b.date)
       case 'name':
         return a.title.localeCompare(b.title)
       case 'status':
@@ -310,9 +326,33 @@ const handleSubmit = async (e) => {
     }
   })
 
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    )
+  }
+
   return (
     <>
       <div>
+        {/* Success Message */}
+        {successMessage && (
+          <Alert variant="success" dismissible onClose={() => setSuccessMessage('')}>
+            {successMessage}
+          </Alert>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <Alert variant="danger" dismissible onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
+
         {/* Header Section */}
         <div className="bg-light p-4 mb-4 rounded">
           <Container fluid>
@@ -332,15 +372,20 @@ const handleSubmit = async (e) => {
                   </ol>
                 </nav>
               </div>
-              <Button variant="primary" className="d-flex align-items-center" onClick={() => setShowAddModal(true)}>
+              <Button 
+                variant="primary" 
+                className="d-flex align-items-center" 
+                onClick={() => setShowAddModal(true)}
+                disabled={submitLoading}
+              >
                 <FaPlus className="me-2" />
                 Add New Blog
               </Button>
             </div>
 
-            {/* Search and Sort Section */}
+            {/* Search and Filter Section */}
             <div className="row g-3 align-items-center">
-              <div className="col-md-8">
+              <div className="col-md-6">
                 <div className="search-input">
                   <div className="input-group">
                     <span className="input-group-text border-end-0 bg-white">
@@ -356,7 +401,18 @@ const handleSubmit = async (e) => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-4">
+              <div className="col-md-3">
+                <Form.Select 
+                  value={filterByTag} 
+                  onChange={(e) => setFilterByTag(e.target.value)}
+                >
+                  <option value="">All Tags</option>
+                  {getAllTags().map(tag => (
+                    <option key={tag} value={tag}>{tag}</option>
+                  ))}
+                </Form.Select>
+              </div>
+              <div className="col-md-3">
                 <div className="d-flex align-items-center justify-content-end">
                   <label className="me-2 text-nowrap fw-medium">Sort by:</label>
                   <Form.Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="form-select">
@@ -378,7 +434,7 @@ const handleSubmit = async (e) => {
               <div className="card bg-white shadow-sm h-100">
                 <div className="card-body d-flex align-items-center">
                   <div className="p-3">
-                    <FaEye/>
+                    <FaEye size={24} className="text-primary"/>
                   </div>
                   <div>
                     <h6 className="text-muted mb-1">Total Posts</h6>
@@ -391,7 +447,7 @@ const handleSubmit = async (e) => {
               <div className="card bg-white shadow-sm h-100">
                 <div className="card-body d-flex align-items-center">
                   <div className="p-3">
-                    <BsFileEarmarkRichtext/>
+                    <BsFileEarmarkRichtext size={24} className="text-success"/>
                   </div>
                   <div>
                     <h6 className="text-muted mb-1">Published Posts</h6>
@@ -404,7 +460,7 @@ const handleSubmit = async (e) => {
               <div className="card bg-white shadow-sm h-100">
                 <div className="card-body d-flex align-items-center">
                   <div className="p-3">
-                    <BsFileEarmarkBreak size={14}/>
+                    <BsFileEarmarkBreak size={24} className="text-warning"/>
                   </div>
                   <div>
                     <h6 className="text-muted mb-1">Draft Posts</h6>
@@ -420,7 +476,7 @@ const handleSubmit = async (e) => {
             <div className="col-12">
               <div className="card shadow-sm">
                 <div className="card-header bg-white d-flex justify-content-between align-items-center">
-                  <h5 className="mb-0">Manage Existing Posts</h5>
+                  <h5 className="mb-0">Manage Existing Posts ({filteredPosts.length})</h5>
                   <div className="form-check form-switch">
                     <input
                       className="form-check-input"
@@ -453,15 +509,32 @@ const handleSubmit = async (e) => {
                           sortedPosts.map((post) => (
                             <tr key={post.id} className={!post.isPublished ? 'table-light' : ''}>
                               <td>{post.id}</td>
-                              <td>{post.title}</td>
+                              <td>
+                                <div className="d-flex align-items-center">
+                                  {post.imageUrl && (
+                                    <img 
+                                      src={post.imageUrl} 
+                                      alt={post.title}
+                                      className="thumbnail me-2"
+                                      style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+                                    />
+                                  )}
+                                  <div>
+                                    <div className="fw-medium">{post.title}</div>
+                                    <small className="text-muted">{post.excerpt?.substring(0, 60)}...</small>
+                                  </div>
+                                </div>
+                              </td>
                               <td>{post.author}</td>
                               <td>{post.date}</td>
                               <td>
-                                {post.tags.map((tag) => (
-                                  <span key={tag} className="badge bg-light text-dark border me-1">
+                                {Array.isArray(post.tags) ? post.tags.map((tag) => (
+                                  <span key={tag} className="badge bg-light text-dark border me-1 mb-1">
                                     {tag}
                                   </span>
-                                ))}
+                                )) : (
+                                  <span className="text-muted">No tags</span>
+                                )}
                               </td>
                               <td>
                                 <span className={`badge ${post.isPublished ? 'bg-success' : 'bg-warning'}`}>
@@ -470,17 +543,26 @@ const handleSubmit = async (e) => {
                               </td>
                               <td>
                                 <div className="btn-group btn-group-sm">
-                                  <button className="btn btn-outline-primary" onClick={() => handleEdit(post)}>
-                                    <i className="bi bi-pencil"></i> Edit
+                                  <button 
+                                    className="btn btn-outline-primary" 
+                                    onClick={() => handleEdit(post)}
+                                    title="Edit post"
+                                  >
+                                    <FaEdit />
                                   </button>
-                                  <button className="btn btn-outline-danger" onClick={() => confirmDelete(post)}>
-                                    <i className="bi bi-trash"></i> Delete
+                                  <button 
+                                    className="btn btn-outline-danger" 
+                                    onClick={() => confirmDelete(post)}
+                                    title="Delete post"
+                                  >
+                                    <FaTrash />
                                   </button>
                                   <button
                                     className={`btn ${post.isPublished ? 'btn-outline-warning' : 'btn-outline-success'}`}
-                                    onClick={() => togglePublishStatus(post.id)}>
-                                    <i className={`bi ${post.isPublished ? 'bi-eye-slash' : 'bi-eye'}`}></i>
-                                    {post.isPublished ? ' Unpublish' : ' Publish'}
+                                    onClick={() => togglePublishStatus(post)}
+                                    title={post.isPublished ? 'Unpublish' : 'Publish'}
+                                  >
+                                    {post.isPublished ? <FaEyeSlash /> : <FaEye />}
                                   </button>
                                 </div>
                               </td>
@@ -489,7 +571,7 @@ const handleSubmit = async (e) => {
                         ) : (
                           <tr>
                             <td colSpan="7" className="text-center py-4">
-                              No posts found matching your criteria
+                              {searchQuery || filterByTag ? 'No posts found matching your criteria' : 'No blog posts found'}
                             </td>
                           </tr>
                         )}
@@ -513,18 +595,44 @@ const handleSubmit = async (e) => {
             <input type="hidden" name="id" value={formData.id} />
 
             <Form.Group className="mb-3">
-              <Form.Label>Title</Form.Label>
-              <Form.Control type="text" name="title" value={formData.title} onChange={handleInputChange} required />
+              <Form.Label>Title <span className="text-danger">*</span></Form.Label>
+              <Form.Control 
+                type="text" 
+                name="title" 
+                value={formData.title} 
+                onChange={handleInputChange} 
+                isInvalid={!!formErrors.title}
+                required 
+              />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.title}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Author</Form.Label>
-              <Form.Control type="text" name="author" value={formData.author} onChange={handleInputChange} required />
+              <Form.Label>Author <span className="text-danger">*</span></Form.Label>
+              <Form.Control 
+                type="text" 
+                name="author" 
+                value={formData.author} 
+                onChange={handleInputChange}
+                isInvalid={!!formErrors.author}
+                required 
+              />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.author}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Date (Leave blank for today's date)</Form.Label>
-              <Form.Control type="text" name="date" value={formData.date} onChange={handleInputChange} placeholder="March 29, 2025" />
+              <Form.Control 
+                type="text" 
+                name="date" 
+                value={formData.date} 
+                onChange={handleInputChange} 
+                placeholder="March 29, 2025" 
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -547,10 +655,11 @@ const handleSubmit = async (e) => {
                     <Button 
                       variant="outline-danger" 
                       size="sm" 
-                      className="mt-2"
+                      className="mt-2 d-block"
                       onClick={() => {
                         setImagePreview(null);
                         setSelectedFile(null);
+                        setFormData({ ...formData, imageUrl: '' });
                       }}
                     >
                       Remove Image
@@ -572,25 +681,51 @@ const handleSubmit = async (e) => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Excerpt</Form.Label>
-              <Form.Control as="textarea" name="excerpt" value={formData.excerpt} onChange={handleInputChange} rows="2" required />
+              <Form.Label>Excerpt <span className="text-danger">*</span></Form.Label>
+              <Form.Control 
+                as="textarea" 
+                name="excerpt" 
+                value={formData.excerpt} 
+                onChange={handleInputChange} 
+                rows="2"
+                isInvalid={!!formErrors.excerpt}
+                required 
+              />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.excerpt}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Content</Form.Label>
-              <Form.Control as="textarea" name="content" value={formData.content} onChange={handleInputChange} rows="6" required />
+              <Form.Label>Content <span className="text-danger">*</span></Form.Label>
+              <Form.Control 
+                as="textarea" 
+                name="content" 
+                value={formData.content} 
+                onChange={handleInputChange} 
+                rows="6"
+                isInvalid={!!formErrors.content}
+                required 
+              />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.content}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Tags (comma separated)</Form.Label>
+              <Form.Label>Tags (comma separated) <span className="text-danger">*</span></Form.Label>
               <Form.Control
                 type="text"
                 name="tags"
                 value={formData.tags}
                 onChange={handleInputChange}
                 placeholder="React, JavaScript, Web Development"
+                isInvalid={!!formErrors.tags}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.tags}
+              </Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -606,11 +741,29 @@ const handleSubmit = async (e) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+          <Button variant="secondary" onClick={handleCloseModal} disabled={submitLoading}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            {editMode ? 'Update Post' : 'Add Post'}
+          <Button 
+            variant="primary" 
+            onClick={handleSubmit} 
+            disabled={submitLoading}
+          >
+            {submitLoading ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                {editMode ? 'Updating...' : 'Creating...'}
+              </>
+            ) : (
+              editMode ? 'Update Post' : 'Add Post'
+            )}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -625,11 +778,33 @@ const handleSubmit = async (e) => {
           <p className="text-danger">This action cannot be undone.</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowDeleteConfirm(false)}
+            disabled={deleteLoading}
+          >
             Cancel
           </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
+          <Button 
+            variant="danger" 
+            onClick={handleDelete}
+            disabled={deleteLoading}
+          >
+            {deleteLoading ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Deleting...
+              </>
+            ) : (
+              'Delete'
+            )}
           </Button>
         </Modal.Footer>
       </Modal>
