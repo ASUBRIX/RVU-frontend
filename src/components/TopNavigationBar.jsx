@@ -34,7 +34,7 @@ const TopNavigationBar = () => {
         <Container fluid className="px-2 px-xl-4">
           {/* Logo Section - Left Side */}
           <div className="d-flex align-items-center">
-            <LogoBox height={120} width={300} />
+            <LogoBox height={150} width={375} />
           </div>
 
           {/* Mobile Toggle Button */}
