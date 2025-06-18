@@ -62,7 +62,22 @@ const BlogManagement = () => {
       setLoading(true)
       setError(null)
       const res = await getBlogs();
-      setBlogPosts(res.data);
+      
+      // Handle different response structures
+      let blogs = [];
+      if (res.data) {
+        if (Array.isArray(res.data)) {
+          blogs = res.data;
+        } else if (res.data.data && Array.isArray(res.data.data)) {
+          blogs = res.data.data;
+        } else if (res.success && Array.isArray(res.data)) {
+          blogs = res.data;
+        }
+      } else if (Array.isArray(res)) {
+        blogs = res;
+      }
+      
+      setBlogPosts(blogs);
     } catch (err) {
       console.error('Failed to load blogs:', err);
       setError('Failed to load blogs. Please try again.')
@@ -176,17 +191,37 @@ const BlogManagement = () => {
         // Update blog via API
         const res = await updateBlog(formData.id, postData);
         
-        // Update frontend list
-        setBlogPosts((prev) =>
-          prev.map((post) => (post.id === res.data.id ? res.data : post))
-        );
+        // Handle different response structures
+        let updatedBlog = null;
+        if (res.data) {
+          updatedBlog = res.data.data || res.data;
+        } else if (res.success && res.data) {
+          updatedBlog = res.data;
+        }
+        
+        if (updatedBlog) {
+          // Update frontend list
+          setBlogPosts((prev) =>
+            prev.map((post) => (post.id === updatedBlog.id ? updatedBlog : post))
+          );
+        }
         setSuccessMessage('Blog post updated successfully!')
       } else {
         // Create new blog via API
         const res = await createBlog(postData);
         
-        // Add new blog to frontend list
-        setBlogPosts((prev) => [res.data, ...prev]);
+        // Handle different response structures
+        let newBlog = null;
+        if (res.data) {
+          newBlog = res.data.data || res.data;
+        } else if (res.success && res.data) {
+          newBlog = res.data;
+        }
+        
+        if (newBlog) {
+          // Add new blog to frontend list
+          setBlogPosts((prev) => [newBlog, ...prev]);
+        }
         setSuccessMessage('Blog post created successfully!')
       }
 
@@ -211,8 +246,9 @@ const BlogManagement = () => {
     setFormData({
       ...post,
       tags: Array.isArray(post.tags) ? post.tags.join(', ') : post.tags,
+      isPublished: post.isPublished !== undefined ? post.isPublished : post.is_published,
     })
-    setImagePreview(post.imageUrl)
+    setImagePreview(post.imageUrl || post.image_url)
     setShowAddModal(true)
     setFormErrors({})
   }
@@ -272,13 +308,22 @@ const BlogManagement = () => {
   // Handle changing post publish status
   const togglePublishStatus = async (post) => {
     try {
-      const updatedPost = { ...post, isPublished: !post.isPublished }
+      const currentStatus = post.isPublished !== undefined ? post.isPublished : post.is_published;
+      const updatedPost = { 
+        ...post, 
+        isPublished: !currentStatus,
+        is_published: !currentStatus 
+      }
       await updateBlog(post.id, updatedPost)
       
       setBlogPosts(prev => 
-        prev.map((p) => (p.id === post.id ? { ...p, isPublished: !p.isPublished } : p))
+        prev.map((p) => (p.id === post.id ? { 
+          ...p, 
+          isPublished: !currentStatus,
+          is_published: !currentStatus 
+        } : p))
       )
-      setSuccessMessage(`Post ${updatedPost.isPublished ? 'published' : 'unpublished'} successfully!`)
+      setSuccessMessage(`Post ${!currentStatus ? 'published' : 'unpublished'} successfully!`)
       setTimeout(() => setSuccessMessage(''), 3000)
     } catch (err) {
       console.error('Failed to update publish status:', err)
@@ -288,6 +333,8 @@ const BlogManagement = () => {
 
   // Get all unique tags for filter dropdown
   const getAllTags = () => {
+    if (!Array.isArray(blogPosts)) return [];
+    
     const allTags = new Set()
     blogPosts.forEach(post => {
       if (Array.isArray(post.tags)) {
@@ -298,17 +345,17 @@ const BlogManagement = () => {
   }
 
   // Filter posts based on search query, published status, and tag
-  const filteredPosts = blogPosts.filter((post) => {
+  const filteredPosts = Array.isArray(blogPosts) ? blogPosts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (Array.isArray(post.tags) && post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())))
 
-    const matchesPublishFilter = !showOnlyPublished || post.isPublished
+    const matchesPublishFilter = !showOnlyPublished || post.isPublished || post.is_published
     const matchesTagFilter = !filterByTag || (Array.isArray(post.tags) && post.tags.includes(filterByTag))
 
     return matchesSearch && matchesPublishFilter && matchesTagFilter
-  })
+  }) : []
 
   // Sort posts
   const sortedPosts = [...filteredPosts].sort((a, b) => {
@@ -407,8 +454,8 @@ const BlogManagement = () => {
                   onChange={(e) => setFilterByTag(e.target.value)}
                 >
                   <option value="">All Tags</option>
-                  {getAllTags().map(tag => (
-                    <option key={tag} value={tag}>{tag}</option>
+                  {getAllTags().map((tag, index) => (
+                    <option key={`tag-filter-${index}-${tag}`} value={tag}>{tag}</option>
                   ))}
                 </Form.Select>
               </div>
@@ -438,7 +485,7 @@ const BlogManagement = () => {
                   </div>
                   <div>
                     <h6 className="text-muted mb-1">Total Posts</h6>
-                    <h3 className="mb-0">{blogPosts.length}</h3>
+                    <h3 className="mb-0">{Array.isArray(blogPosts) ? blogPosts.length : 0}</h3>
                   </div>
                 </div>
               </div>
@@ -451,7 +498,7 @@ const BlogManagement = () => {
                   </div>
                   <div>
                     <h6 className="text-muted mb-1">Published Posts</h6>
-                    <h3 className="mb-0">{blogPosts.filter((post) => post.isPublished).length}</h3>
+                    <h3 className="mb-0">{Array.isArray(blogPosts) ? blogPosts.filter((post) => post.isPublished || post.is_published).length : 0}</h3>
                   </div>
                 </div>
               </div>
@@ -464,7 +511,7 @@ const BlogManagement = () => {
                   </div>
                   <div>
                     <h6 className="text-muted mb-1">Draft Posts</h6>
-                    <h3 className="mb-0">{blogPosts.filter((post) => !post.isPublished).length}</h3>
+                    <h3 className="mb-0">{Array.isArray(blogPosts) ? blogPosts.filter((post) => !(post.isPublished || post.is_published)).length : 0}</h3>
                   </div>
                 </div>
               </div>
@@ -507,7 +554,7 @@ const BlogManagement = () => {
                       <tbody>
                         {sortedPosts.length > 0 ? (
                           sortedPosts.map((post) => (
-                            <tr key={post.id} className={!post.isPublished ? 'table-light' : ''}>
+                            <tr key={post.id} className={!(post.isPublished || post.is_published) ? 'table-light' : ''}>
                               <td>{post.id}</td>
                               <td>
                                 <div className="d-flex align-items-center">
@@ -528,8 +575,8 @@ const BlogManagement = () => {
                               <td>{post.author}</td>
                               <td>{post.date}</td>
                               <td>
-                                {Array.isArray(post.tags) ? post.tags.map((tag) => (
-                                  <span key={tag} className="badge bg-light text-dark border me-1 mb-1">
+                                {Array.isArray(post.tags) ? post.tags.map((tag, index) => (
+                                  <span key={`${post.id}-tag-${index}-${tag}`} className="badge bg-light text-dark border me-1 mb-1">
                                     {tag}
                                   </span>
                                 )) : (
@@ -537,8 +584,8 @@ const BlogManagement = () => {
                                 )}
                               </td>
                               <td>
-                                <span className={`badge ${post.isPublished ? 'bg-success' : 'bg-warning'}`}>
-                                  {post.isPublished ? 'Published' : 'Draft'}
+                                <span className={`badge ${(post.isPublished || post.is_published) ? 'bg-success' : 'bg-warning'}`}>
+                                  {(post.isPublished || post.is_published) ? 'Published' : 'Draft'}
                                 </span>
                               </td>
                               <td>
@@ -558,11 +605,11 @@ const BlogManagement = () => {
                                     <FaTrash />
                                   </button>
                                   <button
-                                    className={`btn ${post.isPublished ? 'btn-outline-warning' : 'btn-outline-success'}`}
+                                    className={`btn ${(post.isPublished || post.is_published) ? 'btn-outline-warning' : 'btn-outline-success'}`}
                                     onClick={() => togglePublishStatus(post)}
-                                    title={post.isPublished ? 'Unpublish' : 'Publish'}
+                                    title={(post.isPublished || post.is_published) ? 'Unpublish' : 'Publish'}
                                   >
-                                    {post.isPublished ? <FaEyeSlash /> : <FaEye />}
+                                    {(post.isPublished || post.is_published) ? <FaEyeSlash /> : <FaEye />}
                                   </button>
                                 </div>
                               </td>
