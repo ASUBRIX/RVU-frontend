@@ -32,19 +32,25 @@ const TopNavigationBar = () => {
       })}>
       <nav className="navbar navbar-expand-xl z-index-2 py-0">
         <Container fluid className="px-2 px-xl-4">
-          <div className="d-flex align-items-center" style={{ marginLeft: 78 }}>
-            <LogoBox height={90} width={240} />
+          {/* Logo Section - Left Side */}
+          <div className="d-flex align-items-center">
+            <LogoBox height={120} width={300} />
           </div>
-          <button onClick={toggle} className="navbar-toggler ms-2 custom-toggler" type="button" aria-expanded={isOpen} aria-label="Toggle navigation">
+
+          {/* Mobile Toggle Button */}
+          <button onClick={toggle} className="navbar-toggler ms-auto custom-toggler" type="button" aria-expanded={isOpen} aria-label="Toggle navigation">
             <span className="navbar-toggler-animation">
               <span />
               <span />
               <span />
             </span>
           </button>
+
+          {/* Navigation Menu and User Dropdown */}
           <Collapse in={isOpen || window.innerWidth >= 1200} className="navbar-collapse">
-            <div className="d-flex align-items-center">
-              <ul className="navbar-nav mb-2 mb-lg-0 d-flex flex-row flex-nowrap">
+            <div className="d-flex align-items-center w-100">
+              {/* Navigation Menu - Left Side after Logo */}
+              <ul className="navbar-nav mb-2 mb-lg-0 d-flex flex-row flex-nowrap ms-4">
                 {menus.map(({ label, path }, idx) => (
                   <NavItem key={idx} className="flex-shrink-0">
                     <Link className="nav-link custom-nav-link" to={path}>
@@ -53,7 +59,9 @@ const TopNavigationBar = () => {
                   </NavItem>
                 ))}
               </ul>
-              <div className="d-flex align-items-center ms-2 position-relative">
+
+              {/* User Dropdown - Left Side with margin */}
+              <div className="d-flex align-items-center position-relative ms-4 me-5">
                 <Dropdown className="centered-avatar-dropdown">
                   <Dropdown.Toggle variant="light" id="dropdown-avatar" className="avatar-toggle-button">
                     <PersonCircle size={38} color="#ed155a" />
@@ -109,6 +117,3 @@ const TopNavigationBar = () => {
 }
 
 export default TopNavigationBar
-
-
-

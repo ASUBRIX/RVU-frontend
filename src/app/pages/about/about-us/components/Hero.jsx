@@ -33,6 +33,8 @@ const Hero = () => {
             </h1>
           </Col>
         </Row>
+
+        
         <Row className="g-4 mt-0 mt-lg-5">
           <Col xs={6} md={4}>
             <Row className="g-4">
