@@ -61,7 +61,7 @@ const TopNavigationBar = () => {
               </ul>
 
               {/* User Dropdown - Left Side with margin */}
-              <div className="d-flex align-items-center position-relative ms-5 me-7">
+              <div className="d-flex align-items-center position-relative ms-6 me-7">
                 <Dropdown className="centered-avatar-dropdown">
                   <Dropdown.Toggle variant="light" id="dropdown-avatar" className="avatar-toggle-button">
                     <PersonCircle size={38} color="#ed155a" />
