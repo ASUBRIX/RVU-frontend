@@ -1,4 +1,5 @@
-import about6 from '@/assets/images/about/06.jpg'
+import about5 from '@/assets/images/about/05.png';
+import about6 from '@/assets/images/about/06.jpeg';
 import { Col, Container, Row } from 'react-bootstrap'
 
 const About = () => {
@@ -10,7 +11,7 @@ const About = () => {
           <Col lg={6} className="d-flex align-items-center mb-4 mb-lg-0">
             <div className="text-center w-100">
               <img
-                src={about6}
+                src={about5}
                 className="rounded img-fluid shadow object-cover"
                 alt="Students learning together"
                 style={{ height: '400px', width: '100%' }}
