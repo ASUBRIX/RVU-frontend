@@ -58,14 +58,7 @@ const Blog = () => {
       <TopNavigationBar />
       <HeroImage />
       <div className="blog-page container py-5">
-        <div className="row">
-          <div className="col-lg-8 mx-auto text-center mb-5">
-            <h2 className="display-4 fw-bold mb-3">Latest Articles</h2>
-            <p className="lead text-secondary">
-              Stay up to date with the latest web development trends and tutorials
-            </p>
-          </div>
-        </div>
+        
 
         <div className="featured-post mb-5">
           <BlogPost post={blogPosts[0]} featured={true} />

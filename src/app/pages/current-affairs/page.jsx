@@ -52,13 +52,6 @@ const CurrentAffairs = () => {
       <TopNavigationBar />
       <CurrentAffairsHeroImage />
       <div className="current-affairs-page container py-5">
-        <div className="row mb-4">
-          <div className="col-12 col-lg-8">
-            <p className="lead text-secondary text-start">
-              Stay updated with the latest current affairs, news, and happenings.
-            </p>
-          </div>
-        </div>
 
         <div className="row g-4 mb-5">
           {affairs.map((affair) => (
