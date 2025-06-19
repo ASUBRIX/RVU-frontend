@@ -16,16 +16,18 @@ const InstructorCard = ({ instructor, isBoardMember = false }) => {
         />
         <div className="instructor-hover-overlay">
           {isBoardMember ? (
-            // Board members show bio in center
+            // Board members show bio in center with nice padding
             <div className="instructor-bio-center" style={{ 
               position: 'absolute', 
-              top: '0',
-              left: '16px', 
-              right: '16px', 
-              bottom: '0',
+              top: '10px',    // 10px from top instead of 0
+              left: '12px',   // 12px from left 
+              right: '12px',  // 12px from right
+              bottom: '10px', // 10px from bottom instead of 0
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              padding: '20px 16px',  // Extra inline padding
+              boxSizing: 'border-box'
             }}>
               {bio || 'Biography not available'}
             </div>

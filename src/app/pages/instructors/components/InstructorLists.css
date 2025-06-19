@@ -1,5 +1,6 @@
 .board-section {
   background: #f8fafb;
+  border-top: none; /* Remove any top border */
 }
 
 .board-title-wrap {
@@ -8,6 +9,7 @@
   justify-content: center;
   align-items: flex-end;
   margin-bottom: 2.5rem;
+  border-top: none; /* Remove any top border */
 }
 
 .board-title {
@@ -20,6 +22,11 @@
   display: block;
   text-align: center;
   margin-bottom: 0;
+  border-top: none; /* Remove any top border */
+}
+
+.board-title::before {
+  display: none; /* Remove any pseudo-element line above */
 }
 
 .board-title::after {
@@ -106,20 +113,20 @@
   line-height: 1.2;
 }
 
-/* Updated: Bio in center for board members */
+/* Updated: Bio in center for board members with better padding */
 .instructor-bio-center {
-  font-size: 1rem;
-  max-height: 200px;
+  font-size: 0.95rem;
+  max-height: 220px;
   overflow-y: auto;
   color: #f3f3f3;
   text-shadow: 0 2px 8px rgba(0,0,0,0.16);
   width: 100%;
   text-align: center;
-  line-height: 1.4;
-  padding: 0 8px;
+  line-height: 1.5;
+  padding: 20px 16px;  /* Increased padding: top/bottom 20px, left/right 16px */
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  margin: 10px 0;  /* Added margin for extra spacing */
 }
-
-/* Remove the old instructor-bio class since we're not using it anymore */
