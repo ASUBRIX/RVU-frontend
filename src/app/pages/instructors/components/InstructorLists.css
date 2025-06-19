@@ -85,7 +85,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Changed from center to flex-start */
+  justify-content: center;
   text-align: center;
   padding: 24px 8px;
 }
@@ -95,21 +95,27 @@
   pointer-events: auto;
 }
 
-.instructor-name {
-  font-size: 1.2rem;
+/* Updated: Designation in center */
+.instructor-designation {
+  font-size: 1.3rem;
   font-weight: 600;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  margin-bottom: 0.7rem;
   width: 100%;
   text-align: center;
+  color: #fff;
+  line-height: 1.2;
 }
 
+/* Updated: Bio at bottom */
 .instructor-bio {
-  font-size: 0.97rem;
-  max-height: 120px;
+  font-size: 0.9rem;
+  max-height: 80px;
   overflow-y: auto;
   color: #f3f3f3;
   text-shadow: 0 2px 8px rgba(0,0,0,0.16);
   width: 100%;
   text-align: center;
+  line-height: 1.3;
 }
+
+/* Remove the old instructor-name class since we're not using it anymore */

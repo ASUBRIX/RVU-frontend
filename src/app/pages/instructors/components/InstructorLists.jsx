@@ -4,8 +4,7 @@ import { fetchInstructors } from '@/helpers/instructorApi';
 import './InstructorLists.css';
 
 const InstructorCard = ({ instructor }) => {
-  const { avatar, name, bio } = instructor;
-
+  const { avatar, name, bio, designation } = instructor;
 
   return (
     <Card className="instructor-card shadow h-100 border-0 position-relative overflow-hidden">
@@ -16,11 +15,13 @@ const InstructorCard = ({ instructor }) => {
           className="instructor-img"
         />
         <div className="instructor-hover-overlay">
-          <div className="instructor-name" style={{ position: 'absolute', top: '16px', left: '16px', right: '16px' }}>
-            {name}
+          <div className="instructor-designation" style={{ position: 'absolute', top: '50%', left: '16px', right: '16px', transform: 'translateY(-50%)' }}>
+            {designation || 'Faculty Member'}
           </div>
           {bio && (
-            <div className="instructor-bio" style={{ marginTop: '60px' }}>{bio}</div>
+            <div className="instructor-bio" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
+              {bio}
+            </div>
           )}
         </div>
       </div>
@@ -42,7 +43,6 @@ const InstructorLists = () => {
   setLoading(false);
 });
 
-
   }, []);
 
 const boardMembers = faculties.filter(f => f.board_member === true || f.board_member === 't' || f.board_member === 'true');
@@ -50,9 +50,6 @@ console.log('board of members:',boardMembers);
 
 const facultyMembers = faculties.filter(f => !f.board_member || f.board_member === 'f' || f.board_member === 'false');
 console.log('faculty members:',facultyMembers);
-
-
-  
 
   return (
     <>
