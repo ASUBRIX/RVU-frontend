@@ -18,7 +18,7 @@ const TopNavigationBar = () => {
     { label: 'About', path: '/about-us' },
     { label: 'Our Team', path: '/our-team' },
     { label: 'Courses', path: '/courses' },
-    { label: 'Test', path: '/free-test' },
+    { label: 'Free Test', path: '/free-test' },
     { label: 'Gallery', path: '/gallery' },
     { label: 'Blogs', path: '/blogs' },
     { label: 'Current Affairs', path: '/current-affairs' },
