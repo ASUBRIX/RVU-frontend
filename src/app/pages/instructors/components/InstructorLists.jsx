@@ -3,7 +3,7 @@ import { Card, Col, Container, Row } from 'react-bootstrap';
 import { fetchInstructors } from '@/helpers/instructorApi';
 import './InstructorLists.css';
 
-const InstructorCard = ({ instructor }) => {
+const InstructorCard = ({ instructor, isBoardMember = false }) => {
   const { avatar, name, bio, designation } = instructor;
 
   return (
@@ -15,12 +15,24 @@ const InstructorCard = ({ instructor }) => {
           className="instructor-img"
         />
         <div className="instructor-hover-overlay">
-          <div className="instructor-designation" style={{ position: 'absolute', top: '50%', left: '16px', right: '16px', transform: 'translateY(-50%)' }}>
-            {designation || 'Faculty Member'}
-          </div>
-          {bio && (
-            <div className="instructor-bio" style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
-              {bio}
+          {isBoardMember ? (
+            // Board members show bio in center
+            <div className="instructor-bio-center" style={{ 
+              position: 'absolute', 
+              top: '0',
+              left: '16px', 
+              right: '16px', 
+              bottom: '0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {bio || 'Biography not available'}
+            </div>
+          ) : (
+            // Regular faculty show designation in center
+            <div className="instructor-designation" style={{ position: 'absolute', top: '50%', left: '16px', right: '16px', transform: 'translateY(-50%)' }}>
+              {designation || 'Faculty Member'}
             </div>
           )}
         </div>
@@ -37,19 +49,32 @@ const InstructorLists = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   fetchInstructors().then(data => {
-  console.log('API RAW:', data);
-  setFaculties(data || []);
-  setLoading(false);
-});
-
+    fetchInstructors().then(data => {
+      console.log('API Response:', data);
+      setFaculties(data || []);
+      setLoading(false);
+    }).catch(error => {
+      console.error('Failed to fetch instructors:', error);
+      setLoading(false);
+    });
   }, []);
 
-const boardMembers = faculties.filter(f => f.board_member === true || f.board_member === 't' || f.board_member === 'true');
-console.log('board of members:',boardMembers);
+  // Filter board members (boolean true or string 'true'/'t')
+  const boardMembers = faculties.filter(f => 
+    f.board_member === true || 
+    f.board_member === 't' || 
+    f.board_member === 'true'
+  );
 
-const facultyMembers = faculties.filter(f => !f.board_member || f.board_member === 'f' || f.board_member === 'false');
-console.log('faculty members:',facultyMembers);
+  // Filter regular faculty members
+  const facultyMembers = faculties.filter(f => 
+    !f.board_member || 
+    f.board_member === false || 
+    f.board_member === 'f' || 
+    f.board_member === 'false'
+  );
+
+  console.log(`Board members: ${boardMembers.length}, Faculty members: ${facultyMembers.length}`);
 
   return (
     <>
@@ -67,13 +92,13 @@ console.log('faculty members:',facultyMembers);
             </div>
           ) : boardMembers.length === 0 ? (
             <div className="py-5 text-center">
-              <p>No board members found.</p>
+              <p className="text-muted">No board members found.</p>
             </div>
           ) : (
             <Row className="g-4 justify-content-center">
               {boardMembers.map(member => (
                 <Col xs={12} sm={6} md={4} lg={3} key={member.id}>
-                  <InstructorCard instructor={member} />
+                  <InstructorCard instructor={member} isBoardMember={true} />
                 </Col>
               ))}
             </Row>
@@ -95,13 +120,13 @@ console.log('faculty members:',facultyMembers);
             </div>
           ) : facultyMembers.length === 0 ? (
             <div className="py-5 text-center">
-              <p>No faculty members found.</p>
+              <p className="text-muted">No faculty members found.</p>
             </div>
           ) : (
             <Row className="g-4 justify-content-center">
               {facultyMembers.map(member => (
                 <Col xs={12} sm={6} md={4} lg={3} key={member.id}>
-                  <InstructorCard instructor={member} />
+                  <InstructorCard instructor={member} isBoardMember={false} />
                 </Col>
               ))}
             </Row>
