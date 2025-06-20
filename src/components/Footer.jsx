@@ -14,38 +14,52 @@ const BACKEND_URL = import.meta.env.VITE_API_BASE_URL;
 let settingsCache = null;
 
 const Footer = ({ className }) => {
-  // Inline styles for footer
+  // Inline styles for footer - using !important to override imported CSS
   const footerStyles = {
     logoImageFooter: {
-      marginLeft: 0,
+      marginLeft: '0 !important',
       objectFit: 'contain',
-      display: 'block'
+      display: 'block !important',
+      maxWidth: '189px',
+      textAlign: 'left !important'
     },
     logoColumn: {
-      textAlign: 'left',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start'
+      textAlign: 'left !important',
+      paddingLeft: '0 !important',
+      marginLeft: '0 !important',
+      display: 'block !important'
     },
     termsLink: {
-      whiteSpace: 'nowrap',
-      wordBreak: 'keep-all'
+      whiteSpace: 'nowrap !important',
+      wordBreak: 'keep-all !important'
     },
     logoLink: {
-      display: 'inline-block',
-      marginRight: 0,
-      alignSelf: 'flex-start'
+      display: 'block !important',
+      marginRight: '0 !important',
+      marginLeft: '0 !important',
+      textAlign: 'left !important',
+      width: 'fit-content !important',
+      float: 'none !important'
     },
     logoDescription: {
-      textAlign: 'left',
+      textAlign: 'left !important',
       marginTop: '1rem',
       marginBottom: '1rem'
     },
     socialLinks: {
-      display: 'flex',
-      justifyContent: 'flex-start',
-      alignItems: 'flex-start',
-      marginTop: '1rem'
+      display: 'flex !important',
+      justifyContent: 'flex-start !important',
+      alignItems: 'flex-start !important',
+      marginTop: '1rem',
+      textAlign: 'left !important'
+    },
+    footerContainer: {
+      paddingLeft: '0 !important',
+      paddingRight: '15px !important'
+    },
+    footerRow: {
+      marginLeft: '0 !important',
+      paddingLeft: '0 !important'
     }
   };
 
@@ -101,12 +115,13 @@ const Footer = ({ className }) => {
   }, []);
 
   return (
-    <footer className={clsx('pt-5', className)}>
-      <Container>
-        <Row className="g-4">
+    <footer className={clsx('pt-5', className)} style={{ textAlign: 'left' }}>
+      <Container style={footerStyles.footerContainer}>
+        <Row className="g-4" style={footerStyles.footerRow}>
           {/* Logo section - explicitly kept on left */}
-          <Col lg={3} style={footerStyles.logoColumn}>
-            <Link className="me-0" to="/" style={footerStyles.logoLink}>
+          <Col lg={3} className="ps-0 pe-3" style={footerStyles.logoColumn}>
+            <div style={{ textAlign: 'left', width: '100%' }}>
+              <Link className="me-0 d-block" to="/" style={footerStyles.logoLink}>
               <img
                 className="light-mode-item logo-image-footer"
                 width={189}
@@ -122,7 +137,7 @@ const Footer = ({ className }) => {
                 'Pudhuyugam Academy embarked on a resolute mission to deliver top-notch education for a spectrum of competitive examinations'}
             </p>
             <div style={footerStyles.socialLinks}>
-              <ul className="list-inline mb-0 mt-3" style={{ margin: 0, padding: 0 }}>
+              <ul className="list-inline mb-0 mt-3" style={{ margin: '0 !important', padding: '0 !important', textAlign: 'left' }}>
               {settings.facebook_url && (
                 <li className="list-inline-item">
                   <a
@@ -172,6 +187,7 @@ const Footer = ({ className }) => {
                 </li>
               )}
             </ul>
+            </div>
             </div>
           </Col>
 

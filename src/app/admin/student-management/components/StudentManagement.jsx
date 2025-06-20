@@ -23,28 +23,26 @@ const StudentManagement = () => {
       console.error('Failed to load students:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchStudents();
   }, []);
 
-  const generateStudentId = (index) => `STU${String(index + 1).padStart(3, '0')}`;
-
-  const handleAddStudent = async (studentData) => {
-    try {
-      if (currentStudent) {
-        await updateStudent(currentStudent.id, studentData);
-      } else {
-        studentData.enrollment_id = generateStudentId(students.length);
-        await addStudent(studentData);
-      }
-      fetchStudents();
-      setShowAddModal(false);
-      setCurrentStudent(null);
-    } catch (error) {
-      console.error('Save failed:', error);
+const handleAddStudent = async (studentData) => {
+  try {
+    if (currentStudent) {
+      await updateStudent(currentStudent.id, studentData);
+    } else {
+      await addStudent(studentData);
     }
-  };
+    fetchStudents();
+    setShowAddModal(false);
+    setCurrentStudent(null);
+  } catch (error) {
+    console.error('Save failed:', error);
+  }
+};
 
   const handleDeleteStudent = async (studentId) => {
     await deleteStudent(studentId);
