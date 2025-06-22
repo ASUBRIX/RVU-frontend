@@ -17,3 +17,5 @@ export const updatePricingPlan = (id, data) => {
 export const deletePricingPlan = (id) => {
   return httpClient.delete(`${BASE_URL}/${id}`);
 };
+
+

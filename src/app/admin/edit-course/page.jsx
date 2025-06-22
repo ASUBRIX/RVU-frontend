@@ -12,11 +12,34 @@ const EditCourse = () => {
   const [courseName, setCourseName] = useState('');
 
   const steps = [
-    { number: 1, title: 'Basic Information', icon: <FiUser />, component: BasicInfo },
-    { number: 2, title: 'Pricing Plans', icon: <FiDollarSign />, component: PricingPlans },
-    { number: 3, title: 'Course Content', icon: <FiFolder />, component: CourseContent },
-    { number: 4, title: 'Advanced Settings', icon: <FiFolder />, component: AdvancedSettings },
+    { number: 1, title: 'Basic Information', icon: <FiUser /> },
+    { number: 2, title: 'Pricing Plans', icon: <FiDollarSign /> },
+    { number: 3, title: 'Course Content', icon: <FiFolder /> },
+    { number: 4, title: 'Advanced Settings', icon: <FiFolder /> },
   ];
+
+  // Function to render the active component
+  const renderActiveComponent = () => {
+    const commonProps = {
+      setActiveStep,
+      setProgress,
+      courseName,
+      setCourseName
+    };
+
+    switch (activeStep) {
+      case 1:
+        return <BasicInfo {...commonProps} />;
+      case 2:
+        return <PricingPlans {...commonProps} />;
+      case 3:
+        return <CourseContent {...commonProps} />;
+      case 4:
+        return <AdvancedSettings {...commonProps} />;
+      default:
+        return <BasicInfo {...commonProps} />;
+    }
+  };
 
   return (
     <div className="min-vh-100 py-4">
@@ -70,18 +93,7 @@ const EditCourse = () => {
           </div>
 
           <div className="step-content">
-            {steps.map(
-              (step) =>
-                activeStep === step.number && (
-                  <step.component
-                    key={step.number}
-                    setActiveStep={setActiveStep}
-                    setProgress={setProgress}
-                    courseName={courseName}
-                    setCourseName={setCourseName}
-                  />
-                )
-            )}
+            {renderActiveComponent()}
           </div>
         </div>
       </Container>

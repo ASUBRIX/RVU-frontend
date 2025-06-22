@@ -1,4 +1,3 @@
-// === Updated CourseFilters.jsx ===
 import { useEffect, useState } from 'react';
 import { Form, Spinner } from 'react-bootstrap';
 import { BiCategory } from 'react-icons/bi';

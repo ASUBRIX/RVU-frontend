@@ -48,6 +48,7 @@ const RequestAccess = lazy(() => import('@/app/pages/form/request-access/page'))
 const AdmissionForm = lazy(() => import('@/app/pages/form/admission-form/page'))
 const TestQuestions = lazy(() => import('@/app/pages/test-questions/page'))
 
+
 // about pages
 const AboutUs = lazy(() => import('@/app/pages/about/about-us/page'))
 const ContactUs = lazy(() => import('@/app/pages/about/contact-us/page'))
@@ -310,11 +311,7 @@ const rawAdminRoutes = [
       </ProtectedRoute>
     ),
   },
-  {
-    path: '/admin/all-courses',
-    name: 'All Courses',
-    element: <AllCourses />,
-  },
+
   {
     path: '/admin/test-management',
     name: 'Content Management',
@@ -325,8 +322,20 @@ const rawAdminRoutes = [
     name: 'Blog Management',
     element: <BlogManagement />,
   },
+
   {
-    path: '/admin/edit-course/:id',
+    path: '/admin/all-courses',
+    name: 'All Courses',
+    element: <AllCourses />,
+  },
+  {
+    path: '/admin/edit-course/new',
+    name: 'Create Course',
+    element: <EditCourse />,
+  },
+
+  {
+    path: '/admin/edit-course/:courseId',
     name: 'Create Course',
     element: <EditCourse />,
   },
@@ -340,6 +349,7 @@ const rawAdminRoutes = [
     name: 'Course Detail',
     element: <CourseDetail />,
   },
+
   {
     path: '/admin/coupons',
     name: 'Coupon Management',
@@ -526,7 +536,7 @@ const pagesRoutes = [
     name: 'Terms And Conditions',
     element: <TermsAndConditions />,
   },
-    {
+  {
     path: '/privacy',
     name: 'Privacy Policy',
     element: <PrivacyPolicy />,
@@ -609,8 +619,6 @@ const pagesRoutes = [
   },
 ]
 
-
-
 export const shopRoutes = [
   {
     path: '/shop',
@@ -643,7 +651,6 @@ export const shopRoutes = [
     element: <Wishlist />,
   },
 ]
-
 
 // export const InstructorRoutes = [
 //   {
@@ -696,7 +703,6 @@ export const shopRoutes = [
 //     name: 'Payout',
 //     element: <Payout />,
 //   },
-
 
 const helpRoutes = [
   {
