@@ -4,7 +4,7 @@ import { BiCategory } from 'react-icons/bi';
 import { MdOutlineCategory } from 'react-icons/md';
 import { HiOutlineStatusOnline } from 'react-icons/hi';
 import { FiX } from 'react-icons/fi';
-import { getCourseCategories } from '../../../../helpers/courseApi';
+import { getCourseCategories } from '@/helpers/courseApi';
 
 const featureOptions = [
   { value: 'live', label: 'Live Class' },
@@ -29,9 +29,14 @@ const CourseFilters = ({ filters, setFilters }) => {
       try {
         setLoading(true);
         const res = await getCourseCategories();
-        setCategories(res.data);
+        
+        // Fix: Access response directly, not res.data
+        // Also add safety check for array
+        setCategories(Array.isArray(res) ? res : []);
       } catch (err) {
         console.error('Failed to load categories', err);
+        // Set empty array on error to prevent crashes
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -39,7 +44,7 @@ const CourseFilters = ({ filters, setFilters }) => {
     fetchCategories();
   }, []);
 
-  const hasActiveFilters = Object.values(filters).some((value) => value !== '');
+  const hasActiveFilters = Object.values(filters || {}).some((value) => value !== '');
 
   return (
     <div className="filter-group">
@@ -73,7 +78,7 @@ const CourseFilters = ({ filters, setFilters }) => {
           <Spinner animation="border" size="sm" />
         ) : (
           <Form.Select
-            value={filters.category}
+            value={filters?.category || ''}
             onChange={(e) => handleFilterChange('category', e.target.value)}
             className="form-select border-0 bg-light rounded-3 shadow-none"
             size="sm"
@@ -95,14 +100,23 @@ const CourseFilters = ({ filters, setFilters }) => {
           <label className="form-label mb-0 text-muted small">Sub Categories</label>
         </div>
         <Form.Select
-          value={filters.subCategory}
+          value={filters?.subCategory || ''}
           onChange={(e) => handleFilterChange('subCategory', e.target.value)}
           className="form-select border-0 bg-light rounded-3 shadow-none"
           size="sm"
-          disabled={!filters.category}
+          disabled={!filters?.category}
         >
           <option value="">All Sub Categories</option>
-          {/* Future: load dynamically based on selected category */}
+          {/* Get subcategories for selected category */}
+          {filters?.category && 
+            categories
+              .find(cat => cat.title === filters.category)
+              ?.subcategories?.map((subcat) => (
+                <option key={subcat.id} value={subcat.title}>
+                  {subcat.title}
+                </option>
+              ))
+          }
         </Form.Select>
       </div>
 
@@ -121,7 +135,7 @@ const CourseFilters = ({ filters, setFilters }) => {
                 id={`feature-${feature.value}`}
                 name="feature"
                 value={feature.value}
-                checked={filters.status === feature.value}
+                checked={filters?.status === feature.value}
                 onChange={(e) => handleFilterChange('status', e.target.value)}
               />
               <label className="form-check-label" htmlFor={`feature-${feature.value}`}>
@@ -139,7 +153,7 @@ const CourseFilters = ({ filters, setFilters }) => {
             <span className="text-muted small">Active Filters</span>
           </div>
           <div className="d-flex flex-wrap gap-2">
-            {Object.entries(filters).map(([key, value]) => {
+            {Object.entries(filters || {}).map(([key, value]) => {
               if (!value) return null;
               return (
                 <span key={key} className="badge bg-primary bg-opacity-10 text-primary rounded-pill">

@@ -48,7 +48,6 @@ const RequestAccess = lazy(() => import('@/app/pages/form/request-access/page'))
 const AdmissionForm = lazy(() => import('@/app/pages/form/admission-form/page'))
 const TestQuestions = lazy(() => import('@/app/pages/test-questions/page'))
 
-
 // about pages
 const AboutUs = lazy(() => import('@/app/pages/about/about-us/page'))
 const ContactUs = lazy(() => import('@/app/pages/about/contact-us/page'))
@@ -296,6 +295,8 @@ export const rawStudentRoutes = [
   },
 ]
 
+
+
 const rawAdminRoutes = [
   {
     path: '/auth/admin-login',
@@ -304,14 +305,9 @@ const rawAdminRoutes = [
   },
   {
     path: '/admin/dashboard',
-    name: 'Admin',
-    element: (
-      <ProtectedRoute allowedRoles={['admin']}>
-        <AdminDashboard />
-      </ProtectedRoute>
-    ),
+    name: 'Admin Dashboard',
+    element: <AdminDashboard />,
   },
-
   {
     path: '/admin/test-management',
     name: 'Content Management',
@@ -322,7 +318,6 @@ const rawAdminRoutes = [
     name: 'Blog Management',
     element: <BlogManagement />,
   },
-
   {
     path: '/admin/all-courses',
     name: 'All Courses',
@@ -333,10 +328,9 @@ const rawAdminRoutes = [
     name: 'Create Course',
     element: <EditCourse />,
   },
-
   {
     path: '/admin/edit-course/:courseId',
-    name: 'Create Course',
+    name: 'Edit Course',
     element: <EditCourse />,
   },
   {
@@ -349,7 +343,6 @@ const rawAdminRoutes = [
     name: 'Course Detail',
     element: <CourseDetail />,
   },
-
   {
     path: '/admin/coupons',
     name: 'Coupon Management',
@@ -425,13 +418,20 @@ const rawAdminRoutes = [
     name: 'Reports & Analytics',
     element: <ReportsPage />,
   },
-
   {
     path: '/admin/announcements',
     name: 'Announcements',
     element: <AnnouncementPage />,
   },
-]
+];
+
+
+export const adminRoutes = rawAdminRoutes.map((route) =>
+  route.path.startsWith('/admin/') 
+    ? { ...route, element: <ProtectedRoute allowedRoles={['admin']}>{route.element}</ProtectedRoute> } 
+    : route,
+);
+
 
 const pagesRoutes = [
   {
@@ -744,8 +744,5 @@ export const studentRoutes = rawStudentRoutes.map((route) =>
   route.path.startsWith('/student/') ? { ...route, element: <ProtectedRoute allowedRoles={['student']}>{route.element}</ProtectedRoute> } : route,
 )
 
-export const adminRoutes = rawAdminRoutes.map((route) =>
-  route.path.startsWith('/admin/') ? { ...route, element: <ProtectedRoute allowedRoles={['admin']}>{route.element}</ProtectedRoute> } : route,
-)
 
 export const appRoutes = [...initialRoutes, ...demosRoutes, ...otherRoutes, ...pagesRoutes, ...helpRoutes]
