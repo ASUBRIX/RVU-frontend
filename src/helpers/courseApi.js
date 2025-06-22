@@ -1,38 +1,92 @@
-// helpers/courseApi.js
+// helpers/courseApi.js - FIXED VERSION
 
-// Mock implementation - replace with real httpClient when ready
-const mockHttpClient = {
-  get: async (url) => {
-    console.log('Mock GET:', url);
-    if (url.includes('/categories')) {
-      return []; // Empty categories for now
+import httpClient from './httpClient';
+
+// FIXED: Get all categories with proper error handling
+export const getCourseCategories = async () => {
+  try {
+    console.log('Fetching categories from API...');
+    const response = await httpClient.get('/api/admin/courses/categories');
+    console.log('API Response:', response.data);
+    
+    // Handle both old and new response formats
+    if (response.data && response.data.success) {
+      // New format with success flag
+      return response.data;
+    } else if (Array.isArray(response.data)) {
+      // Old format - just array
+      return {
+        success: true,
+        data: response.data,
+        total: response.data.length
+      };
+    } else {
+      // Fallback
+      return {
+        success: true,
+        data: response.data || [],
+        total: 0
+      };
     }
-    return []; // Empty courses for now
-  },
-  post: async (url, data) => {
-    console.log('Mock POST:', url, data);
-    return {
-      id: Date.now(),
-      ...data,
-      created_at: new Date().toISOString(),
-      visibility_status: 'draft'
-    };
-  },
-  put: async (url, data) => {
-    console.log('Mock PUT:', url, data);
-    return { id: 1, ...data };
-  },
-  delete: async (url) => {
-    console.log('Mock DELETE:', url);
-    return { message: 'Deleted' };
+  } catch (error) {
+    console.error('Error fetching course categories:', error);
+    console.error('Error details:', error.response?.data);
+    throw error;
+  }
+};
+
+// FIXED: Create category with subcategories
+export const createCategoryWithSubcategories = async (categoryData) => {
+  try {
+    console.log('Creating category:', categoryData);
+    const response = await httpClient.post('/api/admin/courses/categories', categoryData);
+    console.log('Category creation response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating category:', error);
+    console.error('Error response:', error.response?.data);
+    throw error;
+  }
+};
+
+// Add subcategories to existing category
+export const addSubcategoriesToCategory = async (categoryId, subcategoriesData) => {
+  try {
+    console.log('Adding subcategories to category:', categoryId, subcategoriesData);
+    const response = await httpClient.post(
+      `/api/admin/courses/categories/${categoryId}/subcategories`, 
+      subcategoriesData
+    );
+    console.log('Subcategories addition response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding subcategories:', error);
+    console.error('Error response:', error.response?.data);
+    throw error;
+  }
+};
+
+// Delete category
+export const deleteCategory = async (categoryId) => {
+  try {
+    console.log('Deleting category:', categoryId);
+    const response = await httpClient.delete(`/api/admin/courses/categories/${categoryId}`);
+    console.log('Category deletion response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    console.error('Error response:', error.response?.data);
+    throw error;
   }
 };
 
 // Create a new course
-const createCourse = async (courseData) => {
+export const createCourse = async (courseData) => {
   try {
-    const response = await mockHttpClient.post('/api/admin/courses', courseData);
-    return response;
+    console.log('Creating course:', courseData);
+    const response = await httpClient.post('/api/admin/courses', courseData);
+    console.log('Course creation response:', response.data);
+    return response.data;
   } catch (error) {
     console.error('Error creating course:', error);
     throw error;
@@ -40,14 +94,14 @@ const createCourse = async (courseData) => {
 };
 
 // Get course by ID
-const getCourseById = async (courseId) => {
+export const getCourseById = async (courseId) => {
   if (!courseId) {
     throw new Error('Course ID is required');
   }
   
   try {
-    const response = await mockHttpClient.get(`/api/admin/courses/${courseId}`);
-    return response;
+    const response = await httpClient.get(`/api/admin/courses/${courseId}`);
+    return response.data;
   } catch (error) {
     console.error('Error fetching course:', error);
     throw error;
@@ -55,14 +109,14 @@ const getCourseById = async (courseId) => {
 };
 
 // Update course details
-const updateCourse = async (courseId, courseData) => {
+export const updateCourse = async (courseId, courseData) => {
   if (!courseId) {
     throw new Error('Course ID is required');
   }
   
   try {
-    const response = await mockHttpClient.put(`/api/admin/courses/${courseId}`, courseData);
-    return response;
+    const response = await httpClient.put(`/api/admin/courses/${courseId}`, courseData);
+    return response.data;
   } catch (error) {
     console.error('Error updating course:', error);
     throw error;
@@ -70,14 +124,14 @@ const updateCourse = async (courseId, courseData) => {
 };
 
 // Update course settings (advanced settings)
-const updateCourseSettings = async (courseId, settingsData) => {
+export const updateCourseSettings = async (courseId, settingsData) => {
   if (!courseId) {
     throw new Error('Course ID is required');
   }
   
   try {
-    const response = await mockHttpClient.put(`/api/admin/courses/${courseId}/settings`, settingsData);
-    return response;
+    const response = await httpClient.put(`/api/admin/courses/${courseId}/settings`, settingsData);
+    return response.data;
   } catch (error) {
     console.error('Error updating course settings:', error);
     throw error;
@@ -85,10 +139,10 @@ const updateCourseSettings = async (courseId, settingsData) => {
 };
 
 // Get all courses
-const getAllCourses = async () => {
+export const getAllCourses = async () => {
   try {
-    const response = await mockHttpClient.get('/api/admin/courses');
-    return response;
+    const response = await httpClient.get('/api/admin/courses');
+    return response.data;
   } catch (error) {
     console.error('Error fetching courses:', error);
     throw error;
@@ -96,14 +150,14 @@ const getAllCourses = async () => {
 };
 
 // Delete course
-const deleteCourse = async (courseId) => {
+export const deleteCourse = async (courseId) => {
   if (!courseId) {
     throw new Error('Course ID is required');
   }
   
   try {
-    const response = await mockHttpClient.delete(`/api/admin/courses/${courseId}`);
-    return response;
+    const response = await httpClient.delete(`/api/admin/courses/${courseId}`);
+    return response.data;
   } catch (error) {
     console.error('Error deleting course:', error);
     throw error;
@@ -111,51 +165,22 @@ const deleteCourse = async (courseId) => {
 };
 
 // Get course statistics
-const getCourseStats = async () => {
+export const getCourseStats = async () => {
   try {
-    const response = await mockHttpClient.get('/api/admin/courses/stats');
-    return response;
+    const response = await httpClient.get('/api/admin/courses/stats');
+    return response.data;
   } catch (error) {
     console.error('Error fetching course stats:', error);
     throw error;
   }
 };
 
-// Get course categories
-const getCourseCategories = async () => {
+// Create a new category (legacy function)
+export const createCategory = async (categoryData) => {
   try {
-    const response = await mockHttpClient.get('/api/admin/courses/categories');
-    return response;
-  } catch (error) {
-    console.error('Error fetching course categories:', error);
-    throw error;
-  }
-};
-
-// Create a new course category with subcategories
-const createCategoryWithSubcategories = async (categoryData) => {
-  try {
-    console.log('Mock: Creating category with subcategories', categoryData);
-    return {
-      id: Date.now(),
-      ...categoryData,
-      created_at: new Date().toISOString()
-    };
-  } catch (error) {
-    console.error('Error creating category:', error);
-    throw error;
-  }
-};
-
-// Create a new category
-const createCategory = async (categoryData) => {
-  try {
-    console.log('Mock: Creating category', categoryData);
-    return {
-      id: Date.now(),
-      ...categoryData,
-      created_at: new Date().toISOString()
-    };
+    console.log('Creating category (legacy):', categoryData);
+    const response = await httpClient.post('/api/admin/courses/categories', categoryData);
+    return response.data;
   } catch (error) {
     console.error('Error creating category:', error);
     throw error;
@@ -163,10 +188,10 @@ const createCategory = async (categoryData) => {
 };
 
 // Get course modules
-const getCourseModules = async (courseId) => {
+export const getCourseModules = async (courseId) => {
   try {
-    console.log('Mock: Getting course modules for', courseId);
-    return [];
+    const response = await httpClient.get(`/api/admin/courses/modules/${courseId}`);
+    return response.data;
   } catch (error) {
     console.error('Error fetching course modules:', error);
     throw error;
@@ -174,31 +199,12 @@ const getCourseModules = async (courseId) => {
 };
 
 // Create course module
-const createCourseModule = async (moduleData) => {
+export const createCourseModule = async (moduleData) => {
   try {
-    console.log('Mock: Creating course module', moduleData);
-    return {
-      id: Date.now(),
-      ...moduleData,
-      created_at: new Date().toISOString()
-    };
+    const response = await httpClient.post('/api/admin/courses/modules', moduleData);
+    return response.data;
   } catch (error) {
     console.error('Error creating course module:', error);
     throw error;
   }
-};
-
-export {
-  createCourse,
-  getCourseById,
-  updateCourse,
-  updateCourseSettings,
-  getAllCourses,
-  deleteCourse,
-  getCourseStats,
-  getCourseCategories,
-  createCategoryWithSubcategories,
-  createCategory,
-  getCourseModules,
-  createCourseModule
 };

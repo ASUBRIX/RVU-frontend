@@ -1,8 +1,10 @@
+// components/BasicInfo.jsx
+
 import { useState, useEffect, useCallback } from 'react';
-import { Form, Button, Modal, Dropdown, Alert, Spinner } from 'react-bootstrap';
-import { getCourseCategories, createCategoryWithSubcategories } from '@/helpers/courseApi';
-import { FaCloudUploadAlt, FaChevronDown, FaChevronRight, FaPlus, FaTrash, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
+import { Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { FaCloudUploadAlt, FaTrash, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import Category from '../components/Category';
 
 const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) => {
   // Form state
@@ -10,28 +12,13 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
     courseName: courseName || '',
     description: '',
     thumbnail: null,
-    selectedCategories: [],
-    selectedSubcategories: []
   });
 
   // UI state
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
-  const [expandedCategories, setExpandedCategories] = useState([]);
   const [thumbnail, setThumbnail] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
-  
-  // Categories state
-  const [categoriesData, setCategoriesData] = useState([]);
-  const [loadingCategories, setLoadingCategories] = useState(false);
-  
-  // Modal state
-  const [showNewCategoryModal, setShowNewCategoryModal] = useState(false);
-  const [newCategory, setNewCategory] = useState('');
-  const [newSubcategories, setNewSubcategories] = useState(['']);
-  const [parentCategory, setParentCategory] = useState('');
-  const [isAddingSubcategory, setIsAddingSubcategory] = useState(false);
-  const [creatingCategory, setCreatingCategory] = useState(false);
   
   // Validation and feedback state
   const [errors, setErrors] = useState({});
@@ -137,45 +124,20 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
     }
   }, [formData]);
 
-  // Fetch categories on component mount
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoadingCategories(true);
-        const res = await getCourseCategories();
-        setCategoriesData(res.data || []);
-      } catch (err) {
-        console.error('Error fetching categories:', err);
-        setErrors(prev => ({ ...prev, categories: 'Failed to load categories' }));
-      } finally {
-        setLoadingCategories(false);
-      }
-    };
+  // Category change handlers
+  const handleCategoryChange = useCallback((categories) => {
+    setSelectedCategories(categories);
+    setTouched(prev => ({ ...prev, categories: true }));
     
-    fetchCategories();
+    // Clear category error if categories are selected
+    if (categories.length > 0) {
+      setErrors(prev => ({ ...prev, categories: '' }));
+    }
   }, []);
 
-  // Category selection handlers
-  const handleCategoryChange = (e) => {
-    const value = e.target.value.toString();
-    setSelectedCategories((prev) =>
-      prev.includes(value) ? prev.filter((cat) => cat !== value) : [...prev, value]
-    );
-    setTouched(prev => ({ ...prev, categories: true }));
-  };
-
-  const handleSubcategoryChange = (e) => {
-    const value = e.target.value.toString();
-    setSelectedSubcategories((prev) =>
-      prev.includes(value) ? prev.filter((sub) => sub !== value) : [...prev, value]
-    );
-  };
-
-  const toggleCategoryExpand = (categoryId) => {
-    setExpandedCategories((prev) =>
-      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
-    );
-  };
+  const handleSubcategoryChange = useCallback((subcategories) => {
+    setSelectedSubcategories(subcategories);
+  }, []);
 
   // Thumbnail handling with validation
   const handleThumbnailChange = (e) => {
@@ -198,56 +160,6 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
     setThumbnail(null);
     setThumbnailPreview(null);
     document.getElementById('thumbnail-input').value = '';
-  };
-
-  // Category creation handlers
-  const handleNewCategory = async () => {
-    if (!newCategory.trim() || newSubcategories.some(sub => !sub.trim())) {
-      return;
-    }
-    
-    try {
-      setCreatingCategory(true);
-      await createCategoryWithSubcategories({
-        title: isAddingSubcategory ? parentCategory : newCategory,
-        subcategories: newSubcategories.filter(sub => sub.trim()),
-      });
-      
-      // Refresh categories
-      const res = await getCourseCategories();
-      setCategoriesData(res.data || []);
-      
-      // Reset modal state
-      setShowNewCategoryModal(false);
-      setNewCategory('');
-      setNewSubcategories(['']);
-      setParentCategory('');
-      setIsAddingSubcategory(false);
-      
-    } catch (err) {
-      console.error('Error creating category:', err);
-      setErrors(prev => ({ ...prev, categoryModal: err.message || 'Failed to create category' }));
-    } finally {
-      setCreatingCategory(false);
-    }
-  };
-
-  const toggleAddSubcategory = () => setIsAddingSubcategory(!isAddingSubcategory);
-
-  const handleAddSubcategoryField = () => {
-    setNewSubcategories([...newSubcategories, '']);
-  };
-
-  const handleRemoveSubcategoryField = (index) => {
-    const updated = [...newSubcategories];
-    updated.splice(index, 1);
-    setNewSubcategories(updated);
-  };
-
-  const handleSubcategoryInputChange = (index, value) => {
-    const updated = [...newSubcategories];
-    updated[index] = value;
-    setNewSubcategories(updated);
   };
 
   // Form submission
@@ -440,95 +352,16 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
           )}
         </Form.Group>
 
-        {/* Categories */}
+        {/* Dynamic Categories - Replace the existing category section */}
         <Form.Group className="mb-4">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <Form.Label className="fw-medium mb-0">
-              Categories <span className="text-danger">*</span>
-            </Form.Label>
-            <Button
-              variant="outline-primary"
-              size="sm"
-              onClick={() => {
-                setNewCategory('');
-                setNewSubcategories(['']);
-                setShowNewCategoryModal(true);
-              }}
-              disabled={loadingCategories}
-            >
-              Create New Category
-            </Button>
-          </div>
-          
-          <div className={`border rounded-3 p-3 bg-light ${
-            touched.categories && errors.categories ? 'border-danger' : ''
-          }`}>
-            {loadingCategories ? (
-              <div className="text-center py-3">
-                <Spinner size="sm" className="me-2" />
-                Loading categories...
-              </div>
-            ) : categoriesData.length === 0 ? (
-              <div className="text-center py-3 text-muted">
-                No categories available. Create a new category to get started.
-              </div>
-            ) : (
-              categoriesData.map((category) => (
-                <div key={category.id} className="mb-2">
-                  <div className="d-flex align-items-center mb-2">
-                    <Button
-                      variant="link"
-                      className="p-0 text-dark me-2"
-                      onClick={() => toggleCategoryExpand(category.id)}
-                      style={{ textDecoration: 'none' }}
-                    >
-                      {expandedCategories.includes(category.id) ? 
-                        <FaChevronDown size={14} /> : 
-                        <FaChevronRight size={14} />
-                      }
-                    </Button>
-                    <div className="form-check mb-0">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id={`category-${category.id}`}
-                        value={category.id}
-                        checked={selectedCategories.includes(category.id.toString())}
-                        onChange={handleCategoryChange}
-                      />
-                      <label className="form-check-label fw-medium" htmlFor={`category-${category.id}`}>
-                        {category.title}
-                      </label>
-                    </div>
-                  </div>
-                  {expandedCategories.includes(category.id) && category.subcategories && (
-                    <div className="ms-4 ps-2 border-start">
-                      {category.subcategories.map((sub) => (
-                        <div className="form-check mb-2" key={sub.id}>
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            id={`subcategory-${sub.id}`}
-                            value={sub.id}
-                            checked={selectedSubcategories.includes(sub.id.toString())}
-                            onChange={handleSubcategoryChange}
-                          />
-                          <label className="form-check-label" htmlFor={`subcategory-${sub.id}`}>
-                            {sub.title}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-          {touched.categories && errors.categories && (
-            <div className="text-danger small mt-1">
-              {errors.categories}
-            </div>
-          )}
+          <Category
+            selectedCategories={selectedCategories}
+            selectedSubcategories={selectedSubcategories}
+            onCategoryChange={handleCategoryChange}
+            onSubcategoryChange={handleSubcategoryChange}
+            required={true}
+            error={touched.categories && errors.categories ? errors.categories : ''}
+          />
         </Form.Group>
 
         {/* Action Buttons */}
@@ -569,184 +402,6 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
           </div>
         </div>
       </Form>
-
-      {/* Category Creation Modal - Keeping your existing modal code but with loading states */}
-      <Modal show={showNewCategoryModal} onHide={() => setShowNewCategoryModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {isAddingSubcategory ? 'Add Subcategories to Existing Category' : 'Create New Category'}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {errors.categoryModal && (
-            <Alert variant="danger" className="mb-3">
-              {errors.categoryModal}
-            </Alert>
-          )}
-          
-          {/* Your existing modal content with minor enhancements */}
-          {!isAddingSubcategory ? (
-            <>
-              <Form.Group className="mb-4">
-                <Form.Label>Category Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter category name"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="bg-light border-0"
-                  disabled={creatingCategory}
-                />
-              </Form.Group>
-              <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <Form.Label className="mb-0">Subcategories</Form.Label>
-                  <Button 
-                    variant="outline-primary" 
-                    size="sm" 
-                    onClick={handleAddSubcategoryField}
-                    disabled={creatingCategory}
-                  >
-                    <FaPlus className="me-1" size={12} /> Add Subcategory
-                  </Button>
-                </div>
-                {newSubcategories.map((subcategory, index) => (
-                  <div key={index} className="d-flex align-items-center mb-2">
-                    <Form.Control
-                      type="text"
-                      placeholder={`Enter subcategory ${index + 1} name`}
-                      value={subcategory}
-                      onChange={(e) => handleSubcategoryInputChange(index, e.target.value)}
-                      className="bg-light border-0 me-2"
-                      disabled={creatingCategory}
-                    />
-                    {newSubcategories.length > 1 && (
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => handleRemoveSubcategoryField(index)}
-                        className="p-1"
-                        disabled={creatingCategory}
-                      >
-                        <FaTrash size={14} />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="d-flex justify-content-end">
-                <Button 
-                  variant="link" 
-                  className="text-primary p-0" 
-                  onClick={toggleAddSubcategory}
-                  disabled={creatingCategory}
-                >
-                  Add subcategories to existing category
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <Form.Group className="mb-4">
-                <Form.Label>Select Parent Category</Form.Label>
-                <Dropdown className="w-100">
-                  <Dropdown.Toggle 
-                    variant="light" 
-                    className="bg-light border-0 w-100 text-start"
-                    disabled={creatingCategory}
-                  >
-                    {parentCategory || 'Select parent category'}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu className="w-100">
-                    {categoriesData.map((category) => (
-                      <Dropdown.Item 
-                        key={category.id} 
-                        onClick={() => setParentCategory(category.title)}
-                      >
-                        {category.title}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Form.Group>
-              <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <Form.Label className="mb-0">Subcategories</Form.Label>
-                  <Button 
-                    variant="outline-primary" 
-                    size="sm" 
-                    onClick={handleAddSubcategoryField}
-                    disabled={creatingCategory}
-                  >
-                    <FaPlus className="me-1" size={12} /> Add Subcategory
-                  </Button>
-                </div>
-                {newSubcategories.map((subcategory, index) => (
-                  <div key={index} className="d-flex align-items-center mb-2">
-                    <Form.Control
-                      type="text"
-                      placeholder={`Enter subcategory ${index + 1} name`}
-                      value={subcategory}
-                      onChange={(e) => handleSubcategoryInputChange(index, e.target.value)}
-                      className="bg-light border-0 me-2"
-                      disabled={creatingCategory}
-                    />
-                    {newSubcategories.length > 1 && (
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => handleRemoveSubcategoryField(index)}
-                        className="p-1"
-                        disabled={creatingCategory}
-                      >
-                        <FaTrash size={14} />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="d-flex justify-content-end">
-                <Button 
-                  variant="link" 
-                  className="text-primary p-0" 
-                  onClick={toggleAddSubcategory}
-                  disabled={creatingCategory}
-                >
-                  Create new category with subcategories
-                </Button>
-              </div>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button 
-            variant="light" 
-            onClick={() => setShowNewCategoryModal(false)}
-            disabled={creatingCategory}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleNewCategory}
-            disabled={
-              creatingCategory ||
-              (isAddingSubcategory
-                ? !parentCategory || newSubcategories.some((sub) => !sub.trim())
-                : !newCategory || newSubcategories.some((sub) => !sub.trim()))
-            }
-          >
-            {creatingCategory ? (
-              <>
-                <Spinner size="sm" className="me-2" />
-                Creating...
-              </>
-            ) : (
-              isAddingSubcategory ? 'Add Subcategories' : 'Create Category'
-            )}
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };
