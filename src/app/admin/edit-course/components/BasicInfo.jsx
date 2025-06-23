@@ -5,8 +5,19 @@ import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { FaCloudUploadAlt, FaTrash, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Category from '../components/Category';
+import httpClient from '@/helpers/httpClient'; // Adjust path as needed
 
-const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) => {
+const BasicInfo = ({ 
+  setActiveStep, 
+  setProgress, 
+  courseName, 
+  setCourseName, 
+  courseId, 
+  isNewCourse,
+  courseCreated,
+  onCourseCreated,
+  onCourseUpdated 
+}) => {
   // Form state
   const [formData, setFormData] = useState({
     courseName: courseName || '',
@@ -25,8 +36,44 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
   const [touched, setTouched] = useState({});
   const [saving, setSaving] = useState(false);
   const [autoSaveStatus, setAutoSaveStatus] = useState('');
+  const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
+
+  // Load existing course data if editing
+  useEffect(() => {
+    if (courseId && !isNewCourse) {
+      loadCourseData();
+    }
+  }, [courseId, isNewCourse]);
+
+  const loadCourseData = async () => {
+    try {
+      setLoading(true);
+      const response = await httpClient.get(`/api/admin/courses/${courseId}`);
+      const course = response.data;
+      
+      setFormData({
+        courseName: course.name || '',
+        description: course.description || '',
+        thumbnail: null
+      });
+      
+      setCourseName(course.name || '');
+      setSelectedCategories(course.categories || []);
+      setSelectedSubcategories(course.subcategories || []);
+      
+      if (course.thumbnail) {
+        setThumbnailPreview(course.thumbnail);
+      }
+      
+    } catch (error) {
+      console.error('Failed to load course data:', error);
+      setErrors({ fetch: 'Failed to load course data' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Validation rules
   const validateField = useCallback((name, value) => {
@@ -101,16 +148,18 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
     const error = validateField(name, value);
     setErrors(prev => ({ ...prev, [name]: error }));
     
-    // Auto-save after 2 seconds of no typing
-    clearTimeout(window.autoSaveTimeout);
-    window.autoSaveTimeout = setTimeout(() => {
-      autoSaveDraft();
-    }, 2000);
-  }, [validateField, setCourseName]);
+    // Auto-save after 2 seconds of no typing (only for existing courses)
+    if (!isNewCourse && courseId) {
+      clearTimeout(window.autoSaveTimeout);
+      window.autoSaveTimeout = setTimeout(() => {
+        autoSaveDraft();
+      }, 2000);
+    }
+  }, [validateField, setCourseName, isNewCourse, courseId]);
 
   // Auto-save draft functionality
   const autoSaveDraft = useCallback(async () => {
-    if (!formData.courseName.trim()) return;
+    if (!formData.courseName.trim() || isNewCourse) return;
     
     try {
       setAutoSaveStatus('saving');
@@ -122,7 +171,7 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
       setAutoSaveStatus('error');
       setTimeout(() => setAutoSaveStatus(''), 3000);
     }
-  }, [formData]);
+  }, [formData, isNewCourse]);
 
   // Category change handlers
   const handleCategoryChange = useCallback((categories) => {
@@ -162,6 +211,98 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
     document.getElementById('thumbnail-input').value = '';
   };
 
+  // Save course to database
+  const saveCourseToDatabase = async () => {
+    try {
+      // Prepare form data for API
+      const courseData = new FormData();
+      courseData.append('name', formData.courseName.trim());
+      courseData.append('description', formData.description.trim());
+      courseData.append('categories', JSON.stringify(selectedCategories));
+      courseData.append('subcategories', JSON.stringify(selectedSubcategories));
+      
+      if (thumbnail) {
+        courseData.append('thumbnail', thumbnail);
+      }
+
+      let response;
+      // Check if this is truly a new course or an existing course
+      const isCreatingNewCourse = isNewCourse || !courseId || courseId === 'new';
+      
+      if (isCreatingNewCourse) {
+        // Create new course
+        console.log('🆕 Creating new course...');
+        console.log('📝 Course data being sent:', {
+          name: formData.courseName.trim(),
+          description: formData.description.trim(),
+          categories: selectedCategories,
+          subcategories: selectedSubcategories,
+          hasThumbnail: !!thumbnail
+        });
+        
+        response = await httpClient.post('/api/admin/courses', courseData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        
+        const newCourse = response.data;
+        console.log('✅ Course created successfully:', newCourse);
+        
+        // Notify parent component about course creation
+        if (onCourseCreated) {
+          onCourseCreated(newCourse.id, {
+            courseName: newCourse.name,
+            ...newCourse
+          });
+        }
+        
+        return newCourse;
+      } else {
+        // Update existing course
+        console.log('📝 Updating existing course with ID:', courseId);
+        console.log('📝 Course data being sent:', {
+          name: formData.courseName.trim(),
+          description: formData.description.trim(),
+          categories: selectedCategories,
+          subcategories: selectedSubcategories,
+          hasThumbnail: !!thumbnail
+        });
+        
+        if (!courseId || courseId === 'undefined' || courseId === 'new') {
+          throw new Error('Invalid course ID for update operation');
+        }
+        
+        response = await httpClient.put(`/api/admin/courses/${courseId}`, courseData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        
+        const updatedCourse = response.data;
+        console.log('✅ Course updated successfully:', updatedCourse);
+        
+        // Notify parent component about course update
+        if (onCourseUpdated) {
+          onCourseUpdated({
+            courseName: updatedCourse.name,
+            ...updatedCourse
+          });
+        }
+        
+        return updatedCourse;
+      }
+    } catch (error) {
+      console.error('❌ Failed to save course:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      throw error;
+    }
+  };
+
   // Form submission
   const handleNext = async () => {
     setTouched({
@@ -177,13 +318,19 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
     
     try {
       setSaving(true);
-      // TODO: Save basic info to backend
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setErrors({});
+      
+      await saveCourseToDatabase();
       
       setProgress(45);
       setActiveStep(2);
     } catch (error) {
-      setErrors(prev => ({ ...prev, submit: error.message || 'Failed to save course information' }));
+      console.error('Error saving course:', error);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.message || 
+                          'Failed to save course information';
+      setErrors({ submit: errorMessage });
     } finally {
       setSaving(false);
     }
@@ -195,16 +342,30 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
     }
   };
 
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <Spinner animation="border" variant="primary" className="mb-3" />
+        <h6 className="text-muted">Loading course information...</h6>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h4 className="mb-2">Basic Information</h4>
-          <p className="text-muted mb-0">Enter the essential details for your course</p>
+          <p className="text-muted mb-0">
+            {isNewCourse 
+              ? 'Enter the essential details for your new course'
+              : 'Update the essential details for your course'
+            }
+          </p>
         </div>
         
         {/* Auto-save status */}
-        {autoSaveStatus && (
+        {autoSaveStatus && !isNewCourse && (
           <div className="d-flex align-items-center">
             {autoSaveStatus === 'saving' && (
               <>
@@ -228,11 +389,27 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
         )}
       </div>
 
+      {/* Fetch Error Alert */}
+      {errors.fetch && (
+        <Alert variant="danger" className="mb-4">
+          <FaExclamationTriangle className="me-2" />
+          {errors.fetch}
+        </Alert>
+      )}
+
       {/* Submit Error Alert */}
       {errors.submit && (
         <Alert variant="danger" className="mb-4">
           <FaExclamationTriangle className="me-2" />
           {errors.submit}
+        </Alert>
+      )}
+
+      {/* Course Creation Status */}
+      {isNewCourse && courseCreated && (
+        <Alert variant="success" className="mb-4">
+          <FaCheckCircle className="me-2" />
+          Course created successfully! You can now proceed to add pricing plans.
         </Alert>
       )}
 
@@ -393,10 +570,10 @@ const BasicInfo = ({ setActiveStep, setProgress, courseName, setCourseName }) =>
               {saving ? (
                 <>
                   <Spinner size="sm" className="me-2" />
-                  Saving...
+                  {isNewCourse ? 'Creating Course...' : 'Saving...'}
                 </>
               ) : (
-                'Next'
+                isNewCourse ? 'Create Course & Continue' : 'Save & Next'
               )}
             </Button>
           </div>

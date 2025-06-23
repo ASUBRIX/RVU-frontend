@@ -4,9 +4,21 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FaPlus, FaTrash, FaExclamationTriangle, FaCheckCircle, FaInfoCircle, FaStar, FaCalculator } from 'react-icons/fa';
 import { getPricingPlans, createPricingPlan, updatePricingPlan, deletePricingPlan } from '@/helpers/pricingPlansApi';
 
-const PricingPlans = ({ setActiveStep, setProgress }) => {
-  const { courseId } = useParams();
+const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) => {
+  const { courseId: paramCourseId } = useParams();
   const navigate = useNavigate();
+  
+  // Use courseId from props first (passed from EditCourse), then from URL params
+  const rawCourseId = propCourseId || paramCourseId;
+  
+  // Handle "new" course creation
+  const isNewCourse = rawCourseId === 'new';
+  const courseId = isNewCourse ? null : rawCourseId;
+  
+  console.log('🔢 PricingPlans - PropCourseId:', propCourseId);
+  console.log('🔢 PricingPlans - ParamCourseId:', paramCourseId);
+  console.log('🔢 PricingPlans - Is New Course:', isNewCourse);
+  console.log('🔢 PricingPlans - Final CourseId:', courseId);
   
   // State management
   const [plans, setPlans] = useState([]);
@@ -27,10 +39,18 @@ const PricingPlans = ({ setActiveStep, setProgress }) => {
 
   // Load pricing plans on component mount
   useEffect(() => {
-    if (courseId) {
+    console.log('CourseId from props:', propCourseId);
+    console.log('CourseId from params:', paramCourseId);
+    console.log('Final courseId:', courseId);
+    console.log('Is new course:', isNewCourse);
+    
+    if (courseId && !isNewCourse) {
       fetchPricingPlans();
+    } else if (isNewCourse) {
+      console.log('🆕 New course - skipping pricing plans fetch');
+      setPlans([]); // Start with empty plans for new course
     }
-  }, [courseId]);
+  }, [courseId, propCourseId, paramCourseId, isNewCourse]);
 
   const fetchPricingPlans = async () => {
     try {
@@ -40,7 +60,7 @@ const PricingPlans = ({ setActiveStep, setProgress }) => {
       setPlans(res.data || []);
     } catch (err) {
       console.error('Failed to fetch plans:', err);
-      setErrors({ fetch: err.message || 'Failed to load pricing plans' });
+      setErrors({ fetch: err.response?.data?.error || err.message || 'Failed to load pricing plans' });
     } finally {
       setLoading(false);
     }
@@ -170,7 +190,10 @@ const PricingPlans = ({ setActiveStep, setProgress }) => {
         setTimeout(() => setSuccessMessage(''), 3000);
       } catch (err) {
         console.error('Failed to delete plan:', err);
-        setErrors(prev => ({ ...prev, [index]: { delete: err.message } }));
+        setErrors(prev => ({ 
+          ...prev, 
+          [index]: { delete: err.response?.data?.error || err.message } 
+        }));
       } finally {
         setDeleting(null);
       }
@@ -191,8 +214,76 @@ const PricingPlans = ({ setActiveStep, setProgress }) => {
     setShowRecommendations(false);
   };
 
+  // Clean and prepare plan data for API
+  const preparePlanData = (plan) => {
+    // Ensure courseId is available and valid
+    const validCourseId = courseId || plan.course_id;
+    if (!validCourseId) {
+      throw new Error('Course ID is required but not found');
+    }
+
+    const cleanedPlan = {
+      course_id: parseInt(validCourseId),
+      duration: parseInt(plan.duration),
+      unit: plan.unit,
+      price: parseFloat(plan.price),
+      discount: plan.discount ? parseFloat(plan.discount) : null,
+      is_promoted: Boolean(plan.is_promoted),
+      effective_price: parseFloat(calculateEffectivePrice(plan.price, plan.discount))
+    };
+
+    // Validate required fields
+    if (!cleanedPlan.course_id || isNaN(cleanedPlan.course_id)) {
+      throw new Error('Invalid course_id');
+    }
+    if (!cleanedPlan.duration || isNaN(cleanedPlan.duration)) {
+      throw new Error('Invalid duration');
+    }
+    if (!cleanedPlan.price || isNaN(cleanedPlan.price)) {
+      throw new Error('Invalid price');
+    }
+    if (!cleanedPlan.unit) {
+      throw new Error('Unit is required');
+    }
+
+    // Remove any undefined, null, or NaN values
+    Object.keys(cleanedPlan).forEach(key => {
+      if (cleanedPlan[key] === undefined || 
+          (typeof cleanedPlan[key] === 'number' && isNaN(cleanedPlan[key]))) {
+        if (key === 'discount') {
+          cleanedPlan[key] = null;
+        } else if (key === 'is_promoted') {
+          cleanedPlan[key] = false;
+        } else if (key === 'effective_price') {
+          cleanedPlan[key] = 0;
+        } else {
+          delete cleanedPlan[key];
+        }
+      }
+    });
+
+    console.log('Course ID from params:', courseId);
+    console.log('Prepared plan data:', cleanedPlan);
+    return cleanedPlan;
+  };
+
   const handleSavePlans = async () => {
     if (!validateAllPlans()) {
+      return;
+    }
+
+    // Check if this is a new course
+    if (isNewCourse) {
+      setErrors({ 
+        general: 'Please save the course basic information first before adding pricing plans. You cannot add pricing plans to a course that hasn\'t been created yet.' 
+      });
+      return;
+    }
+
+    // Debug: Check if courseId is available
+    console.log('CourseId from useParams:', courseId);
+    if (!courseId) {
+      setErrors({ general: 'Course ID is missing. Please ensure you are accessing this page from a valid course.' });
       return;
     }
     
@@ -205,20 +296,33 @@ const PricingPlans = ({ setActiveStep, setProgress }) => {
       
       for (const [index, plan] of plans.entries()) {
         try {
-          const planData = {
-            ...plan,
-            effective_price: calculateEffectivePrice(plan.price, plan.discount)
-          };
+          // Validate required fields before sending
+          if (!plan.duration || !plan.unit || !plan.price) {
+            errors.push({ 
+              index, 
+              error: 'Missing required fields: duration, unit, or price' 
+            });
+            continue;
+          }
+
+          const planData = preparePlanData(plan);
           
           let result;
           if (plan.id) {
+            // Update existing plan
             result = await updatePricingPlan(plan.id, planData);
           } else {
-            result = await createPricingPlan({ ...planData, course_id: courseId });
+            // Create new plan
+            result = await createPricingPlan(planData);
           }
           results.push(result);
         } catch (err) {
-          errors.push({ index, error: err.message });
+          console.error(`Error saving plan ${index}:`, err);
+          const errorMessage = err.response?.data?.error || 
+                             err.response?.data?.details || 
+                             err.message || 
+                             'Unknown error occurred';
+          errors.push({ index, error: errorMessage });
         }
       }
       
@@ -232,11 +336,19 @@ const PricingPlans = ({ setActiveStep, setProgress }) => {
           errorObj[index] = { save: error };
         });
         setErrors(errorObj);
+        
+        // If some plans were saved successfully, show partial success
+        if (results.length > 0) {
+          setSuccessMessage(`Saved ${results.length} plans, but ${errors.length} failed`);
+          setTimeout(() => setSuccessMessage(''), 5000);
+        }
       }
       
     } catch (err) {
       console.error('Failed to save plans:', err);
-      setErrors({ general: err.message || 'Failed to save pricing plans' });
+      setErrors({ 
+        general: err.response?.data?.error || err.message || 'Failed to save pricing plans' 
+      });
     } finally {
       setSaving(false);
     }
@@ -301,6 +413,23 @@ const PricingPlans = ({ setActiveStep, setProgress }) => {
         <Alert variant="success" className="mb-4">
           <FaCheckCircle className="me-2" />
           {successMessage}
+        </Alert>
+      )}
+
+      {/* New Course Warning */}
+      {isNewCourse && (
+        <Alert variant="info" className="mb-4">
+          <FaInfoCircle className="me-2" />
+          <strong>New Course:</strong> You're creating a new course. Please complete the basic information step first, then return here to set up pricing plans.
+          <div className="mt-2">
+            <Button 
+              variant="outline-info" 
+              size="sm"
+              onClick={() => setActiveStep(1)}
+            >
+              Go to Basic Information
+            </Button>
+          </div>
         </Alert>
       )}
 
