@@ -2,8 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Alert } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiUser, FiDollarSign, FiFolder, FiSettings, FiCheckCircle } from 'react-icons/fi';
-
-// Import components
 import BasicInfo from './components/BasicInfo';
 import PricingPlans from './components/PricingPlans';
 import CourseContent from './components/CourseContent';
@@ -12,22 +10,14 @@ import AdvancedSettings from './components/AdvancedSettings';
 const EditCourse = () => {
   const { courseId: urlCourseId } = useParams();
   const navigate = useNavigate();
-  
-  // Core state
   const [activeStep, setActiveStep] = useState(1);
   const [progress, setProgress] = useState(15);
   const [courseName, setCourseName] = useState('');
-  
-  // Feedback state
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  
-  // Course creation state
   const [createdCourseId, setCreatedCourseId] = useState(null);
   const [isNewCourse, setIsNewCourse] = useState(urlCourseId === 'new');
   const [courseCreated, setCourseCreated] = useState(false);
-  
-  // Determine the actual courseId to use
   const actualCourseId = isNewCourse ? createdCourseId : urlCourseId;
 
   // Memoized handlers to prevent unnecessary re-renders
@@ -36,12 +26,8 @@ const EditCourse = () => {
     setCourseCreated(true);
     setCourseName(courseData.courseName || `Course #${newCourseId}`);
     setSuccessMessage('Course created successfully! You can now add pricing plans.');
-    
-    // Update URL to reflect the new course ID
     navigate(`/admin/edit-course/${newCourseId}`, { replace: true });
     setIsNewCourse(false);
-    
-    // Clear success message after 5 seconds
     setTimeout(() => setSuccessMessage(''), 5000);
   }, [navigate]);
 
@@ -51,14 +37,14 @@ const EditCourse = () => {
     setTimeout(() => setSuccessMessage(''), 3000);
   }, [courseName]);
 
-  // Check if step is accessible
+ 
   const isStepAccessible = useCallback((stepNumber) => {
-    if (stepNumber === 1) return true; // Basic Info is always accessible
-    if (isNewCourse && !courseCreated) return false; // Can't access other steps without creating course
+    if (stepNumber === 1) return true; 
+    if (isNewCourse && !courseCreated) return false;
     return true;
   }, [isNewCourse, courseCreated]);
 
-  // Handle step navigation with validation
+
   const handleStepClick = useCallback((stepNumber) => {
     if (!isStepAccessible(stepNumber)) {
       setError('Please complete the basic information and create the course first.');
@@ -69,7 +55,7 @@ const EditCourse = () => {
     setActiveStep(stepNumber);
   }, [isStepAccessible]);
 
-  // Memoized step configuration
+
   const steps = [
     { 
       number: 1, 
@@ -97,7 +83,6 @@ const EditCourse = () => {
     },
   ];
 
-  // Memoized common props to prevent unnecessary re-renders
   const commonProps = React.useMemo(() => ({
     setActiveStep,
     setProgress,
@@ -108,11 +93,10 @@ const EditCourse = () => {
     courseCreated
   }), [actualCourseId, isNewCourse, courseCreated, courseName]);
 
-  // Render active component with error boundary
+
   const renderActiveComponent = () => {
     const stepProps = { ...commonProps };
 
-    // Add specific props for BasicInfo
     if (activeStep === 1) {
       stepProps.onCourseCreated = handleCourseCreated;
       stepProps.onCourseUpdated = handleCourseUpdated;
