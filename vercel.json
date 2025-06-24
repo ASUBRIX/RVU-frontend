@@ -1,0 +1,11 @@
+{
+  "build": {
+    "env": {
+      "VITE_API_BASE_URL": "https://pudhuyugam-backend.onrender.com"
+    }
+  },
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "outputDirectory": "dist"
+}
