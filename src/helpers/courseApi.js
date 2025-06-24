@@ -1,6 +1,5 @@
 import httpClient from './httpClient'
 
-
 // Get all courses
 export const getAllCourses = async () => {
   try {
@@ -11,7 +10,6 @@ export const getAllCourses = async () => {
     throw error
   }
 }
-
 
 export const getCourseCategories = async () => {
   try {
@@ -120,6 +118,30 @@ export const updateCourse = async (courseId, courseData) => {
     throw error
   }
 }
+
+// 🔥 NEW: Upload course thumbnail
+export const uploadCourseThumbnail = async (courseId, thumbnailFile) => {
+  try {
+    const formData = new FormData();
+    formData.append('thumbnail', thumbnailFile);
+    formData.append('courseId', courseId);
+
+    console.log('Uploading thumbnail for course:', courseId);
+    console.log('Thumbnail file:', thumbnailFile);
+    
+    const response = await httpClient.post('/api/admin/courses/upload-thumbnail', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    });
+    
+    console.log('Thumbnail upload response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading thumbnail:', error);
+    throw error;
+  }
+};
 
 // Update course settings (advanced settings)
 export const updateCourseSettings = async (courseId, settingsData) => {

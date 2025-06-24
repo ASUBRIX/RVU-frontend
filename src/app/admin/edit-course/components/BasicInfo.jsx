@@ -2,7 +2,8 @@ import React, { useState, useEffect, memo, useCallback } from 'react';
 import { Form, Button, Alert, Spinner, Row, Col } from 'react-bootstrap';
 import { FaCloudUploadAlt, FaTrash, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { createCourse, updateCourse, getCourseById, getCourseCategories } from '@/helpers/courseApi';
+import { createCourse, updateCourse, getCourseById, getCourseCategories, uploadCourseThumbnail } from '@/helpers/courseApi';
+import { getThumbnailUrl } from '../../../../utils/thumbnailHelper';
 
 const BasicInfo = memo(({ 
   setActiveStep, 
@@ -280,8 +281,31 @@ const BasicInfo = memo(({
         console.log('🔍 UPDATE API Response:', result);
       }
 
-      // Extract course ID from response
-      const newCourseId = result.id;
+    // Extract course ID from response
+    const newCourseId = result.id;
+    console.log('🔍 Extracted course ID:', newCourseId);
+    
+    if (!newCourseId && shouldCreateNewCourse) {
+      console.error('❌ No course ID in response:', result);
+      throw new Error('No course ID returned from server');
+    }
+
+    // 🔥 NEW: Upload thumbnail if there's a file
+    if (thumbnail && newCourseId) {
+      try {
+        console.log('🔍 Uploading thumbnail...');
+        const thumbnailResponse = await uploadCourseThumbnail(newCourseId, thumbnail);
+        console.log('🔍 Thumbnail uploaded successfully:', thumbnailResponse);
+        
+        // Update the result with thumbnail URL
+        if (thumbnailResponse.thumbnailUrl) {
+          result.thumbnail = thumbnailResponse.thumbnailUrl;
+        }
+      } catch (thumbnailError) {
+        console.error('⚠️ Thumbnail upload failed (course still created):', thumbnailError);
+        // Don't throw error - course creation succeeded, just thumbnail failed
+      }
+    }
       console.log('🔍 Extracted course ID:', newCourseId);
       
       if (!newCourseId && shouldCreateNewCourse) {

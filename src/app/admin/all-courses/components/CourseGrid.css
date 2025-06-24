@@ -1,0 +1,264 @@
+/* CourseGrid.css */
+
+/* Course Card Base Styles */
+.course-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Card Hover Effects */
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Thumbnail Styles */
+.course-card .card-img-top {
+  transition: transform 0.3s ease;
+  border-radius: 12px 12px 0 0;
+}
+
+.course-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+/* Title Hover Effect */
+.hover-text-primary {
+  transition: color 0.2s ease;
+}
+
+.hover-text-primary:hover {
+  color: var(--bs-primary) !important;
+}
+
+/* Badge Animations */
+.course-card .badge {
+  transition: all 0.2s ease;
+}
+
+.course-card:hover .badge {
+  transform: scale(1.05);
+}
+
+/* Action Dropdown Styles */
+.course-card .dropdown-toggle {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.course-card:hover .dropdown-toggle {
+  opacity: 1;
+}
+
+.course-card .dropdown-toggle::after {
+  display: none;
+}
+
+/* Price Styling */
+.course-card .price-section {
+  font-weight: 600;
+}
+
+.course-card .original-price {
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+/* Card Body Spacing */
+.course-card .card-body {
+  padding: 1.25rem;
+}
+
+/* Category Badge */
+.course-card .category-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Status Badges */
+.course-card .status-badges .badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* Meta Information */
+.course-card .course-meta {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.course-card .course-meta svg {
+  opacity: 0.7;
+}
+
+/* Description Text */
+.course-card .card-text {
+  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
+/* Rating Section */
+.course-card .rating-section {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.course-card .rating-section .fa-star {
+  font-size: 0.85rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .course-card .card-img-top {
+    height: 160px !important;
+  }
+  
+  .course-card .card-body {
+    padding: 1rem;
+  }
+  
+  .course-card .card-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .course-card .card-img-top {
+    height: 140px !important;
+  }
+  
+  .course-card .card-body {
+    padding: 0.875rem;
+  }
+}
+
+/* Loading Animation */
+.course-grid-loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Empty State Styles */
+.empty-state {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.empty-state i {
+  opacity: 0.5;
+  margin-bottom: 1.5rem;
+}
+
+.empty-state h4 {
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.empty-state p {
+  margin-bottom: 1.5rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Special Effects */
+.course-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 49%, rgba(255, 255, 255, 0.03) 50%, transparent 51%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.course-card:hover::before {
+  opacity: 1;
+}
+
+/* Featured Course Styling */
+.course-card.featured {
+  border: 2px solid #ffc107;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+}
+
+.course-card.featured:hover {
+  box-shadow: 0 12px 30px rgba(255, 193, 7, 0.3) !important;
+}
+
+/* Published/Draft Status Colors */
+.course-card.status-published {
+  border-left: 4px solid #198754;
+}
+
+.course-card.status-draft {
+  border-left: 4px solid #6c757d;
+}
+
+.course-card.status-pending {
+  border-left: 4px solid #ffc107;
+}
+
+/* Price Styling Variations */
+.price-free {
+  color: #198754 !important;
+  font-weight: 700;
+}
+
+.price-discounted {
+  color: #dc3545 !important;
+  font-weight: 700;
+}
+
+.price-regular {
+  color: #495057 !important;
+  font-weight: 600;
+}
+
+/* Action Button Hover Effects */
+.course-card .btn {
+  transition: all 0.2s ease;
+}
+
+.course-card .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom Scrollbar for Long Text */
+.course-card .card-text::-webkit-scrollbar {
+  width: 2px;
+}
+
+.course-card .card-text::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.course-card .card-text::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.course-card .card-text::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

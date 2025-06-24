@@ -10,6 +10,30 @@ import CourseSearch from './components/CourseSearch';
 import CourseSort from './components/CourseSort';
 import { getAllCourses } from '@/helpers/courseApi';
 
+// Simple thumbnail helper function (inline to avoid import issues)
+const getThumbnailUrl = (thumbnailPath) => {
+  if (!thumbnailPath) {
+    return '/assets/default-course-thumbnail.jpg';
+  }
+  
+  if (thumbnailPath.startsWith('http')) {
+    return thumbnailPath;
+  }
+  
+  // Use Vite environment variable if available
+  let baseUrl;
+  if (import.meta.env.VITE_API_BASE_URL) {
+    baseUrl = import.meta.env.VITE_API_BASE_URL;
+  } else {
+    // Browser-safe URL construction fallback
+    baseUrl = typeof window !== 'undefined' 
+      ? (window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin)
+      : 'http://localhost:5000';
+  }
+    
+  return `${baseUrl}${thumbnailPath}`;
+};
+
 const AllCourses = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
@@ -19,22 +43,33 @@ const AllCourses = () => {
     status: '',
   });
 
-
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  
   const fetchCourses = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
+      console.log('🔍 Fetching courses...');
       const res = await getAllCourses();
-      setCourses(res.data || []);
+      console.log('🔍 Courses fetched:', res);
+      
+      // Handle different response formats
+      const coursesData = res.data || res || [];
+      
+      // Process courses to ensure thumbnail URLs are properly formatted
+      const processedCourses = coursesData.map(course => ({
+        ...course,
+        thumbnailUrl: getThumbnailUrl(course.thumbnail)
+      }));
+      
+      console.log('🔍 Processed courses with thumbnails:', processedCourses);
+      setCourses(processedCourses);
     } catch (error) {
-      console.error('Failed to fetch courses:', error);
+      console.error('❌ Failed to fetch courses:', error);
       setError({
         message: error.message || 'Failed to load courses',
       });
@@ -43,12 +78,10 @@ const AllCourses = () => {
     }
   }, []);
 
-
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses]);
 
-  
   const handleCreateNewCourse = () => {
     navigate('/admin/edit-course/new');
   };
@@ -63,13 +96,18 @@ const AllCourses = () => {
       filtered = filtered.filter(course => 
         course.title?.toLowerCase().includes(query) ||
         course.short_description?.toLowerCase().includes(query) ||
-        course.category?.toLowerCase().includes(query)
+        course.category?.toLowerCase().includes(query) ||
+        (course.tags && course.tags.some(tag => tag.toLowerCase().includes(query)))
       );
     }
 
     // Apply filters
     if (filters.category) {
-      filtered = filtered.filter(course => course.category === filters.category);
+      filtered = filtered.filter(course => {
+        // Check both category field and tags array
+        return course.category === filters.category || 
+               (course.tags && course.tags.includes(filters.category));
+      });
     }
     if (filters.subCategory) {
       filtered = filtered.filter(course => course.subcategory === filters.subCategory);
@@ -84,9 +122,9 @@ const AllCourses = () => {
         case 'name':
           return (a.title || '').localeCompare(b.title || '');
         case 'price_low_high':
-          return (a.price || 0) - (b.price || 0);
+          return (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0);
         case 'price_high_low':
-          return (b.price || 0) - (a.price || 0);
+          return (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0);
         case 'top_selling':
           return (b.enrolled || 0) - (a.enrolled || 0);
         case 'most_popular':
@@ -262,6 +300,7 @@ const AllCourses = () => {
                     filters={filters}
                     courses={processedCourses}
                     onCourseUpdate={fetchCourses}
+                    getThumbnailUrl={getThumbnailUrl} // Pass the helper function
                   />
                 )}
               </div>

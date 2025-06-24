@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import CourseEarning from './Components/CourseEarning';
-// import MarketingCourse from './Components/MarketingCourse';
+import MarketingCourse from './Components/MarketingCourse';
 import StudentReview from './Components/StudentReview';
-import { getCourseById } from '../../../helpers/courseApi';
+import { getCourseById } from '@/helpers/courseApi';
 
 const Page = () => {
   const { id } = useParams();
@@ -34,7 +34,7 @@ const Page = () => {
       </Row>
       {course && (
         <Row className="g-4">
-          // <MarketingCourse course={course} />
+          <MarketingCourse course={course} />
           <CourseEarning courseId={id} />
           <StudentReview courseId={id} />
         </Row>
