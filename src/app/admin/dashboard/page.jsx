@@ -1,12 +1,10 @@
-/**
- * SCSS file: src/assets/scss/components/admin/dashboard.scss
- */
-
 import PageMetaData from '@/components/PageMetaData'
 import { Col, Row } from 'react-bootstrap'
 import Counter from './components/Counter'
 import Earnings from './components/Earnings'
 import LatestEnquiries from './components/LatestEnquiries'
+
+
 const AdminDashboardPage = () => {
   return (
     <>

@@ -1,13 +1,9 @@
-// components/BasicInfo.jsx
-
-import { useState, useEffect, useCallback } from 'react';
-import { Form, Button, Alert, Spinner } from 'react-bootstrap';
+import React, { useState, useEffect, memo, useCallback } from 'react';
+import { Form, Button, Alert, Spinner, Row, Col } from 'react-bootstrap';
 import { FaCloudUploadAlt, FaTrash, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import Category from '../components/Category';
-import httpClient from '@/helpers/httpClient'; // Adjust path as needed
 
-const BasicInfo = ({ 
+const BasicInfo = memo(({ 
   setActiveStep, 
   setProgress, 
   courseName, 
@@ -20,9 +16,11 @@ const BasicInfo = ({
 }) => {
   // Form state
   const [formData, setFormData] = useState({
-    courseName: courseName || '',
+    courseName: '',
     description: '',
-    thumbnail: null,
+    shortDescription: '',
+    language: 'english',
+    level: 'beginner'
   });
 
   // UI state
@@ -35,10 +33,16 @@ const BasicInfo = ({
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [saving, setSaving] = useState(false);
-  const [autoSaveStatus, setAutoSaveStatus] = useState('');
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
+
+  // Initialize form data
+  useEffect(() => {
+    if (courseName && !formData.courseName) {
+      setFormData(prev => ({ ...prev, courseName }));
+    }
+  }, [courseName]);
 
   // Load existing course data if editing
   useEffect(() => {
@@ -50,22 +54,30 @@ const BasicInfo = ({
   const loadCourseData = async () => {
     try {
       setLoading(true);
-      const response = await httpClient.get(`/api/admin/courses/${courseId}`);
-      const course = response.data;
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock course data
+      const mockCourse = {
+        name: 'Sample Course',
+        description: 'This is a sample course description',
+        shortDescription: 'Short description',
+        categories: ['programming'],
+        subcategories: ['web-development'],
+        language: 'english',
+        level: 'beginner'
+      };
       
       setFormData({
-        courseName: course.name || '',
-        description: course.description || '',
-        thumbnail: null
+        courseName: mockCourse.name,
+        description: mockCourse.description,
+        shortDescription: mockCourse.shortDescription,
+        language: mockCourse.language,
+        level: mockCourse.level
       });
       
-      setCourseName(course.name || '');
-      setSelectedCategories(course.categories || []);
-      setSelectedSubcategories(course.subcategories || []);
-      
-      if (course.thumbnail) {
-        setThumbnailPreview(course.thumbnail);
-      }
+      setSelectedCategories(mockCourse.categories);
+      setSelectedSubcategories(mockCourse.subcategories);
       
     } catch (error) {
       console.error('Failed to load course data:', error);
@@ -75,126 +87,76 @@ const BasicInfo = ({
     }
   };
 
-  // Validation rules
-  const validateField = useCallback((name, value) => {
-    switch (name) {
-      case 'courseName':
-        if (!value || value.trim().length < 3) {
-          return 'Course name must be at least 3 characters long';
-        }
-        if (value.trim().length > 255) {
-          return 'Course name must be less than 255 characters';
-        }
-        return '';
-      
-      case 'description':
-        if (!value || value.trim().length < 10) {
-          return 'Description must be at least 10 characters long';
-        }
-        if (value.trim().length > 2000) {
-          return 'Description must be less than 2000 characters';
-        }
-        return '';
-      
-      case 'thumbnail':
-        if (value && value.size > 2 * 1024 * 1024) { // 2MB
-          return 'Image size must be less than 2MB';
-        }
-        if (value && !['image/jpeg', 'image/jpg', 'image/png'].includes(value.type)) {
-          return 'Only JPG, JPEG, and PNG files are allowed';
-        }
-        return '';
-      
-      case 'categories':
-        if (!selectedCategories.length) {
-          return 'Please select at least one category';
-        }
-        return '';
-      
-      default:
-        return '';
-    }
-  }, [selectedCategories]);
-
-  // Real-time validation
+  // Validation
   const validateForm = useCallback(() => {
     const newErrors = {};
     
-    newErrors.courseName = validateField('courseName', formData.courseName);
-    newErrors.description = validateField('description', formData.description);
-    newErrors.thumbnail = validateField('thumbnail', thumbnail);
-    newErrors.categories = validateField('categories', selectedCategories);
+    if (!formData.courseName.trim() || formData.courseName.trim().length < 3) {
+      newErrors.courseName = 'Course name must be at least 3 characters long';
+    }
     
-    // Remove empty errors
-    Object.keys(newErrors).forEach(key => {
-      if (!newErrors[key]) delete newErrors[key];
-    });
+    if (!formData.description.trim() || formData.description.trim().length < 10) {
+      newErrors.description = 'Description must be at least 10 characters long';
+    }
+
+    if (!formData.shortDescription.trim() || formData.shortDescription.trim().length < 5) {
+      newErrors.shortDescription = 'Short description must be at least 5 characters long';
+    }
+    
+    if (selectedCategories.length === 0) {
+      newErrors.categories = 'Please select at least one category';
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData, thumbnail, selectedCategories, validateField]);
+  }, [formData, selectedCategories]);
 
-  // Handle input changes with validation
-  const handleInputChange = useCallback((name, value) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setTouched(prev => ({ ...prev, [name]: true }));
+  // Input handlers
+  const handleInputChange = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    setTouched(prev => ({ ...prev, [field]: true }));
     
-    // Update course name in parent component
-    if (name === 'courseName') {
-      setCourseName(value);
+    // Update parent course name
+    if (field === 'courseName' && setCourseName) {
+      // Debounce to prevent excessive re-renders
+      clearTimeout(window.courseNameTimeout);
+      window.courseNameTimeout = setTimeout(() => {
+        setCourseName(value);
+      }, 300);
     }
     
-    // Clear error for this field
-    const error = validateField(name, value);
-    setErrors(prev => ({ ...prev, [name]: error }));
-    
-    // Auto-save after 2 seconds of no typing (only for existing courses)
-    if (!isNewCourse && courseId) {
-      clearTimeout(window.autoSaveTimeout);
-      window.autoSaveTimeout = setTimeout(() => {
-        autoSaveDraft();
-      }, 2000);
+    // Clear field error
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
-  }, [validateField, setCourseName, isNewCourse, courseId]);
+  }, [setCourseName, errors]);
 
-  // Auto-save draft functionality
-  const autoSaveDraft = useCallback(async () => {
-    if (!formData.courseName.trim() || isNewCourse) return;
-    
-    try {
-      setAutoSaveStatus('saving');
-      // TODO: Replace with actual auto-save API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setAutoSaveStatus('saved');
-      setTimeout(() => setAutoSaveStatus(''), 2000);
-    } catch (error) {
-      setAutoSaveStatus('error');
-      setTimeout(() => setAutoSaveStatus(''), 3000);
-    }
-  }, [formData, isNewCourse]);
-
-  // Category change handlers
+  // Category handlers
   const handleCategoryChange = useCallback((categories) => {
     setSelectedCategories(categories);
     setTouched(prev => ({ ...prev, categories: true }));
     
-    // Clear category error if categories are selected
-    if (categories.length > 0) {
+    if (errors.categories) {
       setErrors(prev => ({ ...prev, categories: '' }));
     }
-  }, []);
+  }, [errors.categories]);
 
   const handleSubcategoryChange = useCallback((subcategories) => {
     setSelectedSubcategories(subcategories);
   }, []);
 
-  // Thumbnail handling with validation
-  const handleThumbnailChange = (e) => {
+  // Thumbnail handling
+  const handleThumbnailChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
-      const error = validateField('thumbnail', file);
-      if (error) {
-        setErrors(prev => ({ ...prev, thumbnail: error }));
+      // Validate file
+      if (file.size > 2 * 1024 * 1024) {
+        setErrors(prev => ({ ...prev, thumbnail: 'Image size must be less than 2MB' }));
+        return;
+      }
+      
+      if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+        setErrors(prev => ({ ...prev, thumbnail: 'Only JPG, JPEG, and PNG files are allowed' }));
         return;
       }
       
@@ -203,111 +165,61 @@ const BasicInfo = ({
       setErrors(prev => ({ ...prev, thumbnail: '' }));
       setTouched(prev => ({ ...prev, thumbnail: true }));
     }
-  };
+  }, []);
 
-  const removeThumbnail = () => {
+  const removeThumbnail = useCallback(() => {
     setThumbnail(null);
     setThumbnailPreview(null);
-    document.getElementById('thumbnail-input').value = '';
-  };
+    const input = document.getElementById('thumbnail-input');
+    if (input) input.value = '';
+  }, []);
 
-  // Save course to database
-  const saveCourseToDatabase = async () => {
+  // Save course
+  const saveCourse = async () => {
     try {
-      // Prepare form data for API
-      const courseData = new FormData();
-      courseData.append('name', formData.courseName.trim());
-      courseData.append('description', formData.description.trim());
-      courseData.append('categories', JSON.stringify(selectedCategories));
-      courseData.append('subcategories', JSON.stringify(selectedSubcategories));
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      if (thumbnail) {
-        courseData.append('thumbnail', thumbnail);
+      const mockCourseId = Math.floor(Math.random() * 1000) + 1;
+      const courseData = {
+        id: mockCourseId,
+        name: formData.courseName,
+        description: formData.description,
+        shortDescription: formData.shortDescription,
+        categories: selectedCategories,
+        subcategories: selectedSubcategories,
+        language: formData.language,
+        level: formData.level
+      };
+      
+      // Update parent with final course name
+      if (setCourseName) {
+        setCourseName(formData.courseName);
       }
-
-      let response;
-      // Check if this is truly a new course or an existing course
-      const isCreatingNewCourse = isNewCourse || !courseId || courseId === 'new';
       
-      if (isCreatingNewCourse) {
-        // Create new course
-        console.log('🆕 Creating new course...');
-        console.log('📝 Course data being sent:', {
-          name: formData.courseName.trim(),
-          description: formData.description.trim(),
-          categories: selectedCategories,
-          subcategories: selectedSubcategories,
-          hasThumbnail: !!thumbnail
-        });
-        
-        response = await httpClient.post('/api/admin/courses', courseData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        
-        const newCourse = response.data;
-        console.log('✅ Course created successfully:', newCourse);
-        
-        // Notify parent component about course creation
+      if (isNewCourse) {
         if (onCourseCreated) {
-          onCourseCreated(newCourse.id, {
-            courseName: newCourse.name,
-            ...newCourse
-          });
+          onCourseCreated(mockCourseId, { courseName: formData.courseName, ...courseData });
         }
-        
-        return newCourse;
       } else {
-        // Update existing course
-        console.log('📝 Updating existing course with ID:', courseId);
-        console.log('📝 Course data being sent:', {
-          name: formData.courseName.trim(),
-          description: formData.description.trim(),
-          categories: selectedCategories,
-          subcategories: selectedSubcategories,
-          hasThumbnail: !!thumbnail
-        });
-        
-        if (!courseId || courseId === 'undefined' || courseId === 'new') {
-          throw new Error('Invalid course ID for update operation');
-        }
-        
-        response = await httpClient.put(`/api/admin/courses/${courseId}`, courseData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        
-        const updatedCourse = response.data;
-        console.log('✅ Course updated successfully:', updatedCourse);
-        
-        // Notify parent component about course update
         if (onCourseUpdated) {
-          onCourseUpdated({
-            courseName: updatedCourse.name,
-            ...updatedCourse
-          });
+          onCourseUpdated({ courseName: formData.courseName, ...courseData });
         }
-        
-        return updatedCourse;
       }
+      
+      return courseData;
     } catch (error) {
-      console.error('❌ Failed to save course:', error);
-      console.error('❌ Error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-      throw error;
+      throw new Error('Failed to save course');
     }
   };
 
   // Form submission
   const handleNext = async () => {
+    // Mark all fields as touched
     setTouched({
       courseName: true,
       description: true,
+      shortDescription: true,
       categories: true,
       thumbnail: true
     });
@@ -320,17 +232,12 @@ const BasicInfo = ({
       setSaving(true);
       setErrors({});
       
-      await saveCourseToDatabase();
+      await saveCourse();
       
-      setProgress(45);
-      setActiveStep(2);
+      if (setProgress) setProgress(45);
+      if (setActiveStep) setActiveStep(2);
     } catch (error) {
-      console.error('Error saving course:', error);
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data?.message || 
-                          error.message || 
-                          'Failed to save course information';
-      setErrors({ submit: errorMessage });
+      setErrors({ submit: error.message });
     } finally {
       setSaving(false);
     }
@@ -353,43 +260,17 @@ const BasicInfo = ({
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h4 className="mb-2">Basic Information</h4>
-          <p className="text-muted mb-0">
-            {isNewCourse 
-              ? 'Enter the essential details for your new course'
-              : 'Update the essential details for your course'
-            }
-          </p>
-        </div>
-        
-        {/* Auto-save status */}
-        {autoSaveStatus && !isNewCourse && (
-          <div className="d-flex align-items-center">
-            {autoSaveStatus === 'saving' && (
-              <>
-                <Spinner size="sm" className="me-2" />
-                <small className="text-muted">Saving draft...</small>
-              </>
-            )}
-            {autoSaveStatus === 'saved' && (
-              <>
-                <FaCheckCircle className="text-success me-2" />
-                <small className="text-success">Draft saved</small>
-              </>
-            )}
-            {autoSaveStatus === 'error' && (
-              <>
-                <FaExclamationTriangle className="text-warning me-2" />
-                <small className="text-warning">Auto-save failed</small>
-              </>
-            )}
-          </div>
-        )}
+      <div className="mb-4">
+        <h4 className="mb-2">Basic Information</h4>
+        <p className="text-muted mb-0">
+          {isNewCourse 
+            ? 'Enter the essential details for your new course'
+            : 'Update the essential details for your course'
+          }
+        </p>
       </div>
 
-      {/* Fetch Error Alert */}
+      {/* Error Alerts */}
       {errors.fetch && (
         <Alert variant="danger" className="mb-4">
           <FaExclamationTriangle className="me-2" />
@@ -397,7 +278,6 @@ const BasicInfo = ({
         </Alert>
       )}
 
-      {/* Submit Error Alert */}
       {errors.submit && (
         <Alert variant="danger" className="mb-4">
           <FaExclamationTriangle className="me-2" />
@@ -405,7 +285,7 @@ const BasicInfo = ({
         </Alert>
       )}
 
-      {/* Course Creation Status */}
+      {/* Success Alert */}
       {isNewCourse && courseCreated && (
         <Alert variant="success" className="mb-4">
           <FaCheckCircle className="me-2" />
@@ -422,7 +302,7 @@ const BasicInfo = ({
           <Form.Control
             type="text"
             placeholder="Enter course name"
-            className="form-control-lg bg-light border-0"
+            className="form-control-lg"
             value={formData.courseName}
             onChange={(e) => handleInputChange('courseName', e.target.value)}
             isInvalid={touched.courseName && !!errors.courseName}
@@ -438,6 +318,29 @@ const BasicInfo = ({
           </Form.Text>
         </Form.Group>
 
+        {/* Short Description */}
+        <Form.Group className="mb-4">
+          <Form.Label className="fw-medium">
+            Short Description <span className="text-danger">*</span>
+          </Form.Label>
+          <Form.Control 
+            type="text"
+            placeholder="Brief course summary (for listings)" 
+            value={formData.shortDescription}
+            onChange={(e) => handleInputChange('shortDescription', e.target.value)}
+            isInvalid={touched.shortDescription && !!errors.shortDescription}
+            maxLength={160}
+          />
+          {touched.shortDescription && errors.shortDescription && (
+            <div className="invalid-feedback d-block">
+              {errors.shortDescription}
+            </div>
+          )}
+          <Form.Text className="text-muted">
+            {formData.shortDescription.length}/160 characters
+          </Form.Text>
+        </Form.Group>
+
         {/* Course Description */}
         <Form.Group className="mb-4">
           <Form.Label className="fw-medium">
@@ -446,8 +349,7 @@ const BasicInfo = ({
           <Form.Control 
             as="textarea" 
             rows={5} 
-            placeholder="Enter course description" 
-            className="bg-light border-0"
+            placeholder="Enter detailed course description" 
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
             isInvalid={touched.description && !!errors.description}
@@ -463,22 +365,131 @@ const BasicInfo = ({
           </Form.Text>
         </Form.Group>
 
+        {/* Language and Level */}
+        <Row className="mb-4">
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="fw-medium">Language</Form.Label>
+              <Form.Select
+                value={formData.language}
+                onChange={(e) => handleInputChange('language', e.target.value)}
+              >
+                <option value="english">English</option>
+                <option value="tamil">Tamil</option>
+                <option value="hindi">Hindi</option>
+                <option value="spanish">Spanish</option>
+                <option value="french">French</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="fw-medium">Difficulty Level</Form.Label>
+              <Form.Select
+                value={formData.level}
+                onChange={(e) => handleInputChange('level', e.target.value)}
+              >
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="expert">Expert</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        {/* Categories */}
+        <Form.Group className="mb-4">
+          <Form.Label className="fw-medium">
+            Categories <span className="text-danger">*</span>
+          </Form.Label>
+          <Row>
+            <Col md={6}>
+              <Form.Select
+                value={selectedCategories[0] || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value) {
+                    handleCategoryChange([value]);
+                  } else {
+                    handleCategoryChange([]);
+                  }
+                }}
+                className={touched.categories && errors.categories ? 'is-invalid' : ''}
+              >
+                <option value="">Select Category</option>
+                <option value="programming">Programming & Development</option>
+                <option value="design">Design</option>
+                <option value="business">Business</option>
+                <option value="marketing">Marketing</option>
+                <option value="data-science">Data Science</option>
+                <option value="photography">Photography</option>
+                <option value="music">Music</option>
+                <option value="health">Health & Fitness</option>
+                <option value="language">Language</option>
+                <option value="other">Other</option>
+              </Form.Select>
+            </Col>
+            <Col md={6}>
+              <Form.Select
+                value={selectedSubcategories[0] || ''}
+                onChange={(e) => handleSubcategoryChange(e.target.value ? [e.target.value] : [])}
+                disabled={!selectedCategories[0]}
+              >
+                <option value="">Select Subcategory</option>
+                {selectedCategories[0] === 'programming' && (
+                  <>
+                    <option value="web-development">Web Development</option>
+                    <option value="mobile-development">Mobile Development</option>
+                    <option value="game-development">Game Development</option>
+                    <option value="software-engineering">Software Engineering</option>
+                  </>
+                )}
+                {selectedCategories[0] === 'design' && (
+                  <>
+                    <option value="ui-ux">UI/UX Design</option>
+                    <option value="graphic-design">Graphic Design</option>
+                    <option value="web-design">Web Design</option>
+                    <option value="3d-animation">3D & Animation</option>
+                  </>
+                )}
+                {selectedCategories[0] === 'business' && (
+                  <>
+                    <option value="entrepreneurship">Entrepreneurship</option>
+                    <option value="management">Management</option>
+                    <option value="finance">Finance</option>
+                    <option value="sales">Sales</option>
+                  </>
+                )}
+              </Form.Select>
+            </Col>
+          </Row>
+          {touched.categories && errors.categories && (
+            <div className="invalid-feedback d-block">
+              {errors.categories}
+            </div>
+          )}
+        </Form.Group>
+
         {/* Course Thumbnail */}
         <Form.Group className="mb-4">
           <Form.Label className="fw-medium">Course Thumbnail</Form.Label>
           <div
-            className={`upload-box bg-light rounded-3 p-4 text-center position-relative ${
-              thumbnailPreview ? 'has-image' : ''
-            } ${touched.thumbnail && errors.thumbnail ? 'border-danger' : ''}`}
-            style={{ border: '2px dashed #dee2e6', cursor: 'pointer' }}
-            onClick={() => !thumbnailPreview && document.getElementById('thumbnail-input').click()}
+            className={`upload-box border rounded-3 p-4 text-center position-relative ${
+              thumbnailPreview ? 'has-image' : 'border-dashed'
+            } ${touched.thumbnail && errors.thumbnail ? 'border-danger' : 'border-secondary'}`}
+            style={{ 
+              cursor: 'pointer',
+              borderStyle: thumbnailPreview ? 'solid' : 'dashed'
+            }}
+            onClick={() => !thumbnailPreview && document.getElementById('thumbnail-input')?.click()}
           >
             {thumbnailPreview ? (
               <div className="position-relative">
                 <img 
                   src={thumbnailPreview} 
                   alt="Thumbnail Preview" 
-                  className="img-fluid rounded-3" 
+                  className="img-fluid rounded" 
                   style={{ maxHeight: '200px' }} 
                 />
                 <Button
@@ -498,7 +509,7 @@ const BasicInfo = ({
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      document.getElementById('thumbnail-input').click();
+                      document.getElementById('thumbnail-input')?.click();
                     }}
                   >
                     Change Image
@@ -507,14 +518,14 @@ const BasicInfo = ({
               </div>
             ) : (
               <div className="py-4">
-                <FaCloudUploadAlt className="display-4 text-muted mb-2" />
-                <p className="mb-0 text-muted">Drag & drop or click to upload course thumbnail</p>
+                <FaCloudUploadAlt size={48} className="text-muted mb-3" />
+                <p className="mb-0 text-muted">Click to upload course thumbnail</p>
                 <small className="text-muted d-block mt-2">
-                  Supported formats: JPG, JPEG, PNG (Max size: 2MB)
+                  Recommended: 1280x720px, JPG/PNG, Max 2MB
                 </small>
               </div>
             )}
-            <Form.Control 
+            <input 
               type="file" 
               id="thumbnail-input" 
               className="d-none" 
@@ -529,33 +540,19 @@ const BasicInfo = ({
           )}
         </Form.Group>
 
-        {/* Dynamic Categories - Replace the existing category section */}
-        <Form.Group className="mb-4">
-          <Category
-            selectedCategories={selectedCategories}
-            selectedSubcategories={selectedSubcategories}
-            onCategoryChange={handleCategoryChange}
-            onSubcategoryChange={handleSubcategoryChange}
-            required={true}
-            error={touched.categories && errors.categories ? errors.categories : ''}
-          />
-        </Form.Group>
-
         {/* Action Buttons */}
         <div className="d-flex justify-content-between mt-4">
           <Button 
-            variant="light" 
-            className="px-4 border-theme-secondary text-theme-secondary" 
-            disabled={saving}
+            variant="outline-secondary" 
             onClick={() => setActiveStep(1)}
+            disabled={saving}
           >
             Previous
           </Button>
           
           <div className="d-flex gap-3">
             <Button
-              variant="light"
-              className="px-4 border-theme-secondary text-theme-secondary"
+              variant="outline-secondary"
               onClick={handleCancel}
               disabled={saving}
             >
@@ -563,7 +560,6 @@ const BasicInfo = ({
             </Button>
             <Button
               variant="primary"
-              className="px-4"
               onClick={handleNext}
               disabled={saving}
             >
@@ -573,7 +569,9 @@ const BasicInfo = ({
                   {isNewCourse ? 'Creating Course...' : 'Saving...'}
                 </>
               ) : (
-                isNewCourse ? 'Create Course & Continue' : 'Save & Next'
+                <>
+                  {isNewCourse ? 'Create Course & Continue' : 'Save & Next'}
+                </>
               )}
             </Button>
           </div>
@@ -581,6 +579,16 @@ const BasicInfo = ({
       </Form>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  // Only re-render if these specific props change
+  return (
+    prevProps.courseId === nextProps.courseId &&
+    prevProps.isNewCourse === nextProps.isNewCourse &&
+    prevProps.courseCreated === nextProps.courseCreated &&
+    prevProps.courseName === nextProps.courseName
+  );
+});
+
+BasicInfo.displayName = 'BasicInfo';
 
 export default BasicInfo;

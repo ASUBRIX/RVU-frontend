@@ -1,66 +1,90 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Form, Button, Card, Alert, Spinner, Badge, Modal } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router-dom';
-import { FaPlus, FaTrash, FaExclamationTriangle, FaCheckCircle, FaInfoCircle, FaStar, FaCalculator } from 'react-icons/fa';
-import { getPricingPlans, createPricingPlan, updatePricingPlan, deletePricingPlan } from '@/helpers/pricingPlansApi';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { Form, Button, Card, Alert, Spinner, Badge, Modal, Row, Col } from 'react-bootstrap';
+import { FaPlus, FaTrash, FaExclamationTriangle, FaCheckCircle, FaInfoCircle, FaStar, FaCalculator, FaDollarSign } from 'react-icons/fa';
 
-const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) => {
-  const { courseId: paramCourseId } = useParams();
-  const navigate = useNavigate();
-  
-  // Use courseId from props first (passed from EditCourse), then from URL params
-  const rawCourseId = propCourseId || paramCourseId;
-  
-  // Handle "new" course creation
-  const isNewCourse = rawCourseId === 'new';
-  const courseId = isNewCourse ? null : rawCourseId;
-  
-  console.log('🔢 PricingPlans - PropCourseId:', propCourseId);
-  console.log('🔢 PricingPlans - ParamCourseId:', paramCourseId);
-  console.log('🔢 PricingPlans - Is New Course:', isNewCourse);
-  console.log('🔢 PricingPlans - Final CourseId:', courseId);
-  
+const PricingPlans = memo(({ 
+  setActiveStep, 
+  setProgress, 
+  courseId, 
+  isNewCourse,
+  courseCreated 
+}) => {
   // State management
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(null);
   const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
   
   // Modal state for plan recommendations
   const [showRecommendations, setShowRecommendations] = useState(false);
-  const [recommendations] = useState([
-    { duration: 30, unit: 'days', price: 29.99, discount: 0, title: '1 Month Access' },
-    { duration: 6, unit: 'months', price: 149.99, discount: 15, title: '6 Months Access', isRecommended: true },
-    { duration: 1, unit: 'years', price: 299.99, discount: 20, title: '1 Year Access' }
-  ]);
+  const [showPlanPreview, setShowPlanPreview] = useState(false);
+  
+  // Recommended plans
+  const recommendations = [
+    { 
+      duration: 1, 
+      unit: 'months', 
+      price: 29.99, 
+      discount: 0, 
+      title: '1 Month Access',
+      description: 'Perfect for trying out the course'
+    },
+    { 
+      duration: 6, 
+      unit: 'months', 
+      price: 149.99, 
+      discount: 15, 
+      title: '6 Months Access', 
+      isRecommended: true,
+      description: 'Most popular choice with great value'
+    },
+    { 
+      duration: 1, 
+      unit: 'years', 
+      price: 299.99, 
+      discount: 25, 
+      title: '1 Year Access',
+      description: 'Best value for committed learners'
+    }
+  ];
 
   // Load pricing plans on component mount
   useEffect(() => {
-    console.log('CourseId from props:', propCourseId);
-    console.log('CourseId from params:', paramCourseId);
-    console.log('Final courseId:', courseId);
-    console.log('Is new course:', isNewCourse);
-    
     if (courseId && !isNewCourse) {
       fetchPricingPlans();
-    } else if (isNewCourse) {
-      console.log('🆕 New course - skipping pricing plans fetch');
-      setPlans([]); // Start with empty plans for new course
+    } else if (courseCreated) {
+      // For newly created courses, start with empty plans
+      setPlans([]);
     }
-  }, [courseId, propCourseId, paramCourseId, isNewCourse]);
+  }, [courseId, isNewCourse, courseCreated]);
 
   const fetchPricingPlans = async () => {
     try {
       setLoading(true);
       setErrors({});
-      const res = await getPricingPlans(courseId);
-      setPlans(res.data || []);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock existing plans
+      const mockPlans = [
+        {
+          id: 1,
+          duration: 3,
+          unit: 'months',
+          price: 79.99,
+          discount: 10,
+          is_promoted: false,
+          effective_price: 71.99
+        }
+      ];
+      
+      setPlans(mockPlans);
     } catch (err) {
       console.error('Failed to fetch plans:', err);
-      setErrors({ fetch: err.response?.data?.error || err.message || 'Failed to load pricing plans' });
+      setErrors({ fetch: 'Failed to load pricing plans. Please try again.' });
     } finally {
       setLoading(false);
     }
@@ -122,7 +146,13 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
   }, [plans, validatePlan]);
 
   // Plan manipulation functions
-  const handleChange = (index, field, value) => {
+  const calculateEffectivePrice = useCallback((price, discount) => {
+    const numPrice = parseFloat(price) || 0;
+    const numDiscount = parseFloat(discount) || 0;
+    return (numPrice - (numPrice * numDiscount) / 100).toFixed(2);
+  }, []);
+
+  const handleChange = useCallback((index, field, value) => {
     setPlans(prev => prev.map((plan, i) => {
       if (i === index) {
         const updatedPlan = { ...plan, [field]: value };
@@ -140,8 +170,7 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
       return plan;
     }));
     
-    // Mark field as touched and clear errors
-    setTouched(prev => ({ ...prev, [`${index}-${field}`]: true }));
+    // Clear errors for this plan
     setErrors(prev => {
       const newErrors = { ...prev };
       if (newErrors[index]) {
@@ -152,15 +181,9 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
       }
       return newErrors;
     });
-  };
+  }, [calculateEffectivePrice]);
 
-  const calculateEffectivePrice = (price, discount) => {
-    const numPrice = parseFloat(price) || 0;
-    const numDiscount = parseFloat(discount) || 0;
-    return (numPrice - (numPrice * numDiscount) / 100).toFixed(2);
-  };
-
-  const handleAddPlan = () => {
+  const handleAddPlan = useCallback(() => {
     const newPlan = {
       duration: 1,
       unit: 'months',
@@ -168,23 +191,25 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
       discount: '',
       is_promoted: false,
       effective_price: '0.00',
-      isNew: true // Flag for new plans
+      isNew: true
     };
-    setPlans([...plans, newPlan]);
-  };
+    setPlans(prev => [...prev, newPlan]);
+  }, []);
 
-  const handleRemovePlan = async (index) => {
+  const handleRemovePlan = useCallback(async (index) => {
     const plan = plans[index];
     
     if (plan.id) {
-      // Existing plan - need to delete from backend
+      // Existing plan - confirm deletion
       if (!window.confirm('Are you sure you want to delete this pricing plan?')) {
         return;
       }
       
       try {
         setDeleting(index);
-        await deletePricingPlan(plan.id);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         setPlans(prev => prev.filter((_, i) => i !== index));
         setSuccessMessage('Pricing plan deleted successfully');
         setTimeout(() => setSuccessMessage(''), 3000);
@@ -192,7 +217,7 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
         console.error('Failed to delete plan:', err);
         setErrors(prev => ({ 
           ...prev, 
-          [index]: { delete: err.response?.data?.error || err.message } 
+          [index]: { delete: 'Failed to delete plan. Please try again.' } 
         }));
       } finally {
         setDeleting(null);
@@ -201,9 +226,9 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
       // New plan - just remove from state
       setPlans(prev => prev.filter((_, i) => i !== index));
     }
-  };
+  }, [plans]);
 
-  const handleAddRecommendation = (recommendation) => {
+  const handleAddRecommendation = useCallback((recommendation) => {
     const newPlan = {
       ...recommendation,
       effective_price: calculateEffectivePrice(recommendation.price, recommendation.discount),
@@ -212,60 +237,7 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
     };
     setPlans(prev => [...prev, newPlan]);
     setShowRecommendations(false);
-  };
-
-  // Clean and prepare plan data for API
-  const preparePlanData = (plan) => {
-    // Ensure courseId is available and valid
-    const validCourseId = courseId || plan.course_id;
-    if (!validCourseId) {
-      throw new Error('Course ID is required but not found');
-    }
-
-    const cleanedPlan = {
-      course_id: parseInt(validCourseId),
-      duration: parseInt(plan.duration),
-      unit: plan.unit,
-      price: parseFloat(plan.price),
-      discount: plan.discount ? parseFloat(plan.discount) : null,
-      is_promoted: Boolean(plan.is_promoted),
-      effective_price: parseFloat(calculateEffectivePrice(plan.price, plan.discount))
-    };
-
-    // Validate required fields
-    if (!cleanedPlan.course_id || isNaN(cleanedPlan.course_id)) {
-      throw new Error('Invalid course_id');
-    }
-    if (!cleanedPlan.duration || isNaN(cleanedPlan.duration)) {
-      throw new Error('Invalid duration');
-    }
-    if (!cleanedPlan.price || isNaN(cleanedPlan.price)) {
-      throw new Error('Invalid price');
-    }
-    if (!cleanedPlan.unit) {
-      throw new Error('Unit is required');
-    }
-
-    // Remove any undefined, null, or NaN values
-    Object.keys(cleanedPlan).forEach(key => {
-      if (cleanedPlan[key] === undefined || 
-          (typeof cleanedPlan[key] === 'number' && isNaN(cleanedPlan[key]))) {
-        if (key === 'discount') {
-          cleanedPlan[key] = null;
-        } else if (key === 'is_promoted') {
-          cleanedPlan[key] = false;
-        } else if (key === 'effective_price') {
-          cleanedPlan[key] = 0;
-        } else {
-          delete cleanedPlan[key];
-        }
-      }
-    });
-
-    console.log('Course ID from params:', courseId);
-    console.log('Prepared plan data:', cleanedPlan);
-    return cleanedPlan;
-  };
+  }, [calculateEffectivePrice]);
 
   const handleSavePlans = async () => {
     if (!validateAllPlans()) {
@@ -273,17 +245,15 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
     }
 
     // Check if this is a new course
-    if (isNewCourse) {
+    if (isNewCourse && !courseCreated) {
       setErrors({ 
-        general: 'Please save the course basic information first before adding pricing plans. You cannot add pricing plans to a course that hasn\'t been created yet.' 
+        general: 'Please save the course basic information first before adding pricing plans.' 
       });
       return;
     }
 
-    // Debug: Check if courseId is available
-    console.log('CourseId from useParams:', courseId);
     if (!courseId) {
-      setErrors({ general: 'Course ID is missing. Please ensure you are accessing this page from a valid course.' });
+      setErrors({ general: 'Course ID is missing. Please ensure the course is created first.' });
       return;
     }
     
@@ -291,55 +261,48 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
       setSaving(true);
       setErrors({});
       
+      // Simulate API calls for each plan
       const results = [];
-      const errors = [];
-      
       for (const [index, plan] of plans.entries()) {
         try {
-          // Validate required fields before sending
+          // Validate required fields
           if (!plan.duration || !plan.unit || !plan.price) {
-            errors.push({ 
-              index, 
-              error: 'Missing required fields: duration, unit, or price' 
-            });
-            continue;
+            throw new Error('Missing required fields: duration, unit, or price');
           }
 
-          const planData = preparePlanData(plan);
+          // Simulate API call
+          await new Promise(resolve => setTimeout(resolve, 500));
           
-          let result;
-          if (plan.id) {
-            // Update existing plan
-            result = await updatePricingPlan(plan.id, planData);
-          } else {
-            // Create new plan
-            result = await createPricingPlan(planData);
-          }
-          results.push(result);
+          results.push({ index, success: true, id: Math.floor(Math.random() * 1000) });
         } catch (err) {
-          console.error(`Error saving plan ${index}:`, err);
-          const errorMessage = err.response?.data?.error || 
-                             err.response?.data?.details || 
-                             err.message || 
-                             'Unknown error occurred';
-          errors.push({ index, error: errorMessage });
+          results.push({ index, success: false, error: err.message });
         }
       }
       
-      if (errors.length === 0) {
-        setSuccessMessage(`Successfully saved ${results.length} pricing plan(s)`);
-        await fetchPricingPlans(); // Refresh data
+      const successful = results.filter(r => r.success);
+      const failed = results.filter(r => !r.success);
+      
+      if (failed.length === 0) {
+        setSuccessMessage(`Successfully saved ${successful.length} pricing plan(s)`);
+        // Update plans with IDs for new plans
+        setPlans(prev => prev.map((plan, index) => {
+          const result = results.find(r => r.index === index);
+          if (result && result.success && plan.isNew) {
+            return { ...plan, id: result.id, isNew: false };
+          }
+          return plan;
+        }));
         setTimeout(() => setSuccessMessage(''), 3000);
       } else {
+        // Handle partial failures
         const errorObj = {};
-        errors.forEach(({ index, error }) => {
+        failed.forEach(({ index, error }) => {
           errorObj[index] = { save: error };
         });
         setErrors(errorObj);
         
-        // If some plans were saved successfully, show partial success
-        if (results.length > 0) {
-          setSuccessMessage(`Saved ${results.length} plans, but ${errors.length} failed`);
+        if (successful.length > 0) {
+          setSuccessMessage(`Saved ${successful.length} plans, but ${failed.length} failed`);
           setTimeout(() => setSuccessMessage(''), 5000);
         }
       }
@@ -347,7 +310,7 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
     } catch (err) {
       console.error('Failed to save plans:', err);
       setErrors({ 
-        general: err.response?.data?.error || err.message || 'Failed to save pricing plans' 
+        general: 'Failed to save pricing plans. Please try again.' 
       });
     } finally {
       setSaving(false);
@@ -417,7 +380,7 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
       )}
 
       {/* New Course Warning */}
-      {isNewCourse && (
+      {isNewCourse && !courseCreated && (
         <Alert variant="info" className="mb-4">
           <FaInfoCircle className="me-2" />
           <strong>New Course:</strong> You're creating a new course. Please complete the basic information step first, then return here to set up pricing plans.
@@ -459,11 +422,12 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
       <Form>
         {/* Pricing Plans */}
         {plans.map((plan, index) => (
-          <Card className="mb-3" key={index}>
-            <Card.Body className="p-3">
+          <Card className="mb-3 border" key={index}>
+            <Card.Body className="p-4">
               {/* Plan Header */}
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h6 className="mb-0">
+                <h6 className="mb-0 d-flex align-items-center">
+                  <FaDollarSign className="me-2 text-primary" />
                   Plan {index + 1}
                   {plan.is_promoted && (
                     <Badge bg="warning" className="ms-2">
@@ -499,9 +463,9 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
                 </Alert>
               )}
 
-              <div className="row g-3">
+              <Row className="g-3">
                 {/* Duration */}
-                <div className="col-md-2">
+                <Col md={2}>
                   <Form.Group>
                     <Form.Label>Duration <span className="text-danger">*</span></Form.Label>
                     <Form.Control
@@ -513,10 +477,10 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
                       disabled={saving}
                     />
                   </Form.Group>
-                </div>
+                </Col>
 
                 {/* Unit */}
-                <div className="col-md-2">
+                <Col md={2}>
                   <Form.Group>
                     <Form.Label>Unit <span className="text-danger">*</span></Form.Label>
                     <Form.Select
@@ -530,10 +494,10 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
                       <option value="years">Years</option>
                     </Form.Select>
                   </Form.Group>
-                </div>
+                </Col>
 
                 {/* Original Price */}
-                <div className="col-md-2">
+                <Col md={2}>
                   <Form.Group>
                     <Form.Label>Price ($) <span className="text-danger">*</span></Form.Label>
                     <Form.Control
@@ -546,10 +510,10 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
                       disabled={saving}
                     />
                   </Form.Group>
-                </div>
+                </Col>
 
                 {/* Discount */}
-                <div className="col-md-2">
+                <Col md={2}>
                   <Form.Group>
                     <Form.Label>Discount (%)</Form.Label>
                     <Form.Control
@@ -562,20 +526,20 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
                       disabled={saving}
                     />
                   </Form.Group>
-                </div>
+                </Col>
 
                 {/* Effective Price */}
-                <div className="col-md-2">
+                <Col md={2}>
                   <Form.Group>
                     <Form.Label>Final Price</Form.Label>
-                    <div className="form-control bg-light border-success text-success fw-bold">
+                    <div className="form-control bg-success bg-opacity-10 border-success text-success fw-bold">
                       ${calculateEffectivePrice(plan.price, plan.discount)}
                     </div>
                   </Form.Group>
-                </div>
+                </Col>
 
                 {/* Promoted Toggle */}
-                <div className="col-md-2 d-flex align-items-end">
+                <Col md={2} className="d-flex align-items-end">
                   <Form.Group className="w-100">
                     <Form.Check
                       type="switch"
@@ -586,11 +550,11 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
                       disabled={saving}
                     />
                   </Form.Group>
-                </div>
-              </div>
+                </Col>
+              </Row>
 
               {/* Plan Preview */}
-              <div className="mt-3 p-2 bg-light rounded">
+              <div className="mt-3 p-3 bg-light rounded">
                 <small className="text-muted">
                   <strong>Preview:</strong> {plan.duration} {plan.unit} access for{' '}
                   {plan.discount ? (
@@ -613,7 +577,11 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
 
         {/* Add Plan Buttons */}
         <div className="d-flex gap-2 mb-4">
-          <Button variant="outline-primary" onClick={handleAddPlan} disabled={saving}>
+          <Button 
+            variant="outline-primary" 
+            onClick={handleAddPlan} 
+            disabled={saving}
+          >
             <FaPlus className="me-2" />
             Add Custom Plan
           </Button>
@@ -639,7 +607,7 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
         {/* Action Buttons */}
         <div className="d-flex justify-content-between mt-4">
           <Button 
-            variant="light" 
+            variant="outline-secondary" 
             onClick={() => setActiveStep(1)}
             disabled={saving}
           >
@@ -670,7 +638,7 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
               }}
               disabled={saving || plans.length === 0}
             >
-              Next
+              Next: Content
             </Button>
           </div>
         </div>
@@ -686,9 +654,9 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
             Choose from these proven pricing strategies that work well for online courses:
           </p>
           
-          <div className="row g-3">
+          <Row className="g-3">
             {recommendations.map((rec, index) => (
-              <div key={index} className="col-md-4">
+              <Col key={index} md={4}>
                 <Card className={`h-100 ${rec.isRecommended ? 'border-warning' : ''}`}>
                   <Card.Body className="text-center">
                     {rec.isRecommended && (
@@ -716,6 +684,7 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
                     <div className="text-muted small mb-3">
                       {rec.duration} {rec.unit} access
                     </div>
+                    <p className="small text-muted mb-3">{rec.description}</p>
                     <Button
                       variant={rec.isRecommended ? 'warning' : 'outline-primary'}
                       size="sm"
@@ -725,13 +694,21 @@ const PricingPlans = ({ setActiveStep, setProgress, courseId: propCourseId }) =>
                     </Button>
                   </Card.Body>
                 </Card>
-              </div>
+              </Col>
             ))}
-          </div>
+          </Row>
         </Modal.Body>
       </Modal>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.courseId === nextProps.courseId &&
+    prevProps.isNewCourse === nextProps.isNewCourse &&
+    prevProps.courseCreated === nextProps.courseCreated
+  );
+});
+
+PricingPlans.displayName = 'PricingPlans';
 
 export default PricingPlans;

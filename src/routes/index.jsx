@@ -2,6 +2,8 @@ import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import ContentManagement from '@/app/admin/content-management/page'
 import ProtectedRoute from '../components/ProtectedRoute'
+import ErrorBoundary from '../components/ErrorBoundary';
+
 
 // Demos Pages
 const DemosDefault = lazy(() => import('@/app/demos/default/home/page'))
@@ -323,16 +325,24 @@ const rawAdminRoutes = [
     name: 'All Courses',
     element: <AllCourses />,
   },
-  {
-    path: '/admin/edit-course/new',
-    name: 'Create Course',
-    element: <EditCourse />,
-  },
-  {
-    path: '/admin/edit-course/:courseId',
-    name: 'Edit Course',
-    element: <EditCourse />,
-  },
+{
+  path: '/admin/edit-course/new',
+  name: 'Create Course',
+  element: (
+    <ErrorBoundary componentName="EditCourse">
+      <EditCourse />
+    </ErrorBoundary>
+  ),
+},
+{
+  path: '/admin/edit-course/:courseId',
+  name: 'Edit Course',
+  element: (
+    <ErrorBoundary componentName="EditCourse">
+      <EditCourse />
+    </ErrorBoundary>
+  ),
+},
   {
     path: '/admin/course-category',
     name: 'Course Category',

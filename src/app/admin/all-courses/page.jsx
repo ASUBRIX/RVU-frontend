@@ -1,18 +1,16 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Container, Alert, Spinner } from 'react-bootstrap';
-import { FaPlus, FaExclamationTriangle, FaRedo } from 'react-icons/fa';
+import { FaPlus, FaExclamationTriangle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-
 import PageMetaData from '@/components/PageMetaData';
 import CourseGrid from './components/CourseGrid';
 import CourseFilters from './components/CourseFilters';
 import CourseSearch from './components/CourseSearch';
 import CourseSort from './components/CourseSort';
-import { getAllCourses } from '../../../helpers/courseApi';
+import { getAllCourses } from '@/helpers/courseApi';
 
 const AllCourses = () => {
-  // Search and filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
   const [filters, setFilters] = useState({
@@ -21,22 +19,16 @@ const AllCourses = () => {
     status: '',
   });
 
-  // Data and UI state
+
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [retrying, setRetrying] = useState(false);
-
   const navigate = useNavigate();
 
-  // Fetch courses function with error handling
-  const fetchCourses = useCallback(async (showRetryLoader = false) => {
+  
+  const fetchCourses = useCallback(async () => {
     try {
-      if (showRetryLoader) {
-        setRetrying(true);
-      } else {
-        setLoading(true);
-      }
+      setLoading(true);
       setError(null);
 
       const res = await getAllCourses();
@@ -45,25 +37,18 @@ const AllCourses = () => {
       console.error('Failed to fetch courses:', error);
       setError({
         message: error.message || 'Failed to load courses',
-        action: 'retry'
       });
     } finally {
       setLoading(false);
-      setRetrying(false);
     }
   }, []);
 
-  // Initial load
+
   useEffect(() => {
     fetchCourses();
   }, [fetchCourses]);
 
-  // Handle retry
-  const handleRetry = () => {
-    fetchCourses(true);
-  };
-
-  // Handle create new course
+  
   const handleCreateNewCourse = () => {
     navigate('/admin/edit-course/new');
   };
@@ -127,7 +112,7 @@ const AllCourses = () => {
   }), [courses, processedCourses]);
 
   // Error state
-  if (error && !loading && !retrying) {
+  if (error && !loading) {
     return (
       <>
         <PageMetaData title="Manage Courses" />
@@ -139,32 +124,13 @@ const AllCourses = () => {
               </div>
               <h4 className="text-muted mb-3">Unable to Load Courses</h4>
               <p className="text-muted mb-4">{error.message}</p>
-              <div className="d-flex gap-2 justify-content-center">
-                <Button 
-                  variant="primary" 
-                  onClick={handleRetry}
-                  disabled={retrying}
-                >
-                  {retrying ? (
-                    <>
-                      <Spinner size="sm" className="me-2" />
-                      Retrying...
-                    </>
-                  ) : (
-                    <>
-                      <FaRedo className="me-2" />
-                      Try Again
-                    </>
-                  )}
-                </Button>
-                <Button 
-                  variant="outline-secondary" 
-                  onClick={handleCreateNewCourse}
-                >
-                  <FaPlus className="me-2" />
-                  Create New Course
-                </Button>
-              </div>
+              <Button 
+                variant="outline-secondary" 
+                onClick={handleCreateNewCourse}
+              >
+                <FaPlus className="me-2" />
+                Create New Course
+              </Button>
             </div>
           </div>
         </Container>
@@ -213,23 +179,6 @@ const AllCourses = () => {
             </div>
             
             <div className="d-flex gap-2 align-items-center">
-              {/* Retry button if there was an error but we have some data */}
-              {error && courses.length > 0 && (
-                <Button 
-                  variant="outline-warning" 
-                  size="sm"
-                  onClick={handleRetry}
-                  disabled={retrying}
-                  title="Refresh courses"
-                >
-                  {retrying ? (
-                    <Spinner size="sm" />
-                  ) : (
-                    <FaRedo />
-                  )}
-                </Button>
-              )}
-              
               <Button 
                 className="btn-add-content d-flex align-items-center" 
                 onClick={handleCreateNewCourse}
@@ -240,16 +189,6 @@ const AllCourses = () => {
               </Button>
             </div>
           </div>
-
-          {/* Error Alert */}
-          {error && courses.length > 0 && (
-            <Alert variant="warning" className="mb-3" dismissible onClose={() => setError(null)}>
-              <div className="d-flex align-items-center">
-                <FaExclamationTriangle className="me-2" />
-                <span>Unable to refresh courses: {error.message}</span>
-              </div>
-            </Alert>
-          )}
 
           {/* Search and Sort Section */}
           <div className="row g-3 align-items-center">
