@@ -2,6 +2,7 @@ import React, { useState, useEffect, memo, useCallback } from 'react';
 import { Form, Button, Alert, Spinner, Row, Col } from 'react-bootstrap';
 import { FaCloudUploadAlt, FaTrash, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { createCourse, updateCourse, getCourseById, getCourseCategories } from '@/helpers/courseApi';
 
 const BasicInfo = memo(({ 
   setActiveStep, 
@@ -19,7 +20,7 @@ const BasicInfo = memo(({
     courseName: '',
     description: '',
     shortDescription: '',
-    language: 'english',
+    language: 'English',
     level: 'beginner'
   });
 
@@ -35,7 +36,16 @@ const BasicInfo = memo(({
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   
+  // Categories data
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  
   const navigate = useNavigate();
+
+  // Load categories on component mount
+  useEffect(() => {
+    loadCategories();
+  }, []);
 
   // Initialize form data
   useEffect(() => {
@@ -51,41 +61,69 @@ const BasicInfo = memo(({
     }
   }, [courseId, isNewCourse]);
 
+  // Load categories from API
+  const loadCategories = async () => {
+    try {
+      console.log('🔍 Loading categories...');
+      const response = await getCourseCategories();
+      console.log('🔍 Categories response:', response);
+      
+      if (response.success && response.data) {
+        setCategories(response.data);
+        console.log('🔍 Categories loaded:', response.data.length);
+      }
+    } catch (error) {
+      console.error('❌ Error loading categories:', error);
+      setErrors({ fetch: 'Failed to load categories' });
+    }
+  };
+
+  // Load existing course data
   const loadCourseData = async () => {
     try {
       setLoading(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('🔍 Loading course data for ID:', courseId);
       
-      // Mock course data
-      const mockCourse = {
-        name: 'Sample Course',
-        description: 'This is a sample course description',
-        shortDescription: 'Short description',
-        categories: ['programming'],
-        subcategories: ['web-development'],
-        language: 'english',
-        level: 'beginner'
-      };
+      const courseData = await getCourseById(courseId);
+      console.log('🔍 Course data loaded:', courseData);
       
       setFormData({
-        courseName: mockCourse.name,
-        description: mockCourse.description,
-        shortDescription: mockCourse.shortDescription,
-        language: mockCourse.language,
-        level: mockCourse.level
+        courseName: courseData.title || '',
+        description: courseData.full_description || courseData.description || '',
+        shortDescription: courseData.short_description || '',
+        language: courseData.language || 'English',
+        level: courseData.level || 'beginner'
       });
       
-      setSelectedCategories(mockCourse.categories);
-      setSelectedSubcategories(mockCourse.subcategories);
+      // Set categories from tags
+      if (courseData.tags && courseData.tags.length > 0) {
+        setSelectedCategories([courseData.tags[0]]);
+      }
       
     } catch (error) {
-      console.error('Failed to load course data:', error);
+      console.error('❌ Failed to load course data:', error);
       setErrors({ fetch: 'Failed to load course data' });
     } finally {
       setLoading(false);
     }
   };
+
+  // Update subcategories when category changes
+  useEffect(() => {
+    if (selectedCategories.length > 0) {
+      const selectedCategory = categories.find(cat => 
+        cat.title === selectedCategories[0] || cat.id === selectedCategories[0]
+      );
+      if (selectedCategory && selectedCategory.subcategories) {
+        setSubcategories(selectedCategory.subcategories);
+      } else {
+        setSubcategories([]);
+      }
+    } else {
+      setSubcategories([]);
+      setSelectedSubcategories([]);
+    }
+  }, [selectedCategories, categories]);
 
   // Validation
   const validateForm = useCallback(() => {
@@ -118,7 +156,6 @@ const BasicInfo = memo(({
     
     // Update parent course name
     if (field === 'courseName' && setCourseName) {
-      // Debounce to prevent excessive re-renders
       clearTimeout(window.courseNameTimeout);
       window.courseNameTimeout = setTimeout(() => {
         setCourseName(value);
@@ -132,8 +169,9 @@ const BasicInfo = memo(({
   }, [setCourseName, errors]);
 
   // Category handlers
-  const handleCategoryChange = useCallback((categories) => {
-    setSelectedCategories(categories);
+  const handleCategoryChange = useCallback((category) => {
+    setSelectedCategories(category ? [category] : []);
+    setSelectedSubcategories([]); // Reset subcategories when category changes
     setTouched(prev => ({ ...prev, categories: true }));
     
     if (errors.categories) {
@@ -141,8 +179,8 @@ const BasicInfo = memo(({
     }
   }, [errors.categories]);
 
-  const handleSubcategoryChange = useCallback((subcategories) => {
-    setSelectedSubcategories(subcategories);
+  const handleSubcategoryChange = useCallback((subcategory) => {
+    setSelectedSubcategories(subcategory ? [subcategory] : []);
   }, []);
 
   // Thumbnail handling
@@ -174,47 +212,125 @@ const BasicInfo = memo(({
     if (input) input.value = '';
   }, []);
 
-  // Save course
+  // REAL Save course function - NO MORE MOCK!
   const saveCourse = async () => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log('🔍 Starting REAL course save process...');
+      console.log('🔍 Form data:', formData);
+      console.log('🔍 Selected categories:', selectedCategories);
+      console.log('🔍 Selected subcategories:', selectedSubcategories);
+      console.log('🔍 isNewCourse:', isNewCourse);
       
-      const mockCourseId = Math.floor(Math.random() * 1000) + 1;
+      // Prepare course data matching your backend controller expectations
       const courseData = {
-        id: mockCourseId,
-        name: formData.courseName,
+        title: formData.courseName,
         description: formData.description,
-        shortDescription: formData.shortDescription,
-        categories: selectedCategories,
-        subcategories: selectedSubcategories,
+        short_description: formData.shortDescription,
+        full_description: formData.description,
+        category: selectedCategories[0] || '', // Your backend expects single category
+        level: formData.level,
         language: formData.language,
-        level: formData.level
+        
+        // Optional fields with defaults (matching your controller)
+        thumbnail: '',
+        promo_video_url: '',
+        price: 0,
+        discount: 0,
+        is_discount_enabled: false,
+        validity_type: 'lifetime',
+        expiry_date: null,
+        is_featured: false,
+        total_lectures: 0,
+        total_duration: '',
+        message_to_reviewer: '',
+        review_status: 'pending',
+        visibility_status: 'draft'
       };
+
+      console.log('🔍 Prepared course data for API:', courseData);
+
+      let result;
       
+      // Check if we're creating a new course or updating existing
+      // For new courses: isNewCourse = true OR courseId is null/undefined/"new"
+      const shouldCreateNewCourse = isNewCourse || !courseId || courseId === 'new' || courseId === null || courseId === undefined;
+      
+      if (shouldCreateNewCourse) {
+        console.log('🔍 Making API call to CREATE course...');
+        console.log('🔍 createCourse function type:', typeof createCourse);
+        console.log('🔍 Reason for CREATE:', { isNewCourse, courseId });
+        
+        // Make the REAL API call to create course
+        result = await createCourse(courseData);
+        
+        console.log('🔍 CREATE API Response:', result);
+      } else {
+        console.log('🔍 Making API call to UPDATE course...');
+        console.log('🔍 updateCourse function type:', typeof updateCourse);
+        console.log('🔍 Course ID for update:', courseId);
+        
+        // Ensure we have a valid courseId for update
+        if (!courseId || courseId === 'new') {
+          throw new Error('Invalid course ID for update operation');
+        }
+        
+        // Make the REAL API call to update course
+        result = await updateCourse(courseId, courseData);
+        
+        console.log('🔍 UPDATE API Response:', result);
+      }
+
+      // Extract course ID from response
+      const newCourseId = result.id;
+      console.log('🔍 Extracted course ID:', newCourseId);
+      
+      if (!newCourseId && shouldCreateNewCourse) {
+        console.error('❌ No course ID in response:', result);
+        throw new Error('No course ID returned from server');
+      }
+
       // Update parent with final course name
       if (setCourseName) {
         setCourseName(formData.courseName);
       }
-      
-      if (isNewCourse) {
-        if (onCourseCreated) {
-          onCourseCreated(mockCourseId, { courseName: formData.courseName, ...courseData });
-        }
-      } else {
-        if (onCourseUpdated) {
-          onCourseUpdated({ courseName: formData.courseName, ...courseData });
-        }
+
+      // Call appropriate callback with REAL course ID
+      if (shouldCreateNewCourse && onCourseCreated) {
+        console.log('🔍 Calling onCourseCreated with REAL ID:', newCourseId);
+        onCourseCreated(newCourseId, { 
+          courseName: formData.courseName, 
+          ...result 
+        });
+      } else if (!shouldCreateNewCourse && onCourseUpdated) {
+        console.log('🔍 Calling onCourseUpdated');
+        onCourseUpdated({ 
+          courseName: formData.courseName, 
+          ...result 
+        });
       }
-      
-      return courseData;
+
+      return result;
+
     } catch (error) {
-      throw new Error('Failed to save course');
+      console.error('❌ REAL Save course error:', error);
+      console.error('❌ Error details:', error.response?.data);
+      console.error('❌ Error stack:', error.stack);
+      
+      // Handle API errors properly
+      if (error.response?.data?.error) {
+        throw new Error(error.response.data.error);
+      } else if (error.message) {
+        throw new Error(error.message);
+      } else {
+        throw new Error('Failed to save course');
+      }
     }
   };
 
   // Form submission
   const handleNext = async () => {
+    console.log('🔍 HandleNext called - starting validation...');
+    
     // Mark all fields as touched
     setTouched({
       courseName: true,
@@ -225,6 +341,7 @@ const BasicInfo = memo(({
     });
     
     if (!validateForm()) {
+      console.log('❌ Form validation failed');
       return;
     }
     
@@ -232,11 +349,15 @@ const BasicInfo = memo(({
       setSaving(true);
       setErrors({});
       
+      console.log('🔍 Form valid, calling saveCourse...');
       await saveCourse();
       
+      console.log('✅ Course saved successfully!');
       if (setProgress) setProgress(45);
       if (setActiveStep) setActiveStep(2);
+      
     } catch (error) {
+      console.error('❌ HandleNext error:', error);
       setErrors({ submit: error.message });
     } finally {
       setSaving(false);
@@ -374,11 +495,11 @@ const BasicInfo = memo(({
                 value={formData.language}
                 onChange={(e) => handleInputChange('language', e.target.value)}
               >
-                <option value="english">English</option>
-                <option value="tamil">Tamil</option>
-                <option value="hindi">Hindi</option>
-                <option value="spanish">Spanish</option>
-                <option value="french">French</option>
+                <option value="English">English</option>
+                <option value="Tamil">Tamil</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Spanish">Spanish</option>
+                <option value="French">French</option>
               </Form.Select>
             </Form.Group>
           </Col>
@@ -407,60 +528,29 @@ const BasicInfo = memo(({
             <Col md={6}>
               <Form.Select
                 value={selectedCategories[0] || ''}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value) {
-                    handleCategoryChange([value]);
-                  } else {
-                    handleCategoryChange([]);
-                  }
-                }}
+                onChange={(e) => handleCategoryChange(e.target.value)}
                 className={touched.categories && errors.categories ? 'is-invalid' : ''}
               >
                 <option value="">Select Category</option>
-                <option value="programming">Programming & Development</option>
-                <option value="design">Design</option>
-                <option value="business">Business</option>
-                <option value="marketing">Marketing</option>
-                <option value="data-science">Data Science</option>
-                <option value="photography">Photography</option>
-                <option value="music">Music</option>
-                <option value="health">Health & Fitness</option>
-                <option value="language">Language</option>
-                <option value="other">Other</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.title}>
+                    {category.title}
+                  </option>
+                ))}
               </Form.Select>
             </Col>
             <Col md={6}>
               <Form.Select
                 value={selectedSubcategories[0] || ''}
-                onChange={(e) => handleSubcategoryChange(e.target.value ? [e.target.value] : [])}
+                onChange={(e) => handleSubcategoryChange(e.target.value)}
                 disabled={!selectedCategories[0]}
               >
                 <option value="">Select Subcategory</option>
-                {selectedCategories[0] === 'programming' && (
-                  <>
-                    <option value="web-development">Web Development</option>
-                    <option value="mobile-development">Mobile Development</option>
-                    <option value="game-development">Game Development</option>
-                    <option value="software-engineering">Software Engineering</option>
-                  </>
-                )}
-                {selectedCategories[0] === 'design' && (
-                  <>
-                    <option value="ui-ux">UI/UX Design</option>
-                    <option value="graphic-design">Graphic Design</option>
-                    <option value="web-design">Web Design</option>
-                    <option value="3d-animation">3D & Animation</option>
-                  </>
-                )}
-                {selectedCategories[0] === 'business' && (
-                  <>
-                    <option value="entrepreneurship">Entrepreneurship</option>
-                    <option value="management">Management</option>
-                    <option value="finance">Finance</option>
-                    <option value="sales">Sales</option>
-                  </>
-                )}
+                {subcategories.map((subcategory) => (
+                  <option key={subcategory.id} value={subcategory.title}>
+                    {subcategory.title}
+                  </option>
+                ))}
               </Form.Select>
             </Col>
           </Row>
