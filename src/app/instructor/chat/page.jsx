@@ -4,7 +4,7 @@ import { FaPaperPlane, FaFile, FaImage, FaPaperclip, FaUserShield } from 'react-
 import { BsCheck2, BsCheck2All } from 'react-icons/bs';
 import io from 'socket.io-client';
 
-const socket = io('https://server.pudhuyugamacademy.com'); 
+const socket = io('https://rvu-backend.onrender.com'); 
 
 const InstructorChatPage = () => {
   const [messages, setMessages] = useState([]);
