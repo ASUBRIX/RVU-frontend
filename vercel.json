@@ -1,7 +1,7 @@
 {
   "build": {
     "env": {
-      "VITE_API_BASE_URL": "https://pudhuyugam-backend.onrender.com"
+      "VITE_API_BASE_URL": "https://rvu-backend.onrender.com"
     }
   },
   "buildCommand": "npm run build",

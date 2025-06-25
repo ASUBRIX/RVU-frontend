@@ -4,7 +4,7 @@ import { useState } from 'react';
 import AuthLayout from './components/AuthLayout';
 import httpClient from '../../../helpers/httpClient';
 import { useAuthContext } from '../../../context/useAuthContext';
-import './MobileLoginPage.css'; // Reuse the same CSS
+import './MobileLoginPage.css'; 
 
 export default function OtpVerifyPage() {
   const location = useLocation();
