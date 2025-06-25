@@ -16,6 +16,11 @@ let settingsCache = null;
 const Footer = ({ className }) => {
   // Inline styles for footer - using !important to override imported CSS
   const footerStyles = {
+    footerMain: {
+      backgroundColor: '#0e0a38. !important',
+      color: '#ffffff !important',
+      textAlign: 'left'
+    },
     logoImageFooter: {
       marginLeft: '0 !important',
       objectFit: 'contain',
@@ -31,7 +36,8 @@ const Footer = ({ className }) => {
     },
     termsLink: {
       whiteSpace: 'nowrap !important',
-      wordBreak: 'keep-all !important'
+      wordBreak: 'keep-all !important',
+      color: '#ffffff !important'
     },
     logoLink: {
       display: 'block !important',
@@ -44,7 +50,8 @@ const Footer = ({ className }) => {
     logoDescription: {
       textAlign: 'left !important',
       marginTop: '1rem',
-      marginBottom: '1rem'
+      marginBottom: '1rem',
+      color: '#e0e0e0 !important'
     },
     socialLinks: {
       display: 'flex !important',
@@ -60,6 +67,33 @@ const Footer = ({ className }) => {
     footerRow: {
       marginLeft: '0 !important',
       paddingLeft: '0 !important'
+    },
+    footerHeading: {
+      color: '#ffffff !important',
+      fontWeight: '600'
+    },
+    footerText: {
+      color: '#e0e0e0 !important'
+    },
+    footerLink: {
+      color: '#e0e0e0 !important',
+      textDecoration: 'none'
+    },
+    navLink: {
+      color: '#e0e0e0 !important',
+      padding: '0.25rem 0 !important',
+      textDecoration: 'none'
+    },
+    footerHr: {
+      borderColor: 'rgba(255, 255, 255, 0.2) !important',
+      margin: '2rem 0 0 0 !important'
+    },
+    copyrightText: {
+      color: '#e0e0e0 !important'
+    },
+    copyrightLink: {
+      color: '#ffffff !important',
+      textDecoration: 'none'
     }
   };
 
@@ -115,7 +149,7 @@ const Footer = ({ className }) => {
   }, []);
 
   return (
-    <footer className={clsx('pt-5', className)} style={{ textAlign: 'left' }}>
+    <footer className={clsx('pt-5', className)} style={footerStyles.footerMain}>
       <Container style={footerStyles.footerContainer}>
         <Row className="g-4" style={footerStyles.footerRow}>
           {/* Logo section - explicitly kept on left */}
@@ -196,14 +230,17 @@ const Footer = ({ className }) => {
             <Row className="g-4">
               {footerLinks.slice(0, 2).map((link, idx) => (
                 <Col xs={6} md={4} key={idx}>
-                  <h5 className="mb-2 mb-md-4">{link.title}</h5>
+                  <h5 className="mb-2 mb-md-4" style={footerStyles.footerHeading}>{link.title}</h5>
                   <ul className="nav flex-column">
                     {link.items.map((item, idx) => (
                       <li className="nav-item" key={idx}>
                         <Link 
                           className="nav-link" 
                           to={item.link ?? ''}
-                          style={item.name === 'Terms and Conditions' ? footerStyles.termsLink : {}}
+                          style={{
+                            ...footerStyles.navLink,
+                            ...(item.name === 'Terms and Conditions' ? footerStyles.termsLink : {})
+                          }}
                         >
                           {item.name}
                         </Link>
@@ -217,13 +254,13 @@ const Footer = ({ className }) => {
 
           {/* Contact section */}
           <Col lg={4}>
-            <h5 className="mb-2 mb-md-4">Contact</h5>
-            <p className="mb-2">{settings.site_address}</p>
-            <p className="mb-0">
-              Contact Number: <span className="h6 fw-light ms-1">{settings.site_phone}</span>
+            <h5 className="mb-2 mb-md-4" style={footerStyles.footerHeading}>Contact</h5>
+            <p className="mb-2" style={footerStyles.footerText}>{settings.site_address}</p>
+            <p className="mb-0" style={footerStyles.footerText}>
+              Contact Number: <span className="h6 fw-light ms-1" style={footerStyles.footerText}>{settings.site_phone}</span>
             </p>
-            <p className="mb-0">
-              Email: <span className="h6 fw-light ms-1">{settings.site_email}</span>
+            <p className="mb-0" style={footerStyles.footerText}>
+              Email: <span className="h6 fw-light ms-1" style={footerStyles.footerText}>{settings.site_email}</span>
             </p>
             <Row className="g-2 mt-2">
               <Col xs={6} sm={4} md={3} lg={6}>
@@ -240,13 +277,13 @@ const Footer = ({ className }) => {
           </Col>
         </Row>
 
-        <hr className="mt-4 mb-0" />
+        <hr className="mt-4 mb-0" style={footerStyles.footerHr} />
         <div className="py-3">
           <Container className="px-0">
             <div className="d-flex justify-content-center py-3">
-              <div className="text-body text-primary-hover text-center">
+              <div className="text-center" style={footerStyles.copyrightText}>
                 Powered by{' '}
-                <Link to="https://asubrix.com/" target="_blank" className="text-body">
+                <Link to="https://asubrix.com/" target="_blank" style={footerStyles.copyrightLink}>
                   Asubrix International Pvt Ltd
                 </Link>{' '}
                  © Pudhuyugam Academy 2025. All rights reserved

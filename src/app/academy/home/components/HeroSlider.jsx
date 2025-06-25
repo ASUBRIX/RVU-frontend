@@ -60,13 +60,11 @@ const HeroSlider = () => {
           return (
             <div key={slide.id || idx} className="hero-slide-overlay">
               <img src={imgUrl} alt={slide.title} className="hero-image-overlay" />
-              <div className="slide-caption-overlay">
-                <h2 className="hero-title mb-3">{slide.title}</h2>
-                {slide.description && <p className="hero-description mb-4">{slide.description}</p>}
-                <button className="hero-btn btn btn-lg px-5 py-2" type="button">
-                  Get Started
-                </button>
-              </div>
+              
+              {/* Dark overlay for better text visibility */}
+              <div className="hero-overlay"></div>
+              
+             
             </div>
           );
         })}

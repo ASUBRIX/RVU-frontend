@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { Offcanvas, OffcanvasBody, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { BsGearFill, BsGlobe, BsPower } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import logoImg2 from '@/assets/images/py_circle_logo.png';
+import logoImg2 from '@/assets/images/logo.png';
 import AppMenu from '@/components/admin/AppMenu';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useLayoutContext } from '@/context/useLayoutContext';

@@ -20,12 +20,11 @@ const AboutAndNoticeBoard = () => {
       <Row className="py-5">
         <Col lg={7}>
           <div className="p-4 d-flex flex-column">
-            <h3 className="mb-3">Welcome to Pudhuyugam</h3>
+            <h3 className="mb-3">Welcome to Royal Victorian University</h3>
             <p>
-              Pudhuyugam Academy embarked on a resolute mission – to deliver top-notch education for a spectrum of competitive examinations. Our
-              academy has been on a transformative journey, sculpting the futures of aspirants by providing unparalleled guidance. Our mission extends
-              beyond shaping futures; it aims to create opportunities for aspirants, especially those from rural areas, enabling them to flourish and
-              excel in their competitive exam endeavors.
+              Royal Victorian University is a prestigious institution in Yeghegnadzor, Armenia, offering bachelor’s and master’s degree programs, including German language courses. Our dedicated faculty ensures a high-quality education in diverse fields such as business, engineering, arts, sciences, and technology.
+
+We prioritize student success and provide state-of-the-art facilities for academic growth and research. With a multicultural and inclusive community, we welcome students from diverse backgrounds. International collaborations and exchange programs enhance global perspectives. Join us at Royal Victorian University for a transformative educational journey, equipping you with the tools, knowledge, and opportunities to excel in your chosen field and unlock your full potential.
             </p>
             <p>
               Led by visionary educators, Pudhuyugam Academy is dedicated to shaping the destinies of aspirants, fostering a culture of excellence,

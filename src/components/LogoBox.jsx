@@ -1,4 +1,4 @@
-import pymainlogo from '@/assets/images/logo-puthuyugham.png';
+import pymainlogo from '@/assets/images/logo.png';
 import '@/assets/scss/style.scss';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';

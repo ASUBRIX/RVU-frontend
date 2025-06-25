@@ -1,3 +1,21 @@
+/* Navbar background color */
+.custom-navbar {
+  background-color: #0e0a38 !important;
+}
+
+/* Optional: Add smooth transition for background color changes */
+.custom-navbar {
+  background-color: #0e0a38 !important;
+  transition: background-color 0.3s ease;
+}
+
+/* If you want different background when scrolled */
+.custom-navbar.navbar-sticky-on {
+  background-color: #0e0a38 !important;
+  /* You can use a slightly different shade when scrolled if desired */
+  /* background-color: #1a1654 !important; */
+}
+
 /* Existing dropdown styles */
 #dropdown-avatar, .avatar-toggle-button {
   transition: box-shadow 0.2s;
@@ -92,12 +110,13 @@
   margin-right: 0.5rem;
 }
 
-/* New styles for larger menus and reduced right padding */
+/* Navigation link styles - Updated for better contrast on dark background */
 .navbar-nav .nav-link.custom-nav-link {
   font-size: 1.1rem !important;
   font-weight: 500 !important;
   padding: 0.75rem 1rem !important;
   transition: all 0.3s ease;
+  color: #ffffff !important; /* White text for better contrast on dark background */
 }
 
 .navbar-nav .nav-link.custom-nav-link:hover {
