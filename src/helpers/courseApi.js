@@ -217,3 +217,13 @@ export const createCourseModule = async (moduleData) => {
     throw error
   }
 }
+
+export const getCourseEarnings = async => {
+  console.log("Tesing");
+  
+}
+
+export const getCourseReviews = async => {
+  console.log("Tesing");
+  
+}

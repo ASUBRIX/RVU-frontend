@@ -9,6 +9,7 @@ const CourseEarning = ({ courseId }) => {
   const [earnings, setEarnings] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
 
+  
   useEffect(() => {
     const fetchEarnings = async () => {
       try {
