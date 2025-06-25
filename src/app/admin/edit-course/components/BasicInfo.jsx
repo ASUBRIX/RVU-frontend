@@ -1,8 +1,17 @@
 import React, { useState, useEffect, memo, useCallback } from 'react';
-import { Form, Button, Alert, Spinner, Row, Col } from 'react-bootstrap';
-import { FaCloudUploadAlt, FaTrash, FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
+import { Form, Button, Alert, Spinner, Row, Col, Modal, Badge } from 'react-bootstrap';
+import { FaCloudUploadAlt, FaTrash, FaExclamationTriangle, FaCheckCircle, FaPlus, FaEdit, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { createCourse, updateCourse, getCourseById, getCourseCategories, uploadCourseThumbnail } from '@/helpers/courseApi';
+import { 
+  createCourse, 
+  updateCourse, 
+  getCourseById, 
+  getCourseCategories, 
+  uploadCourseThumbnail,
+  createCategoryWithSubcategories,
+  addSubcategoriesToCategory,
+  deleteCategory 
+} from '@/helpers/courseApi';
 import { getThumbnailUrl } from '../../../../utils/thumbnailHelper';
 
 const BasicInfo = memo(({ 
@@ -40,6 +49,16 @@ const BasicInfo = memo(({
   // Categories data
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  
+  // Category Management Modal States
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [categoryModalType, setCategoryModalType] = useState('create'); // 'create' or 'edit'
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [categoryFormData, setCategoryFormData] = useState({
+    title: '',
+    subcategories: []
+  });
+  const [categoryLoading, setCategoryLoading] = useState(false);
   
   const navigate = useNavigate();
 
@@ -212,6 +231,124 @@ const BasicInfo = memo(({
     const input = document.getElementById('thumbnail-input');
     if (input) input.value = '';
   }, []);
+
+  // Category Management Functions
+  const openCategoryModal = (type = 'create', category = null) => {
+    setCategoryModalType(type);
+    setEditingCategory(category);
+    
+    if (type === 'edit' && category) {
+      setCategoryFormData({
+        title: category.title || '',
+        subcategories: category.subcategories || []
+      });
+    } else {
+      setCategoryFormData({
+        title: '',
+        subcategories: []
+      });
+    }
+    
+    setShowCategoryModal(true);
+  };
+
+  const handleCreateCategory = async () => {
+    try {
+      setCategoryLoading(true);
+      
+      if (!categoryFormData.title.trim()) {
+        alert('Category title is required');
+        return;
+      }
+
+      // Backend expects subcategories as array of strings, not objects
+      const categoryData = {
+        title: categoryFormData.title.trim(),
+        subcategories: categoryFormData.subcategories
+          .filter(sub => sub.title && sub.title.trim())
+          .map(sub => sub.title.trim())
+      };
+
+      console.log('Creating category with data:', categoryData);
+      
+      const result = await createCategoryWithSubcategories(categoryData);
+      console.log('Category created:', result);
+      
+      // Reload categories
+      await loadCategories();
+      
+      // Close modal and reset form
+      setShowCategoryModal(false);
+      setCategoryFormData({ title: '', subcategories: [] });
+      
+      // Show success message
+      setErrors({ success: 'Category created successfully!' });
+      setTimeout(() => setErrors({}), 3000);
+      
+    } catch (error) {
+      console.error('Error creating category:', error);
+      setErrors({ categoryError: error.message || 'Failed to create category' });
+    } finally {
+      setCategoryLoading(false);
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    if (!window.confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setCategoryLoading(true);
+      
+      console.log('Deleting category:', categoryId);
+      const result = await deleteCategory(categoryId);
+      console.log('Category deleted:', result);
+      
+      // Reload categories
+      await loadCategories();
+      
+      // Clear selection if deleted category was selected
+      const deletedCategory = categories.find(cat => cat.id === categoryId);
+      if (deletedCategory && selectedCategories.includes(deletedCategory.title)) {
+        setSelectedCategories([]);
+        setSelectedSubcategories([]);
+      }
+      
+      // Show success message
+      setErrors({ success: 'Category deleted successfully!' });
+      setTimeout(() => setErrors({}), 3000);
+      
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      setErrors({ deleteError: error.message || 'Failed to delete category' });
+    } finally {
+      setCategoryLoading(false);
+    }
+  };
+
+  const addSubcategoryToForm = () => {
+    setCategoryFormData(prev => ({
+      ...prev,
+      subcategories: [...prev.subcategories, { title: '' }]
+    }));
+  };
+
+  const updateSubcategoryInForm = (index, value) => {
+    setCategoryFormData(prev => ({
+      ...prev,
+      subcategories: prev.subcategories.map((sub, i) => 
+        i === index ? { title: value } : sub
+      )
+    }));
+  };
+
+  const removeSubcategoryFromForm = (index) => {
+    setCategoryFormData(prev => ({
+      ...prev,
+      subcategories: prev.subcategories.filter((_, i) => i !== index)
+    }));
+  };
 
   // REAL Save course function - NO MORE MOCK!
   const saveCourse = async () => {
@@ -430,7 +567,35 @@ const BasicInfo = memo(({
         </Alert>
       )}
 
+      {errors.categoryError && (
+        <Alert variant="danger" className="mb-4">
+          <FaExclamationTriangle className="me-2" />
+          {errors.categoryError}
+        </Alert>
+      )}
+
+      {errors.subcategoryError && (
+        <Alert variant="danger" className="mb-4">
+          <FaExclamationTriangle className="me-2" />
+          {errors.subcategoryError}
+        </Alert>
+      )}
+
+      {errors.deleteError && (
+        <Alert variant="danger" className="mb-4">
+          <FaExclamationTriangle className="me-2" />
+          {errors.deleteError}
+        </Alert>
+      )}
+
       {/* Success Alert */}
+      {errors.success && (
+        <Alert variant="success" className="mb-4">
+          <FaCheckCircle className="me-2" />
+          {errors.success}
+        </Alert>
+      )}
+
       {isNewCourse && courseCreated && (
         <Alert variant="success" className="mb-4">
           <FaCheckCircle className="me-2" />
@@ -543,11 +708,25 @@ const BasicInfo = memo(({
           </Col>
         </Row>
 
-        {/* Categories */}
+        {/* Categories with Management Buttons */}
         <Form.Group className="mb-4">
-          <Form.Label className="fw-medium">
-            Categories <span className="text-danger">*</span>
-          </Form.Label>
+          <div className="d-flex align-items-center justify-content-between mb-2">
+            <Form.Label className="fw-medium mb-0">
+              Categories <span className="text-danger">*</span>
+            </Form.Label>
+            <div className="d-flex gap-2">
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => openCategoryModal('create')}
+                disabled={categoryLoading}
+              >
+                <FaPlus className="me-1" />
+                Add Category
+              </Button>
+            </div>
+          </div>
+          
           <Row>
             <Col md={6}>
               <Form.Select
@@ -564,23 +743,58 @@ const BasicInfo = memo(({
               </Form.Select>
             </Col>
             <Col md={6}>
-              <Form.Select
-                value={selectedSubcategories[0] || ''}
-                onChange={(e) => handleSubcategoryChange(e.target.value)}
-                disabled={!selectedCategories[0]}
-              >
-                <option value="">Select Subcategory</option>
-                {subcategories.map((subcategory) => (
-                  <option key={subcategory.id} value={subcategory.title}>
-                    {subcategory.title}
-                  </option>
-                ))}
-              </Form.Select>
+              <div className="d-flex">
+                <Form.Select
+                  value={selectedSubcategories[0] || ''}
+                  onChange={(e) => handleSubcategoryChange(e.target.value)}
+                  disabled={!selectedCategories[0]}
+                  className="me-2"
+                >
+                  <option value="">Select Subcategory</option>
+                  {subcategories.map((subcategory) => (
+                    <option key={subcategory.id} value={subcategory.title}>
+                      {subcategory.title}
+                    </option>
+                  ))}
+                </Form.Select>
+                {selectedCategories[0] && (
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => {
+                      const selectedCategory = categories.find(cat => 
+                        cat.title === selectedCategories[0] || cat.id === selectedCategories[0]
+                      );
+                      if (selectedCategory) {
+                        handleDeleteCategory(selectedCategory.id);
+                      }
+                    }}
+                    disabled={categoryLoading}
+                    title="Delete Category"
+                  >
+                    <FaTrash />
+                  </Button>
+                )}
+              </div>
             </Col>
           </Row>
           {touched.categories && errors.categories && (
             <div className="invalid-feedback d-block">
               {errors.categories}
+            </div>
+          )}
+          
+          {/* Display current category info */}
+          {selectedCategories[0] && (
+            <div className="mt-2">
+              <Badge bg="primary" className="me-2">
+                {selectedCategories[0]}
+              </Badge>
+              {selectedSubcategories[0] && (
+                <Badge bg="secondary">
+                  {selectedSubcategories[0]}
+                </Badge>
+              )}
             </div>
           )}
         </Form.Group>
@@ -691,6 +905,97 @@ const BasicInfo = memo(({
           </div>
         </div>
       </Form>
+
+      {/* Category Creation Modal */}
+      <Modal show={showCategoryModal} onHide={() => setShowCategoryModal(false)} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {categoryModalType === 'create' ? 'Create New Category' : 'Edit Category'}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Category Title *</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter category title"
+                value={categoryFormData.title}
+                onChange={(e) => setCategoryFormData(prev => ({ ...prev, title: e.target.value }))}
+                maxLength={100}
+              />
+              <Form.Text className="text-muted">
+                {categoryFormData.title.length}/100 characters
+              </Form.Text>
+            </Form.Group>
+
+            <div className="mb-3">
+              <div className="d-flex align-items-center justify-content-between mb-2">
+                <Form.Label className="mb-0">Subcategories</Form.Label>
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={addSubcategoryToForm}
+                >
+                  <FaPlus className="me-1" />
+                  Add Subcategory
+                </Button>
+              </div>
+              
+              {categoryFormData.subcategories.map((subcategory, index) => (
+                <div key={index} className="d-flex align-items-center mb-2">
+                  <Form.Control
+                    type="text"
+                    placeholder="Subcategory title"
+                    value={subcategory.title}
+                    onChange={(e) => updateSubcategoryInForm(index, e.target.value)}
+                    maxLength={100}
+                    className="me-2"
+                  />
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => removeSubcategoryFromForm(index)}
+                  >
+                    <FaTimes />
+                  </Button>
+                </div>
+              ))}
+              
+              {categoryFormData.subcategories.length === 0 && (
+                <div className="text-muted text-center py-3 border rounded">
+                  No subcategories added yet. Click "Add Subcategory" to add one.
+                </div>
+              )}
+            </div>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowCategoryModal(false)}
+            disabled={categoryLoading}
+          >
+            Cancel
+          </Button>
+          <Button 
+            variant="primary" 
+            onClick={handleCreateCategory}
+            disabled={categoryLoading || !categoryFormData.title.trim()}
+          >
+            {categoryLoading ? (
+              <>
+                <Spinner size="sm" className="me-2" />
+                {categoryModalType === 'create' ? 'Creating...' : 'Updating...'}
+              </>
+            ) : (
+              <>
+                {categoryModalType === 'create' ? 'Create Category' : 'Update Category'}
+              </>
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }, (prevProps, nextProps) => {

@@ -21,6 +21,8 @@ const CourseFilters = ({ filters, setFilters }) => {
     setFilters((prev) => ({
       ...prev,
       [field]: value,
+      // Clear subcategory when category changes
+      ...(field === 'category' && { subCategory: '' })
     }));
   };
 
@@ -28,21 +30,67 @@ const CourseFilters = ({ filters, setFilters }) => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const res = await getCourseCategories();
+        const response = await getCourseCategories();
+        console.log('Categories API response:', response);
         
-        // Fix: Access response directly, not res.data
-        // Also add safety check for array
-        setCategories(Array.isArray(res) ? res : []);
+        // Handle different response structures
+        let categoriesData = [];
+        
+        if (response?.success && response?.data) {
+          // If response has success flag and data property
+          categoriesData = response.data;
+        } else if (Array.isArray(response)) {
+          // If response is directly an array
+          categoriesData = response;
+        } else if (response?.data && Array.isArray(response.data)) {
+          // If response.data is an array
+          categoriesData = response.data;
+        }
+        
+        // Sort categories alphabetically by title
+        const sortedCategories = categoriesData
+          .filter(cat => cat && cat.title) // Filter out invalid entries
+          .sort((a, b) => {
+            const titleA = (a.title || '').toLowerCase();
+            const titleB = (b.title || '').toLowerCase();
+            return titleA.localeCompare(titleB);
+          })
+          .map(category => ({
+            ...category,
+            // Sort subcategories alphabetically too
+            subcategories: (category.subcategories || [])
+              .filter(sub => sub && sub.title) // Filter out invalid subcategories
+              .sort((a, b) => {
+                const titleA = (a.title || '').toLowerCase();
+                const titleB = (b.title || '').toLowerCase();
+                return titleA.localeCompare(titleB);
+              })
+          }));
+        
+        console.log('Processed and sorted categories:', sortedCategories);
+        setCategories(sortedCategories);
+        
       } catch (err) {
-        console.error('Failed to load categories', err);
-        // Set empty array on error to prevent crashes
+        console.error('Failed to load categories:', err);
         setCategories([]);
       } finally {
         setLoading(false);
       }
     };
+    
     fetchCategories();
   }, []);
+
+  // Get subcategories for the selected category
+  const getSubcategoriesForSelectedCategory = () => {
+    if (!filters?.category) return [];
+    
+    const selectedCategory = categories.find(cat => 
+      cat.title === filters.category || cat.id === filters.category
+    );
+    
+    return selectedCategory?.subcategories || [];
+  };
 
   const hasActiveFilters = Object.values(filters || {}).some((value) => value !== '');
 
@@ -75,7 +123,10 @@ const CourseFilters = ({ filters, setFilters }) => {
           <label className="form-label mb-0 text-muted small">Categories</label>
         </div>
         {loading ? (
-          <Spinner animation="border" size="sm" />
+          <div className="d-flex align-items-center">
+            <Spinner animation="border" size="sm" className="me-2" />
+            <span className="text-muted small">Loading categories...</span>
+          </div>
         ) : (
           <Form.Select
             value={filters?.category || ''}
@@ -85,11 +136,28 @@ const CourseFilters = ({ filters, setFilters }) => {
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
-              <option key={category.id} value={category.title}>
+              <option key={category.id || category.title} value={category.title}>
                 {category.title}
+                {category.subcategories && category.subcategories.length > 0 && 
+                  ` (${category.subcategories.length} subcategories)`
+                }
               </option>
             ))}
           </Form.Select>
+        )}
+        
+        {/* Show category count */}
+        {!loading && categories.length > 0 && (
+          <small className="text-muted mt-1 d-block">
+            {categories.length} categories available
+          </small>
+        )}
+        
+        {/* Show error if no categories */}
+        {!loading && categories.length === 0 && (
+          <small className="text-warning mt-1 d-block">
+            No categories found
+          </small>
         )}
       </div>
 
@@ -106,18 +174,22 @@ const CourseFilters = ({ filters, setFilters }) => {
           size="sm"
           disabled={!filters?.category}
         >
-          <option value="">All Sub Categories</option>
-          {/* Get subcategories for selected category */}
-          {filters?.category && 
-            categories
-              .find(cat => cat.title === filters.category)
-              ?.subcategories?.map((subcat) => (
-                <option key={subcat.id} value={subcat.title}>
-                  {subcat.title}
-                </option>
-              ))
-          }
+          <option value="">
+            {!filters?.category ? 'Select a category first' : 'All Sub Categories'}
+          </option>
+          {getSubcategoriesForSelectedCategory().map((subcat) => (
+            <option key={subcat.id || subcat.title} value={subcat.title}>
+              {subcat.title}
+            </option>
+          ))}
         </Form.Select>
+        
+        {/* Show subcategory count */}
+        {filters?.category && (
+          <small className="text-muted mt-1 d-block">
+            {getSubcategoriesForSelectedCategory().length} subcategories available
+          </small>
+        )}
       </div>
 
       {/* Course Features */}
@@ -143,6 +215,24 @@ const CourseFilters = ({ filters, setFilters }) => {
               </label>
             </div>
           ))}
+          
+          {/* Add "Clear Features" option */}
+          {filters?.status && (
+            <div className="form-check">
+              <input
+                type="radio"
+                className="form-check-input"
+                id="feature-clear"
+                name="feature"
+                value=""
+                checked={!filters?.status}
+                onChange={(e) => handleFilterChange('status', '')}
+              />
+              <label className="form-check-label text-muted" htmlFor="feature-clear">
+                Clear selection
+              </label>
+            </div>
+          )}
         </div>
       </div>
 
@@ -150,19 +240,41 @@ const CourseFilters = ({ filters, setFilters }) => {
       {hasActiveFilters && (
         <div className="active-filters mt-4 pt-4 border-top">
           <div className="d-flex align-items-center mb-3">
-            <span className="text-muted small">Active Filters</span>
+            <span className="text-muted small fw-medium">Active Filters</span>
           </div>
           <div className="d-flex flex-wrap gap-2">
             {Object.entries(filters || {}).map(([key, value]) => {
               if (!value) return null;
+              
+              // Create more readable labels
+              const getFilterLabel = (key, value) => {
+                switch (key) {
+                  case 'category':
+                    return `Category: ${value}`;
+                  case 'subCategory':
+                    return `Subcategory: ${value}`;
+                  case 'status':
+                    const featureLabel = featureOptions.find(f => f.value === value)?.label;
+                    return `Feature: ${featureLabel || value}`;
+                  default:
+                    return value;
+                }
+              };
+              
               return (
-                <span key={key} className="badge bg-primary bg-opacity-10 text-primary rounded-pill">
-                  {value}
+                <span 
+                  key={key} 
+                  className="badge bg-primary bg-opacity-10 text-primary rounded-pill d-flex align-items-center"
+                  style={{ fontSize: '0.75rem' }}
+                >
+                  {getFilterLabel(key, value)}
                   <button
-                    className="btn btn-link btn-sm text-primary p-0 ms-2"
+                    className="btn btn-link btn-sm text-primary p-0 ms-2 d-flex align-items-center"
+                    style={{ lineHeight: 1 }}
                     onClick={() => handleFilterChange(key, '')}
+                    title={`Remove ${key} filter`}
                   >
-                    <FiX size={14} />
+                    <FiX size={12} />
                   </button>
                 </span>
               );
