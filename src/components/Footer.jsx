@@ -1,7 +1,7 @@
 import { footerLinks } from '@/assets/data/footer-items';
 import playStore from '@/assets/images/client/app-store.svg';
 import googlePlay from '@/assets/images/client/google-play.svg';
-import pylogo from '@/assets/images/puthuyougam_logo.png';
+import pylogo from '@/assets/images/logo.png';
 import '@/assets/scss/style.scss';
 import clsx from 'clsx';
 import { Col, Container, Row } from 'react-bootstrap';
@@ -14,7 +14,7 @@ const BACKEND_URL = import.meta.env.VITE_API_BASE_URL;
 let settingsCache = null;
 
 const Footer = ({ className }) => {
-  // Inline styles for footer - using !important to override imported CSS
+  
   const footerStyles = {
     footerMain: {
       backgroundColor: '#0e0a38. !important',
@@ -98,10 +98,10 @@ const Footer = ({ className }) => {
   };
 
   const defaultSettings = {
-    site_name: 'Pudhuyugam Academy',
-    site_email: 'official@pudhuyugamacademy.in',
-    site_phone: '9488722512, 6381048227',
-    site_address: '4, Hari Garderns, Ramanuja Nagar, Uppilipayam Post, Coimbatore - 641 015',
+    site_name: 'Royal Victorian University',
+    site_email: 'official@rvu.in',
+    site_phone: '(+374) 55 42 43 14',
+    site_address: '5 Momik St, Yeghegnadzor 3601, Republic of Armenia',
     site_logo: pylogo,
     facebook_url: 'https://www.facebook.com/people/Pudhuyugamacademy/61553787314656/',
     youtube_url: 'https://www.youtube.com/@PudhuyugamAcademy',
@@ -168,7 +168,7 @@ const Footer = ({ className }) => {
             </Link>
             <p className="my-3" style={footerStyles.logoDescription}>
               {settings.site_description ||
-                'Pudhuyugam Academy embarked on a resolute mission to deliver top-notch education for a spectrum of competitive examinations'}
+                'Royal Victorian University in Yeghegnadzor, Armenia offers prestigious education with diverse degree programs and linguistic courses, including German language.dhuyugam Academy embarked on a resolute mission to deliver top-notch education for a spectrum of competitive examinations'}
             </p>
             <div style={footerStyles.socialLinks}>
               <ul className="list-inline mb-0 mt-3" style={{ margin: '0 !important', padding: '0 !important', textAlign: 'left' }}>
@@ -286,7 +286,7 @@ const Footer = ({ className }) => {
                 <Link to="https://asubrix.com/" target="_blank" style={footerStyles.copyrightLink}>
                   Asubrix International Pvt Ltd
                 </Link>{' '}
-                 © Pudhuyugam Academy 2025. All rights reserved
+                 © Royal Victorian University 2025. All rights reserved
               </div>
             </div>
           </Container>
