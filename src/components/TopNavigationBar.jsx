@@ -16,12 +16,12 @@ const TopNavigationBar = () => {
   const menus = [
     { label: 'Home', path: '/' },
     { label: 'About', path: '/about-us' },
-    { label: 'Our Team', path: '/our-team' },
+    // { label: 'Our Team', path: '/our-team' },
     { label: 'Courses', path: '/courses' },
     { label: 'Free Test', path: '/free-test' },
     { label: 'Gallery', path: '/gallery' },
     { label: 'Blogs', path: '/blogs' },
-    { label: 'Current Affairs', path: '/current-affairs' },
+    // { label: 'Current Affairs', path: '/current-affairs' },
     { label: 'Contact', path: '/contact-us' },
   ]
 

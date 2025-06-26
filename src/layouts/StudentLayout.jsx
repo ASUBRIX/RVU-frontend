@@ -51,7 +51,7 @@ const StudentLayout = ({ children }) => {
         </section>
       </main>
 
-      <style jsx>{`
+      <style jsx='true'>{`
         .navigation-wrapper {
           position: relative;
           z-index: 10;

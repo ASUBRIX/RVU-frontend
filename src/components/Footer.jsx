@@ -17,82 +17,78 @@ const Footer = ({ className }) => {
   
   const footerStyles = {
     footerMain: {
-      backgroundColor: '#0e0a38. !important',
-      color: '#ffffff !important',
+      backgroundColor: '#0e0a38',
+      color: '#ffffff',
       textAlign: 'left'
     },
     logoImageFooter: {
-      marginLeft: '0 !important',
+      marginLeft: '0',
       objectFit: 'contain',
-      display: 'block !important',
+      display: 'block',
       maxWidth: '189px',
-      textAlign: 'left !important'
+      textAlign: 'left'
     },
     logoColumn: {
-      textAlign: 'left !important',
-      paddingLeft: '0 !important',
-      marginLeft: '0 !important',
-      display: 'block !important'
+      textAlign: 'left',
+      paddingLeft: '0',
+      marginLeft: '0',
+      display: 'block'
     },
     termsLink: {
-      whiteSpace: 'nowrap !important',
-      wordBreak: 'keep-all !important',
-      color: '#ffffff !important'
+      whiteSpace: 'nowrap',
+      wordBreak: 'keep-all',
+      color: '#ffffff'
     },
     logoLink: {
-      display: 'block !important',
-      marginRight: '0 !important',
-      marginLeft: '0 !important',
-      textAlign: 'left !important',
-      width: 'fit-content !important',
-      float: 'none !important'
+      display: 'block',
+      marginRight: '0',
+      marginLeft: '0',
+      textAlign: 'left',
+      width: 'fit-content',
+      float: 'none'
     },
     logoDescription: {
-      textAlign: 'left !important',
+      textAlign: 'left',
       marginTop: '1rem',
       marginBottom: '1rem',
-      color: '#e0e0e0 !important'
+      color: '#e0e0e0'
     },
     socialLinks: {
-      display: 'flex !important',
-      justifyContent: 'flex-start !important',
-      alignItems: 'flex-start !important',
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
       marginTop: '1rem',
-      textAlign: 'left !important'
+      textAlign: 'left'
     },
     footerContainer: {
-      paddingLeft: '0 !important',
-      paddingRight: '15px !important'
+      paddingLeft: '0',
+      paddingRight: '15px'
     },
     footerRow: {
-      marginLeft: '0 !important',
-      paddingLeft: '0 !important'
-    },
-    footerHeading: {
-      color: '#ffffff !important',
-      fontWeight: '600'
+      marginLeft: '0',
+      paddingLeft: '0'
     },
     footerText: {
-      color: '#e0e0e0 !important'
+      color: '#e0e0e0'
     },
     footerLink: {
-      color: '#e0e0e0 !important',
+      color: '#e0e0e0',
       textDecoration: 'none'
     },
     navLink: {
-      color: '#e0e0e0 !important',
-      padding: '0.25rem 0 !important',
+      color: '#e0e0e0',
+      padding: '0.25rem 0',
       textDecoration: 'none'
     },
     footerHr: {
-      borderColor: 'rgba(255, 255, 255, 0.2) !important',
-      margin: '2rem 0 0 0 !important'
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      margin: '2rem 0 0 0'
     },
     copyrightText: {
-      color: '#e0e0e0 !important'
+      color: '#e0e0e0'
     },
     copyrightLink: {
-      color: '#ffffff !important',
+      color: '#ffffff',
       textDecoration: 'none'
     }
   };
@@ -132,7 +128,6 @@ const Footer = ({ className }) => {
             ...defaultSettings,
             ...processedData,
             site_logo: processedData.site_logo || pylogo
-            // ❌ do NOT set copyright_text
           };
 
           setSettings(newSettings);
@@ -171,7 +166,7 @@ const Footer = ({ className }) => {
                 'Royal Victorian University in Yeghegnadzor, Armenia offers prestigious education with diverse degree programs and linguistic courses, including German language.dhuyugam Academy embarked on a resolute mission to deliver top-notch education for a spectrum of competitive examinations'}
             </p>
             <div style={footerStyles.socialLinks}>
-              <ul className="list-inline mb-0 mt-3" style={{ margin: '0 !important', padding: '0 !important', textAlign: 'left' }}>
+              <ul className="list-inline mb-0 mt-3" style={{ margin: '0', padding: '0', textAlign: 'left' }}>
               {settings.facebook_url && (
                 <li className="list-inline-item">
                   <a
@@ -230,7 +225,28 @@ const Footer = ({ className }) => {
             <Row className="g-4">
               {footerLinks.slice(0, 2).map((link, idx) => (
                 <Col xs={6} md={4} key={idx}>
-                  <h5 className="mb-2 mb-md-4" style={footerStyles.footerHeading}>{link.title}</h5>
+                  <h5 
+                    className="mb-2 mb-md-4" 
+                    style={{
+                      color: '#ffffff',
+                      fontWeight: '600',
+                      fontSize: '1.25rem',
+                      lineHeight: '1.2',
+                      marginBottom: '1rem',
+                      textDecoration: 'none',
+                      filter: 'none',
+                      opacity: '1',
+                      textShadow: 'none',
+                      fontFamily: 'inherit',
+                      fontStyle: 'normal',
+                      letterSpacing: 'normal',
+                      textTransform: 'none',
+                      WebkitTextFillColor: '#ffffff',
+                      WebkitTextStroke: 'none'
+                    }}
+                  >
+                    {link.title}
+                  </h5>
                   <ul className="nav flex-column">
                     {link.items.map((item, idx) => (
                       <li className="nav-item" key={idx}>
@@ -254,7 +270,28 @@ const Footer = ({ className }) => {
 
           {/* Contact section */}
           <Col lg={4}>
-            <h5 className="mb-2 mb-md-4" style={footerStyles.footerHeading}>Contact</h5>
+            <h5 
+              className="mb-2 mb-md-4" 
+              style={{
+                color: '#ffffff',
+                fontWeight: '600',
+                fontSize: '1.25rem',
+                lineHeight: '1.2',
+                marginBottom: '1rem',
+                textDecoration: 'none',
+                filter: 'none',
+                opacity: '1',
+                textShadow: 'none',
+                fontFamily: 'inherit',
+                fontStyle: 'normal',
+                letterSpacing: 'normal',
+                textTransform: 'none',
+                WebkitTextFillColor: '#ffffff',
+                WebkitTextStroke: 'none'
+              }}
+            >
+              Contact
+            </h5>
             <p className="mb-2" style={footerStyles.footerText}>{settings.site_address}</p>
             <p className="mb-0" style={footerStyles.footerText}>
               Contact Number: <span className="h6 fw-light ms-1" style={footerStyles.footerText}>{settings.site_phone}</span>
