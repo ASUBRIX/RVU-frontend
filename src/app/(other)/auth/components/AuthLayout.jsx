@@ -2,7 +2,7 @@ import avatar1 from '@/assets/images/avatar/01.jpg';
 import avatar2 from '@/assets/images/avatar/02.jpg';
 import avatar3 from '@/assets/images/avatar/03.jpg';
 import avatar4 from '@/assets/images/logo.png';
-import elementImg from '@/assets/images/logo-transparent.png';
+import elementImg from '@/assets/images/logo.png';
 import { Col, Container, Row } from 'react-bootstrap';
 
 const AuthLayout = ({ children }) => {
@@ -18,7 +18,7 @@ const AuthLayout = ({ children }) => {
               className="d-flex flex-column align-items-center justify-content-center bg-primary bg-opacity-10 vh-lg-100 p-4 text-center"
             >
               <div className="mb-3">
-                <h2 className="fw-bold fs-3">Welcome to Pudhuyugam Academy</h2>
+                <h2 className="fw-bold fs-3">Welcome to Royal Victorian University</h2>
                 <p className="mb-0 h6 fw-light">Let's learn something new today!</p>
               </div>
               <div className="d-flex justify-content-center align-items-center">
